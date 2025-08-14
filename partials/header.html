@@ -1,20 +1,42 @@
-<header class="site-header">
-  <div class="container">
-    <a class="brand" href="./" aria-label="Maskun Kauppakeskus">
-      <img src="./assets/logo.png"
-           srcset="./assets/logo.png"
-           alt="Maskun Kauppakeskus" decoding="async" loading="eager"><b>Maskun Kauppakeskus</b>
+<header class="site-header header">
+  <div class="header-container container">
+    <!-- Brändi / logo -->
+    <a class="brand logo" href="./" aria-label="Maskun Kauppakeskus">
+      <img
+        src="./assets/logo.png"
+        srcset="./assets/logo.png"
+        alt="Maskun Kauppakeskus"
+        decoding="async"
+        loading="eager"
+      />
+      <b>Maskun Kauppakeskus</b>
     </a>
-    <nav id="nav">
-      <!-- NAV:START -->
 
-      <a href="./#tenants">Liikkeet &amp; palvelut</a>
-      <a href="./info-pysakointi.html">Pysäköinti</a>
-      <a href="./info-saapuminen.html">Saapuminen</a>
-      <a href="./info-yhteystiedot.html">Yhteystiedot</a>
-      <a href="./info-liiketilavuokraus.html">Liiketilavuokraus</a>
-      <!-- NAV:END -->
-      <button id="nav-toggle" aria-label="Valikko">☰</button>
+    <!-- Hampurilaispainike (mobiili) -->
+    <button
+      class="hamburger"
+      id="hamburger"
+      aria-label="Avaa valikko"
+      aria-expanded="false"
+      aria-controls="nav-primary"
+    >
+      <span></span><span></span><span></span>
+    </button>
+
+    <!-- Navigaatio -->
+    <nav class="nav" aria-label="Päävalikko">
+      <ul class="nav-links" id="nav-primary" role="menu">
+        <!-- NAV:START -->
+        <li role="none"><a role="menuitem" href="./#tenants">Liikkeet &amp; palvelut</a></li>
+        <li role="none"><a role="menuitem" href="./info-pysakointi.html">Pysäköinti</a></li>
+        <li role="none"><a role="menuitem" href="./info-saapuminen.html">Saapuminen</a></li>
+        <li role="none"><a role="menuitem" href="./info-yhteystiedot.html">Yhteystiedot</a></li>
+        <li role="none"><a role="menuitem" href="./info-liiketilavuokraus.html">Liiketilavuokraus</a></li>
+        <!-- NAV:END -->
+      </ul>
     </nav>
   </div>
 </header>
+
+<!-- Taustan overlay mobiilivalikolle -->
+<div id="nav-overlay" hidden aria-hidden="true"></div>

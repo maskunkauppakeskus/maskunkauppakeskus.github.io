@@ -18,12 +18,40 @@
   }
 
   function mountPartial(root) {
-    // mobiilinav
-    const nav = root.querySelector("#nav");
-    const btn = root.querySelector("#nav-toggle");
-    if (btn && nav) btn.addEventListener("click", () => nav.classList.toggle("open"));
+    // --- Hampurilaisnavigaatio tälle partialille ----------------------------
+    // Tuetaan sekä uutta (hamburger + nav-links) että vanhaa (#nav, #nav-toggle) rakennetta
+    const nav =
+      root.querySelector("#nav-primary") ||
+      root.querySelector(".nav-links") ||
+      root.querySelector("#nav");
+    const burger =
+      root.querySelector("#hamburger") ||
+      root.querySelector(".hamburger") ||
+      root.querySelector("#nav-toggle");
 
-    // PJAX vain samaan alkuperään, html-sivuihin
+    if (nav && burger) {
+      // Käynnistä yleinen hamburger-logiikka (idempotentti)
+      if (typeof window.initHamburgerMenu === "function") {
+        window.initHamburgerMenu();
+      } else {
+        // Fallback vanhalle toteutukselle, jos initHamburgerMenu ei ole vielä injektoitu
+        const toggle = () => {
+          burger.classList.toggle("open");
+          // Uusi malli käyttää .nav-links.active, vanha malli #nav.open
+          if (nav.classList.contains("nav-links")) {
+            nav.classList.toggle("active");
+          } else {
+            nav.classList.toggle("open");
+          }
+        };
+        if (!burger.dataset._bound) {
+          burger.addEventListener("click", toggle);
+          burger.dataset._bound = "1";
+        }
+      }
+    }
+
+    // --- PJAX vain samaan alkuperään, html-sivuihin --------------------------
     root.querySelectorAll("a[href]").forEach((a) => {
       if (shouldIntercept(a)) {
         a.addEventListener("click", (e) => {
@@ -100,7 +128,7 @@
   // --- utilit ----------------------------------------------------------------
   function setActiveNav(pathname) {
     const file = pathname.split("/").pop();
-    document.querySelectorAll("#nav a").forEach((a) => {
+    document.querySelectorAll("#nav a, #nav-primary a, .nav-links a").forEach((a) => {
       const h = a.getAttribute("href") || "";
       if (h.endsWith(file)) a.classList.add("active");
       else a.classList.remove("active");
@@ -300,6 +328,9 @@
     if (headerEl) await loadPartial(headerEl, headerEl.dataset.partial || "/partials/header.html", "header");
     if (footerEl) await loadPartial(footerEl, footerEl.dataset.partial || "/partials/footer.html", "footer");
 
+    // Käynnistä hamburger myös alkuperäiseen DOMiin
+    if (typeof window.initHamburgerMenu === "function") window.initHamburgerMenu();
+
     setActiveNav(location.pathname);
     initCarouselAndYear();
 
@@ -323,6 +354,13 @@
     sync(el);
     new MutationObserver(() => sync(el))
       .observe(el, { childList: true, characterData: true, subtree: true });
+  });
+
+  // Kun header on ladattu partialina, varmista että hamburger alustetaan
+  window.addEventListener("partial:loaded", (e) => {
+    if (e.detail?.key === "header" && typeof window.initHamburgerMenu === "function") {
+      window.initHamburgerMenu();
+    }
   });
 })();
 
@@ -396,4 +434,131 @@
   });
 
   document.addEventListener('DOMContentLoaded', () => { /* ei tarvita erikseen */ });
+})();
+
+// ====== Tyylikäs hampurilaisvalikko (idempotentti) ==========================
+(function () {
+  function initHamburgerMenu() {
+    const mqMobile = window.matchMedia('(max-width:1226px)');
+    const html = document.documentElement;
+
+    const burger =
+      document.getElementById('hamburger') ||
+      document.querySelector('.hamburger') ||
+      document.getElementById('nav-toggle'); // legacy tuki
+
+    const nav =
+      document.getElementById('nav-primary') ||
+      document.querySelector('.nav-links') ||
+      document.getElementById('nav'); // legacy tuki
+
+    if (!burger || !nav) return;
+
+    // Vältä kaksoisinit
+    if (burger.dataset._hamburgerInit === '1') return;
+    burger.dataset._hamburgerInit = '1';
+
+    // Luo overlay, jos puuttuu
+    let overlay = document.getElementById('nav-overlay');
+    if (!overlay) {
+      overlay = document.createElement('div');
+      overlay.id = 'nav-overlay';
+      overlay.hidden = true;
+      document.body.prepend(overlay);
+    }
+
+    const openClassBtn = 'open';
+    const openClassNav = nav.classList.contains('nav-links') ? 'active' : 'open'; // legacy: #nav.open
+
+    const focusableSelector = [
+      'a[href]',
+      'button:not([disabled])',
+      '[tabindex]:not([tabindex="-1"])',
+      'input:not([disabled])',
+      'select:not([disabled])',
+      'textarea:not([disabled])'
+    ].join(',');
+
+    const isOpen = () =>
+      burger.classList.contains(openClassBtn) && nav.classList.contains(openClassNav);
+
+    function lockScroll(lock) {
+      html.classList.toggle('no-scroll', !!lock);
+    }
+
+    function trapFocus(e) {
+      if (!isOpen()) return;
+      const nodes = nav.querySelectorAll(focusableSelector);
+      if (!nodes.length) return;
+      const first = nodes[0];
+      const last = nodes[nodes.length - 1];
+      if (e.key === 'Tab') {
+        if (e.shiftKey && document.activeElement === first) {
+          e.preventDefault(); last.focus();
+        } else if (!e.shiftKey && document.activeElement === last) {
+          e.preventDefault(); first.focus();
+        }
+      }
+    }
+
+    function openMenu() {
+      burger.classList.add(openClassBtn);
+      nav.classList.add(openClassNav);
+      overlay.classList.add('active');
+      overlay.hidden = false;
+      burger.setAttribute('aria-expanded', 'true');
+      lockScroll(true);
+      setTimeout(() => {
+        const firstLink = nav.querySelector('a, button');
+        if (firstLink) firstLink.focus();
+      }, 10);
+    }
+
+    function closeMenu() {
+      burger.classList.remove(openClassBtn);
+      nav.classList.remove(openClassNav);
+      overlay.classList.remove('active');
+      burger.setAttribute('aria-expanded', 'false');
+      lockScroll(false);
+      setTimeout(() => { if (!isOpen()) overlay.hidden = true; }, 180);
+      burger.focus({ preventScroll: true });
+    }
+
+    const toggleMenu = () => (isOpen() ? closeMenu() : openMenu());
+
+    // Tapahtumat
+    burger.addEventListener('click', toggleMenu);
+    overlay.addEventListener('click', closeMenu);
+
+    nav.addEventListener('click', (e) => {
+      const t = e.target.closest('a, button');
+      if (!t) return;
+      if (mqMobile.matches) closeMenu();
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && isOpen()) {
+        e.preventDefault(); closeMenu();
+      } else if (mqMobile.matches) {
+        trapFocus(e);
+      }
+    });
+
+    const onResize = () => { if (!mqMobile.matches) closeMenu(); };
+    window.addEventListener('resize', onResize);
+  }
+
+  // Vie globaaliin käyttöön ja aja heti
+  window.initHamburgerMenu = initHamburgerMenu;
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initHamburgerMenu);
+  } else {
+    initHamburgerMenu();
+  }
+
+  // Kun header-partial latautuu myöhemmin, alustetaan uudelleen
+  window.addEventListener('partial:loaded', (e) => {
+    if (e.detail?.key === 'header') initHamburgerMenu();
+  });
 })();

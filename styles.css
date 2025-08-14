@@ -128,7 +128,6 @@
 /* Ylikirjoitetaan vain fonttiperheet – muu typografia säilyy */
 body {
   font-weight: 400;
-  -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
@@ -566,3 +565,92 @@ section {
   text-align: center;
   margin-top:auto;
 }
+
+/* --- NAV reset & layout --- */
+.nav { display:flex; align-items:center; }
+
+/* Poista bulletit ja tyhjät marginit */
+.nav-links {
+  list-style:none;
+  margin:0;
+  padding:0;
+  display:flex;
+  align-items:center;
+  gap:1rem;
+}
+
+/* Li-kohdat riville desktopissa */
+.nav-links > li { margin:0; padding:0; }
+
+/* Linkkien perusilme */
+.nav-links a {
+  display:block;
+  padding:.75rem .5rem;
+  text-decoration:none;
+  color:var(--fg);
+  opacity:.9;
+}
+.nav-links a:hover { opacity:1; color:var(--shadow); }
+
+/* Mobiili: pinottu paneeli + animointi (yhteensopiva aiemman koodin kanssa) */
+@media (max-width:1226px){
+  .nav-links{
+    position:fixed;
+    top:56px;                 /* tai var(--header-height) */
+    left:0; right:0;
+    background:var(--header-bg);
+    box-shadow:var(--box-shadow);
+    flex-direction:column;
+    align-items:flex-start;
+    padding:.5rem 1rem;
+    display:none;
+    transform:translateY(-10px);
+    opacity:0;
+    transition:transform .2s ease, opacity .2s ease;
+    z-index:1001;
+  }
+  .nav-links.active{
+    display:flex;
+    transform:translateY(0);
+    opacity:1;
+  }
+  .nav-links a{
+    width:100%;
+    padding:.75rem 0;
+  }
+}
+
+/* Hampurilainen näkyviin mobiilissa */
+.hamburger{
+  display:none;
+  position:relative;
+  width:var(--burger-size, 1.75rem);
+  height:var(--burger-size, 1.75rem);
+  background:transparent;
+  border:none;
+  cursor:pointer;
+  margin-left: auto;
+}
+.hamburger span{
+  position:absolute; left:0; right:0;
+  height:var(--burger-line-h, .2rem);
+  background:var(--shadow);
+  border-radius:2px;
+  transform-origin:center;
+  transition:transform .15s ease, opacity .15s ease;
+}
+.hamburger span:nth-child(1){ top:0; }
+.hamburger span:nth-child(2){ top:calc(50% - (var(--burger-line-h, .2rem)/2)); }
+.hamburger span:nth-child(3){ bottom:0; }
+.hamburger.open span:nth-child(1){ transform:translateY(.78rem) rotate(45deg); }
+.hamburger.open span:nth-child(2){ opacity:0; transform:scaleX(0); }
+.hamburger.open span:nth-child(3){ transform:translateY(-.78rem) rotate(-45deg); }
+
+@media (max-width:1226px){
+  .hamburger{ display:flex; }
+}
+@media (min-width:1227px){
+  .hamburger{ display:none; }
+}
+#page-bg{ position:fixed; inset:0; z-index:0; pointer-events:none; }
+.site-header, main, .site-footer{ position:relative; z-index:1; }
