@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="fi">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Maskun Kauppakeskus</title>
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+
+<body>
+
+  <div id="page-bg" aria-hidden="true"></div>
+
+  <header id="site-header" data-partial="./partials/header.html"></header>
+
+
+
+
+  <main>
+    <section class="hero">
+      <div class="hero-container">
+        <h1>Tervetuloa Maskun Kauppakeskukseen!</h1>
+      </div>
+
+    </section>
+
+    <section class="banner">
+
+      <div class="carousel" id="carousel">
+
+        <!-- BANNERS:START -->
+        <a class="slide" href="#" data-editor-target="" style="position: relative;">
+
+          <img src="./assets/banner1.svg" alt="Tervetuloa Maskuun">
+        </a>
+        <!-- BANNERS:END -->
+      </div>
+    </section>
+
+    <section class="tenants container">
+      <h2>Liikkeet ja palvelut</h2>
+      <div class="logo-grid" id="tenants">
+        <!-- TENANTS:START -->
+        <a class="tenant" href="https://www.omasp.fi/konttorit/masku" target="_blank" rel="noopener"
+          aria-label="OmaSp Masku" data-name="OmaSp">
+          <img src="./assets/logot/omasp_logo.png" alt="OmaSp"
+            onerror="this.closest('.tenant').classList.add('missing'); this.remove();" />
+          <span class="tenant-name">OmaSp</span>
+        </a>
+
+        <a class="tenant" href="https://www.ahtinen.com/" target="_blank" rel="noopener"
+          aria-label="Kiinteistö & Notariaatti Ahtinen" data-name="Ahtinen">
+          <img src="./assets/logot/ahtinen_logo.png" alt="Kiinteistö & Notariaatti Ahtinen"
+            onerror="this.closest('.tenant').classList.add('missing'); this.remove();" />
+          <span class="tenant-name">Kiinteistö &amp; Notariaatti Ahtinen</span>
+        </a>
+
+        <a class="tenant" href="https://www.mimosankukka.fi/" target="_blank" rel="noopener" aria-label="Mimosan kukka"
+          data-name="Mimosan kukka">
+          <img src="./assets/logot/mimosan_logo.png" alt="Mimosan kukka"
+            onerror="this.closest('.tenant').classList.add('missing'); this.remove();" />
+          <span class="tenant-name">Mimosan kukka</span>
+        </a>
+
+        <a class="tenant" href="https://www.lunula.fi/" target="_blank" rel="noopener"
+          aria-label="Kauneushoitola Lunula" data-name="Lunula">
+          <img src="./assets/logot/lunula_logo.png" alt="Kauneushoitola Lunula"
+            onerror="this.closest('.tenant').classList.add('missing'); this.remove();" />
+          <span class="tenant-name">Kauneushoitola Lunula</span>
+        </a>
+
+        <a class="tenant" href="https://www.masku.com/" target="_blank" rel="noopener" aria-label="Masku"
+          data-name="Masku">
+          <img src="./assets/logot/masku_logo.png" alt="Masku"
+            onerror="this.closest('.tenant').classList.add('missing'); this.remove();" />
+          <span class="tenant-name">Masku</span>
+        </a>
+
+        <a class="tenant" href="https://www.taksihietanen.fi/" target="_blank" rel="noopener"
+          aria-label="Taksi Hietanen" data-name="Taksi Hietanen">
+          <img src="./assets/logot/taksihietanen_logo.png" alt="Taksi Hietanen"
+            onerror="this.closest('.tenant').classList.add('missing'); this.remove();" />
+          <span class="tenant-name">Taksi Hietanen</span>
+        </a>
+
+        <a class="tenant" href="https://aitokauppa.fi/pages/aito-kauppa-masku-maskun-luontaispuoti" target="_blank"
+          rel="noopener" aria-label="Aito-kauppa Maskun Luontaispuoti" data-name="Aito-kauppa">
+          <img src="./assets/logot/aitokauppa_logo.png" alt="Aito-kauppa Maskun Luontaispuoti"
+            onerror="this.closest('.tenant').classList.add('missing'); this.remove();" />
+          <span class="tenant-name">Aito-kauppa Maskun Luontaispuoti</span>
+        </a>
+
+        <a class="tenant" href="https://www.kotipizza.fi/ravintolat/masku-kankaisten-kauppatie" target="_blank"
+          rel="noopener" aria-label="Kotipizza" data-name="Kotipizza">
+          <img src="./assets/logot/kotipizza_logo.png" alt="Kotipizza"
+            onerror="this.closest('.tenant').classList.add('missing'); this.remove();" />
+          <span class="tenant-name">Kotipizza</span>
+        </a>
+        <!-- TENANTS:END -->
+
+
+      </div>
+      <p><a class="btn" href="./liikkeet-ja-palvelut.html">Näytä kaikki liikkeet &raquo;</a></p>
+    </section>
+
+    <section class="hours container">
+      <div class="container">
+        <h2>Aukioloajat</h2>
+        <div id="hours">
+          <!-- HOURS:START -->
+          <ul class="hours-list" data-editor-target="" style="position: relative;">
+            <li>Ma–Pe: 10–20</li>
+            <li>La: 10–18</li>
+            <li>Su: 12–18</li>
+
+            <!-- HOURS:END -->
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer id="site-footer" data-partial="./partials/footer.html"></footer>
+
+
+  <script src="./app.js" defer></script>
+
+</body>
+
+</html>

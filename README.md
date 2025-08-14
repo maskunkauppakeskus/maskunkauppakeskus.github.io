@@ -1,4 +1,1 @@
-"# maskunkauppakeskus.github.io" 
-"# maskunkauppakeskus.github.io" 
-"# maskunkauppakeskus.github.io" 
-"# maskunkauppakeskus.github.io" 
+Ensimmäinen testiversio Maskun Kauppakeskuksen verkkosivusta.
