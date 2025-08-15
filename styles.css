@@ -173,7 +173,7 @@ h2 {
   line-height: 1.2;
   margin: 0 0 .75rem;
   text-align: center;
-  color: black;
+  color: var(--shadow);
   font-size: 3em;
 
   position: relative;
@@ -241,7 +241,7 @@ a:hover {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 1rem;
+  /*! gap: 1rem; */
   min-height: 56px;
 }
 
@@ -356,6 +356,7 @@ a:hover {
   box-shadow: var(--box-shadow);
   height: 9em;
   transition: background-color 0.1s ease, transform 0.1s ease, box-shadow 0.1s ease;
+  border: 3px var(--paper) solid;
 }
 
 .tenant:hover {
@@ -388,7 +389,7 @@ a:hover {
   align-content: center;
     text-align: center;
   border-radius: 1em;
-  box-shadow: var(--box-shadow);
+  /*! box-shadow: var(--box-shadow); */
 }
 
 .hours-list li {
@@ -410,6 +411,7 @@ a:hover {
   transition: background-color 0.1s ease, transform 0.1s ease, box-shadow 0.1s ease;
 
  
+  border: 3px var(--paper) solid;
 }
 .btn:hover {
    background: var(--shadow);
@@ -476,6 +478,7 @@ html {
 
 .site-footer {
   background: rgba(255, 255, 255, 0.9);
+  margin-top: auto;
 }
 
 .hero {
@@ -510,7 +513,7 @@ section.tenants.container {
   height: 100svh;
 }
 
-section.hours.container {
+section.hours.container, .cta.container {
   height: 100svh;
 }
 
@@ -660,8 +663,12 @@ section {
 }
 
 .hero-container p, .hero-container h3, .about.container p,.about.container h3, .heritage.container p,.heritage.container h3, .location.container p, .location.container h3,.community.container p, .community.container h3, .pill-list, details{
-  background: var(--shadow);
-  color: var(--paper);
+  /*! background: var(--shadow); */
+  color: var(--shadow);
+  padding: 1em;
+  margin: 0;
+  font-weight: normal;
+  font-size: 14pt;
 }
 
 footer {
@@ -669,9 +676,13 @@ footer {
   background: var(--shadow) !important;
   color: var(--paper) !important;
   border: none !important;
+  bottom: 0 !important;
+  width: 100%;
 }
 main {
   position: relative;
+
+  align-content: center;
 }
 
 /* --- Stabiili taustakuva myös kun mobiiliselain näyttää piilottaa osoitepalkkia --- */
@@ -692,4 +703,38 @@ main {
 @supports not (height: 100lvh){
   :root{ --bgH-locked: 100vh; }      /* korvataan JS:llä pikseleiksi */
   #page-bg{ background-size: auto var(--bgH-locked); }
+}
+.pill-list {
+  padding-left: 2em;
+}
+
+.content {
+  border: 3px var(--paper) solid;
+  background: var(--paper);
+  padding: 1em;
+  border-radius: 1em;
+  box-shadow: var(--box-shadow);
+}
+
+h3 {
+  font-family: var(--font-base);
+  font-size:16pt;
+  font-weight: bold !important;;
+}
+
+
+
+body {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh; /* vähintään koko ikkunan korkeus */
+}
+
+main {
+  flex: 1; /* ottaa kaiken jäljellä olevan tilan ennen footeria */
+}
+
+footer {
+  background: #f5f5f5; /* tai oma taustaväri */
+  padding: 1rem;
 }

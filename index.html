@@ -35,7 +35,7 @@
 
 <body>
 
-  <div id="page-bg" aria-hidden="true"></div>
+  
 
   <header id="site-header" data-partial="./partials/header.html"></header>
 
@@ -43,6 +43,9 @@
     <section class="hero">
       <div class="hero-container">
         <h1>Tervetuloa Maskun Kauppakeskukseen!</h1>
+        <div class="content">
+          <div id="aukiolo-widget"></div>
+
         <p class="lead">Paikallinen kauppakeskus Maskun kunnassa, Varsinais-Suomen sydämessä – arjen palvelut ja
           vahvat juuret samassa osoitteessa.</p>
         <nav class="quick-nav" aria-label="Pikavalikko">
@@ -52,6 +55,7 @@
           <a class="btn" href="#sijainti">Sijainti & saapuminen</a>
           <a class="btn" href="#yhteiso">Yhteisö & tapahtumat</a>
         </nav>
+      </div>
       </div>
     </section>
 
@@ -67,6 +71,7 @@
 
     <!-- UUSI: Tietoa meistä -->
     <section id="meista" class="about container">
+      <div class ="content">
       <h2>Maskun Kauppakeskus – juuret Varsinais-Suomessa</h2>
       <p>
         Maskun Kauppakeskus on kasvanut osaksi <strong>Varsinais-Suomen</strong> arkea ja elinvoimaa. Meille
@@ -79,10 +84,12 @@
         Haluamme, että asiointi on helppoa: selkeät tilat, esteetön kulku ja ilmainen pysäköinti tekevät piipahduksesta
         tai viikonloppukäynnistä vaivatonta.
       </p>
+      </div>
     </section>
 
     <!-- UUSI: Juuritarina -->
     <section class="heritage container">
+      <div class ="content">
       <h2>Vahvat juuret, paikallinen ote</h2>
       <p>
         Masku tunnetaan historiastaan ja yrittäjähenkisyydestään. Sama henki näkyy kauppakeskuksemme toiminnassa:
@@ -94,9 +101,11 @@
         <li>Helppo arki &amp; sujuva asiointi</li>
         <li>Kestävä kehitys &amp; pitkä yhteistyö</li>
       </ul>
+      </div>
     </section>
 
     <section class="tenants container">
+      <div class ="content">
       <h2>Liikkeet ja palvelut</h2>
       <div class="logo-grid" id="tenants">
         <!-- TENANTS:START -->
@@ -158,10 +167,12 @@
         <!-- TENANTS:END -->
       </div>
       <p><a class="btn" href="./liikkeet-ja-palvelut.html">Näytä kaikki liikkeet &raquo;</a></p>
+      </div>
     </section>
 
     <!-- UUSI: Sijainti ja saavutettavuus -->
     <section id="sijainti" class="location container">
+      <div class="content">
       <h2>Sijainti & saapuminen Maskussa</h2>
       <p>
         Löydät meidät helposti <strong>Maskun</strong> keskustan tuntumasta. Saapuminen onnistuu sujuvasti sekä
@@ -176,10 +187,12 @@
           <li>Kysy info-pisteeltä paikalliset tärpit: kahvilat, ulkoilureitit ja perhekohteet Maskussa.</li>
         </ul>
       </details>
+      </div>
     </section>
 
     <!-- UUSI: Yhteisö ja tapahtumat -->
     <section id="yhteiso" class="community container">
+      <div class="content">
       <h2>Yhteisön keskellä – tapahtumia Varsinais-Suomessa</h2>
       <p>
         Järjestämme pitkin vuotta paikallisia tempauksia, kausimyyjäisiä ja perhetapahtumia. Tavoitteemme on tuoda
@@ -201,9 +214,11 @@
           <p>Tilavat käytävät, lastenhoitotilat ja selkeät opasteet tekevät asioinnista huoletonta kaikenikäisille.</p>
         </article>
       </div>
+      </div>
     </section>
 
     <section class="hours container">
+      <div class="content">
       <div class="container">
         <h2>Aukioloajat</h2>
         <div id="hours">
@@ -217,10 +232,12 @@
         </div>
         <p class="muted">Huom. Yksittäisillä liikkeillä voi olla poikkeavat aukioloajat – tarkista liikkeen sivulta.</p>
       </div>
+      </div>
     </section>
 
     <!-- UUSI: Kutsu toimintaan -->
     <section class="cta container" aria-label="Ota yhteyttä">
+      <div class="content">
       <h2>Tervetuloa asioimaan – tehdään arjesta sujuvaa</h2>
       <p>Olitpa ohikulkumatkalla tai suunnittelemassa koko perheen retkeä, löydät kaiken tarvittavan Maskun
         Kauppakeskuksesta. Tervetuloa osaksi paikallista tarinaa!</p>
@@ -232,6 +249,7 @@
           Ota yhteyttä
         </a>
       </p>
+      </div>
     </section>
   </main>
 
@@ -281,5 +299,6 @@
   <noscript>Parhaan käyttökokemuksen saat, kun JavaScript on käytössä.</noscript>
 
   <script src="./app.js" defer></script>
+  <script>window.initOpeningHours('#aukiolo-widget');</script>
 </body>
 </html>
