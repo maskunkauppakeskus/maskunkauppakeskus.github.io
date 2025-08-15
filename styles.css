@@ -24,7 +24,20 @@
   --header-border: #e5e7eb;
   --radius: 12px;
 }
-
+@font-face {
+  font-family: "Barlow";
+  src: url("/fonts/Barlow_Semi_Condensed/BarlowSemiCondensed-Bold.ttf") format("truetype");
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Montserrat";
+  src: url("/fonts/Montserrat/Montserrat-VariableFont_wght.ttf") format("truetype");
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+}
 /* Pirata One – vain Regular (otsikoihin) */
 @font-face {
   font-family: "Pirata One";
@@ -133,8 +146,8 @@
 
 /* Fonttimuuttujat (ei kosketa aiempiin väri ym. muuttujiin) */
 :root {
-  --font-heading: "Pirata One", system-ui, -apple-system, "Segoe UI", Roboto, Ubuntu, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
-  --font-body: "Open Sans", system-ui, -apple-system, "Segoe UI", Roboto, Ubuntu, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  --font-heading: "Barlow", system-ui, -apple-system, "Segoe UI", Roboto, Ubuntu, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  --font-body: "Montserrat", system-ui, -apple-system, "Segoe UI", Roboto, Ubuntu, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
 }
 
 /* Ylikirjoitetaan vain fonttiperheet – muu typografia säilyy */
@@ -756,7 +769,7 @@ section {
 details {
   /*! background: var(--shadow); */
   color: var(--shadow);
-  padding: 1em;
+  /*! padding: 1em; */
   margin: 0;
   font-weight: normal;
   font-size: 14pt;
@@ -849,6 +862,7 @@ h1 {
   font-size: 3.5em;
   font-weight: bolder;
   text-shadow: var(--box-shadow);
+  color: var(--signal);
 }
 
 /* Pikavalikon napit */
