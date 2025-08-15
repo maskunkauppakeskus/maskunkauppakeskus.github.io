@@ -812,7 +812,7 @@ main {
 /* Vanhat selaimet ilman lvh/lvw-tukea: lukitse korkeus kerran JS:llä (alla). */
 @supports not (height: 100lvh) {
   :root {
-    --bgH-locked: 100vh;
+    --bgH-locked: 105vh;
   }
 
   /* korvataan JS:llä pikseleiksi */
@@ -863,7 +863,7 @@ footer {
 h1 {
   font-size: 3.5em;
   font-weight: bolder;
-  text-shadow: var(--box-shadow);
+
   color: var(--signal);
 }
 
