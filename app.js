@@ -311,11 +311,27 @@ window.initBannerCarousel = async function initBannerCarousel() {
     return Math.max(0, Math.round(h));
   }
 
-  function smoothScrollTo(el, opts = {}) {
-    if (!el) return;
-    const top = window.scrollY + el.getBoundingClientRect().top - headerOffsetPx() - 8;
-    window.scrollTo({ top, behavior: opts.behavior || "smooth" });
-  }
+function smoothScrollTo(el, opts = {}) {
+  if (!el) return;
+
+  const html = document.documentElement;
+  html.classList.add('scrolling-by-script'); // estä headerin piilotus rullatessa
+
+  const scrollEl = document.scrollingElement || document.documentElement;
+  const headerPx = headerOffsetPx();
+  const yNow = scrollEl.scrollTop || window.scrollY || 0;
+
+  // Lasketaan tavoite ja rajataan selailtavaan alueeseen
+  const rawTarget = yNow + el.getBoundingClientRect().top - headerPx - 8;
+  const max = Math.max(0, scrollEl.scrollHeight - scrollEl.clientHeight);
+  const target = Math.min(Math.max(0, Math.round(rawTarget)), max);
+
+  window.scrollTo({ top: target, behavior: opts.behavior || "smooth" });
+
+  // Poista lippu pian (riittää kun animaatio on päättynyt)
+  setTimeout(() => html.classList.remove('scrolling-by-script'), 800);
+}
+
 
   function findSectionByHash(hash) {
     const slug = sanitizeSlug(hash);
@@ -341,104 +357,104 @@ window.initBannerCarousel = async function initBannerCarousel() {
     lastHash = finalSlug || null;
     history.replaceState(history.state || { href: url.href }, "", url.href);
   }
+let sectionTopLineDetach = null;
+function initSectionHashSync() {
+  // Pysäytä aiemmat tarkkailijat/kuuntelijat
+  if (sectionObserver) { sectionObserver.disconnect(); sectionObserver = null; }
+  if (typeof sectionTopLineDetach === "function") { sectionTopLineDetach(); sectionTopLineDetach = null; }
 
-  function initSectionHashSync() {
-    if (sectionObserver) {
-      sectionObserver.disconnect();
-      sectionObserver = null;
+  const sections = Array.from(document.querySelectorAll("main section"));
+  if (!sections.length) return;
+
+  // Kokoa slugit
+  const withSlug = sections
+    .map((s) => ({ el: s, slug: getSectionSlug(s) }))
+    .filter((x) => !!x.slug);
+
+  if (!withSlug.length) return;
+
+  lastHash = location.hash.replace(/^#/, "") || null;
+
+  // Yläreunaviiva = header-offset + 1px
+  const topLineY = () => Math.round(headerOffsetPx()) + 1;
+
+  let raf = 0;
+  const recompute = () => {
+    raf = 0;
+    const y = topLineY();
+
+    // Etsi osio, jonka sisällä yläreuna on
+    let current = null;
+    for (const { el, slug } of withSlug) {
+      const r = el.getBoundingClientRect();
+      if (r.top <= y && r.bottom > y) {
+        if (!NO_HASH_SECTIONS.has(slug)) current = slug;
+        break;
+      }
     }
 
-    const sections = Array.from(document.querySelectorAll("main section"));
-    if (!sections.length) return;
+    // Päivitä hash vain jos muuttuu ja sallittu; muuten tyhjennä
+    if (current) updateHash(current);
+    else updateHash("");
+  };
 
-    // Kartta slugeista (vain ne joille slug löytyy)
-    const withSlug = sections
-      .map((s) => ({ el: s, slug: getSectionSlug(s) }))
-      .filter((x) => !!x.slug);
+  const onScroll = () => { if (!raf) raf = requestAnimationFrame(recompute); };
 
-    if (!withSlug.length) return;
+  window.addEventListener("scroll", onScroll, { passive: true });
+  window.addEventListener("resize", onScroll);
 
-    lastHash = location.hash.replace(/^#/, "") || null;
+  // Mahdollista irrotus myöhemmin
+  sectionTopLineDetach = () => {
+    window.removeEventListener("scroll", onScroll);
+    window.removeEventListener("resize", onScroll);
+  };
 
-    // Pidetään näkymän keskikohta etusijalla
-    sectionObserver = new IntersectionObserver(
-      (entries) => {
-        // Valitaan entry jonka elementin keskikohta on lähimpänä viewportin keskikohtaa,
-        // ja joka on vähintään 40% näkyvissä.
-        let best = null;
-        let bestScore = Infinity;
+  // Alkusynkka: anna layoutin asettua
+  requestAnimationFrame(() => { onScroll(); });
+}
+function scrollToHash(hash, opts = {}) {
+  const target = findSectionByHash(hash);
+  if (!target) return;
 
-        const viewportCenter = window.innerHeight / 2;
-        for (const e of entries) {
-          if (!e.isIntersecting || e.intersectionRatio < 0.4) continue;
-          const rect = e.target.getBoundingClientRect();
-          const center = rect.top + rect.height / 2;
-          const dist = Math.abs(center - viewportCenter);
-          if (dist < bestScore) {
-            bestScore = dist;
-            best = e.target;
-          }
-        }
+  // Rullaa pehmeästi osion alkuun header-offset huomioiden
+  smoothScrollTo(target, opts);
 
-        if (!best) return;
-        const slug = getSectionSlug(best);
-        // Jos slug kielletty (kuten hero), tyhjennetään hash
-        if (slug && !NO_HASH_SECTIONS.has(slug)) updateHash(slug);
-        else updateHash("");
-      },
-      {
-        root: null,
-        threshold: [0.4, 0.6, 0.8, 1],
-        // huomioi kiinteän headerin: siirretään hieman katselualuetta
-        rootMargin: `-${Math.min(40, headerOffsetPx())}px 0px -30% 0px`,
-      }
-    );
-
-    withSlug.forEach(({ el }) => sectionObserver.observe(el));
-
-    // Päivitä heti kun sivu ladattu, jotta hash vastaa alkuasemaa
-    requestAnimationFrame(() => {
-      const currentHash = location.hash.replace(/^#/, "");
-      if (currentHash) {
-        // Jos syvälinkissä tulimme hero:on tai kelpaamattomaan, tyhjennä
-        if (NO_HASH_SECTIONS.has(currentHash)) updateHash("");
-      } else {
-        // Jos näkymä ei ole ylhäällä, aseta lähin osio
-        const first = withSlug[0]?.el;
-        if (first) {
-          const rect = first.getBoundingClientRect();
-          if (rect.top < headerOffsetPx() + 1) {
-            const slug = getSectionSlug(first);
-            if (slug && !NO_HASH_SECTIONS.has(slug)) updateHash(slug);
-          }
-        }
-      }
-    });
-  }
-
-  function scrollToHash(hash, opts = {}) {
-    const target = findSectionByHash(hash);
-    if (target) {
-      smoothScrollTo(target, opts);
-      updateHash(hash); // pidä osoite synkassa rullauksen jälkeen
-    }
-  }
+  // ÄLÄ päivitä hashia tässä – se päivittyy kun yläreuna on osion sisällä
+  // initSectionHashSync:n scroll-kuuntelija hoitaa muutoksen.
+}
 
   // Delegoitu pehmeä rullaus ankkureille koko dokumentissa
-  function initInPageAnchorScrolling() {
-    document.removeEventListener("click", onDocumentClickForAnchors);
-    document.addEventListener("click", onDocumentClickForAnchors);
-  }
+function initInPageAnchorScrolling() {
+  document.removeEventListener("click", onDocumentClickForAnchors);
+  document.addEventListener("click", onDocumentClickForAnchors);
+}
 
-  function onDocumentClickForAnchors(e) {
-    const a = e.target.closest('a[href^="#"]');
-    if (!a) return;
-    const href = a.getAttribute("href") || "";
-    const hash = href.replace(/^#/, "");
-    if (!hash) return;
+function onDocumentClickForAnchors(e) {
+  // Kaikki linkit, joissa on # – myös ./#id ja /polku/#id
+  const a = e.target.closest('a[href*="#"]');
+  if (!a) return;
+
+  const raw = a.getAttribute("href") || "";
+  // Älä estä, jos target on uusi välilehti
+  if (a.target === "_blank") return;
+
+  // Parsitaan URL turvallisesti nykyosoitteeseen perustuen
+  let url;
+  try { url = new URL(raw, location.href); } catch { return; }
+
+  const hash = (url.hash || "").replace(/^#/, "");
+  if (!hash) return;
+
+  // Vain saman dokumentin sisäiset ankkurit: sama origin + polku
+  if (url.origin === location.origin && url.pathname === location.pathname) {
     e.preventDefault();
+    // Pehmeä rullaus header-offset huomioiden (päivitetty smoothScrollTo hoitaa tämän)
     scrollToHash(hash, { behavior: "smooth" });
   }
+  // Muuten anna mennä normaalisti (esim. toisen sivun ankkuri)
+}
+
+
 
   // --- bootstrap: yksi selkeä onDomReady ------------------------------------
 async function onDomReady() {
@@ -525,6 +541,7 @@ async function onDomReady() {
 // --- header: piilota alas rullatessa, näytä ylös rullatessa -----------------
 (function initHideOnScrollHeader() {
   const el = document.scrollingElement || document.documentElement;
+  const html = document.documentElement; // lisätty: tieto ohjelmallisesta rullauksesta
   let header = null;
   let lastY = el.scrollTop || 0;
   let raf = 0;
@@ -543,31 +560,45 @@ async function onDomReady() {
   function update() {
     const y = el.scrollTop || 0;
     if (header) {
-      if (y <= 0) header.classList.remove("site-header--hidden");
-      else if (y > lastY) header.classList.add("site-header--hidden");
-      else header.classList.remove("site-header--hidden");
+      if (html.classList.contains('scrolling-by-script')) {
+        // ohjelmallinen rullaus: pidä header aina näkyvissä
+        header.classList.remove("site-header--hidden");
+      } else {
+        if (y <= 0) header.classList.remove("site-header--hidden");
+        else if (y > lastY) header.classList.add("site-header--hidden");
+        else header.classList.remove("site-header--hidden");
+      }
     }
     lastY = y;
     raf = 0;
   }
 
-  function onScroll() { if (raf) return; raf = requestAnimationFrame(update); }
+  function onScroll() { 
+    if (raf) return; 
+    raf = requestAnimationFrame(update); 
+  }
 
   // Yritä löytää header heti ja partialin valmistuttua
   ensureHeader();
   window.addEventListener("partial:loaded", (e) => {
-    if (e.detail?.key === "header") { header = null; started = false; ensureHeader(); }
+    if (e.detail?.key === "header") { 
+      header = null; 
+      started = false; 
+      ensureHeader(); 
+    }
   });
   // PJAXin jälkeen nollaa tila ja yritä uudelleen
   window.addEventListener("pjax:navigated", () => {
     lastY = el.scrollTop || 0;
-    header = null; started = false;
+    header = null; 
+    started = false;
     ensureHeader();
     requestAnimationFrame(update);
   });
 
   document.addEventListener('DOMContentLoaded', () => { /* ei tarvita erikseen */ });
 })();
+
 
 // ====== Tyylikäs hampurilaisvalikko (idempotentti) ==========================
 (function () {

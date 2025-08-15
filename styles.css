@@ -248,7 +248,7 @@ h2::before {
 /* Linkit (yleinen) */
 a {
   color: inherit;
-  text-decoration: none
+  text-decoration: none;
 }
 
 a:hover {
@@ -442,6 +442,7 @@ a:hover {
   margin: 0.5em;
   width: 14em;
   text-align: center;
+  align-content: center;
 }
 
 .btn:hover {
@@ -493,7 +494,7 @@ html {
   /* täyttää näkymän */
   pointer-events: none;
   /* ei blokkaa klikkauksia */
-  background-image: url("./assets/bg1.png");
+  background-image: url("./assets/bg1.avif");
   background-repeat: no-repeat;
   background-position: center var(--bg-pos, 0%);
   /* y=0% sivun alussa, 100% sivun lopussa */
@@ -829,7 +830,10 @@ main {
 }
 
 .pill-list {
-  padding-left: 2em;
+  /*! padding-left: 2em; */
+  width: 50%;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .content {
