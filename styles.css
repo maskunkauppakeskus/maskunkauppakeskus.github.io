@@ -9,7 +9,7 @@
 :root {
   --sea: #004765;
   --shadow: #001b31;
-  --signal: #ff6041;
+  --signal: #A50D1A;
   --paper: #fff2d7;
   --ink: #1d1f22;
   --box-shadow: 0 4px 20px #0a284425;
@@ -243,6 +243,7 @@ a:hover {
   justify-content: space-between;
   /*! gap: 1rem; */
   min-height: 56px;
+  min-width: 100%;
 }
 
 .site-header .brand {
@@ -402,7 +403,7 @@ a:hover {
    ========================================================================== */
 .btn {
   display: inline-block;
-  background: var(--brand);
+  background: var(--signal);
   color: var(--brand-contrast);
   padding: .6rem .9rem;
   border-radius: 8px;
@@ -411,7 +412,8 @@ a:hover {
   transition: background-color 0.1s ease, transform 0.1s ease, box-shadow 0.1s ease;
 
  
-  border: 3px var(--paper) solid;
+  box-shadow: var(--box-shadow);
+  margin: 0.5em;
 }
 .btn:hover {
    background: var(--shadow);
@@ -591,7 +593,7 @@ section {
   padding:.75rem .5rem;
   text-decoration:none;
   color:var(--fg);
-  opacity:.9;
+  opacity:1;
 }
 .nav-links a:hover { opacity:1; color:var(--shadow); }
 
@@ -738,3 +740,46 @@ footer {
   background: #f5f5f5; /* tai oma taustaväri */
   padding: 1rem;
 }
+
+h1 {
+  font-size: 3.5em;
+  font-weight: bolder;
+  text-shadow: var(--box-shadow);
+}
+
+/* Pikavalikon napit */
+.quick-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.quick-nav .btn {
+  flex: 1 1 150px; /* Kasvaa tasalevyiseksi, mutta minimileveys 150px */
+  text-align: center;
+  padding: 0.75rem 1rem;
+  min-width:14em;
+
+  text-decoration: none;
+  border-radius: 6px;
+  font-weight: 600;
+
+}
+
+
+/* Pienillä näytöillä jokainen nappi omalle rivilleen */
+@media (max-width: 500px) {
+  .quick-nav {
+    flex-direction: column;
+  }
+  .quick-nav .btn {
+    flex: 1 1 auto;
+    width: 100%;
+  }
+}
+.link-list {
+  list-style: none;   /* Poistaa bulletit */
+  margin: 0;
+  padding-left: 1.5em;
+}
+
