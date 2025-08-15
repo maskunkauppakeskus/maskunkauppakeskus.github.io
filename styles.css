@@ -14,16 +14,9 @@
   --ink: #1d1f22;
   --box-shadow: 0 4px 20px #0a284425;
 
-  /* johdetut */
-  --fg: var(--ink);
-  --bg: var(--paper);
-  --muted: #667085;
-  --brand: var(--sea);
-  --brand-contrast: #fff;
-  --header-bg: var(--paper);
-  --header-border: #e5e7eb;
-  --radius: 12px;
+
 }
+
 @font-face {
   font-family: "Barlow";
   src: url("/fonts/Barlow_Semi_Condensed/BarlowSemiCondensed-Bold.ttf") format("truetype");
@@ -31,6 +24,7 @@
   font-weight: 400;
   font-display: swap;
 }
+
 @font-face {
   font-family: "Montserrat";
   src: url("/fonts/Montserrat/Montserrat-VariableFont_wght.ttf") format("truetype");
@@ -38,6 +32,7 @@
   font-weight: 400;
   font-display: swap;
 }
+
 /* Pirata One – vain Regular (otsikoihin) */
 @font-face {
   font-family: "Pirata One";
@@ -153,6 +148,7 @@
 /* Ylikirjoitetaan vain fonttiperheet – muu typografia säilyy */
 body {
   font-weight: 400;
+  min-width: 564px;
 }
 
 /* Otsikot Pirata One -fontilla */
@@ -200,7 +196,7 @@ body {
 h1,
 h2 {
   line-height: 1.2;
-  margin: 0 0 .75rem;
+  margin: 0 0 1rem;
   text-align: center;
   color: var(--shadow);
   font-size: 3em;
@@ -265,8 +261,8 @@ a:hover {
   position: sticky;
   top: 0;
   z-index: 10;
-  background: var(--header-bg);
-  border-bottom: 1px solid var(--paper);
+  background: var(--paper);
+  /*! border-bottom: 1px solid var(--paper); */
   box-shadow: var(--box-shadow);
 }
 
@@ -386,6 +382,7 @@ a:hover {
   height: 9em;
   transition: background-color 0.1s ease, transform 0.1s ease, box-shadow 0.1s ease;
   border: 3px var(--paper) solid;
+  border-radius: 0.5em;
 }
 
 .tenant:hover {
@@ -432,7 +429,7 @@ a:hover {
 .btn {
   display: inline-block;
   background: var(--signal);
-  color: var(--brand-contrast);
+  color: var(--paper);
   padding: .6rem .9rem;
   border-radius: 8px;
   text-decoration: none;
@@ -442,6 +439,8 @@ a:hover {
 
   box-shadow: var(--box-shadow);
   margin: 0.5em;
+  min-width: 14em;
+  text-align: center;
 }
 
 .btn:hover {
@@ -478,7 +477,7 @@ main {
    ========================================================================== */
 :root {
   /* Säädä tarvittaessa: maksimi "renderöity leveys" taustalle */
-  --bg-max-width: 1400px;
+  --bg-max-width: 1340px;
 }
 
 /* Sulava vieritys ankkureille ja ohjelmallisille scroll-käskyille */
@@ -505,6 +504,7 @@ html {
 /* Varmistetaan, että sisältö pysyy luettavana */
 .banner {
   background: rgba(246, 246, 246, 0.9);
+  box-shadow: var(--box-shadow);
 }
 
 .site-footer {
@@ -558,7 +558,7 @@ section {
 }
 
 .container {
-  max-width: 1100px;
+  max-width: var(--bg-max-width);
 }
 
 /* ----- Tenant-logo fallback jos kuva puuttuu ----- */
@@ -628,6 +628,8 @@ section {
 .nav-links>li {
   margin: 0;
   padding: 0;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 /* Linkkien perusilme */
@@ -769,7 +771,7 @@ section {
 details {
   /*! background: var(--shadow); */
   color: var(--shadow);
-  /*! padding: 1em; */
+  padding-top: 1em;
   margin: 0;
   font-weight: normal;
   font-size: 14pt;
@@ -902,7 +904,7 @@ h1 {
   list-style: none;
   /* Poistaa bulletit */
   margin: 0;
-  padding-left: 1.5em;
+  padding-left: 0em;
 }
 
 /* Perus fokuskorostus kaikille interaktiivisille elementeille */
@@ -961,7 +963,7 @@ select {
 /* Firefox tarvitsee oman version */
 ::-moz-selection {
   background: var(--signal);
-  color: #fff;
+  color: var(--paper);
 }
 
 /* Kohdistetaan favicon ja teksti keskelle */
@@ -997,20 +999,59 @@ select {
   overflow: hidden;
   position: relative;
 }
+
 #carousel .track {
   display: flex;
-  transition: transform 0.6s ease; /* sulava vaihto */
+  transition: transform 0.6s ease;
+  /* sulava vaihto */
   will-change: transform;
 }
+
 #carousel .slide {
-  flex: 0 0 100%; /* yksi kuva täyttää näkymän */
+  flex: 0 0 100%;
+  /* yksi kuva täyttää näkymän */
 }
+
 #carousel .slide img {
   display: block;
   width: 100%;
   /*! height: auto; */
 }
-#carousel { overflow: hidden; position: relative; }
-#carousel .track { display: flex; transition: transform 0.6s ease; will-change: transform; }
-#carousel .slide { flex: 0 0 100%; }
-#carousel .slide img { display: block; width: 100%; /*! height: auto; */ }
+
+#carousel {
+  overflow: hidden;
+  position: relative;
+}
+
+#carousel .track {
+  display: flex;
+  transition: transform 0.6s ease;
+  will-change: transform;
+}
+
+#carousel .slide {
+  flex: 0 0 100%;
+}
+
+#carousel .slide img {
+  display: block;
+  width: 100%;
+  /*! height: auto; */
+  max-width: var(--bg-max-width);
+  align-self: center;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+p.lead {
+  margin-bottom: 1rem;
+  /*! text-shadow: 0px 0px 3px #fff; */
+  color: var(--signal);
+  background: var(--paper);
+  padding: 1em;
+  max-width: 950px;
+  margin-left: auto;
+  margin-right: auto;
+  box-shadow: var(--box-shadow);
+  border-radius: 0.5em;
+}
