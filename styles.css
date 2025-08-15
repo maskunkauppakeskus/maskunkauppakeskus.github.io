@@ -128,7 +128,6 @@
 /* Ylikirjoitetaan vain fonttiperheet – muu typografia säilyy */
 body {
   font-weight: 400;
-  -moz-osx-font-smoothing: grayscale;
 }
 
 /* Otsikot Pirata One -fontilla */
@@ -181,7 +180,7 @@ h2 {
   isolation: isolate;       /* rajaa pinoamisen otsikon sisään */
 
   --stroke: .10em;
-  --stroke-color: #fff;
+  --stroke-color: var(--paper);
   text-shadow: none;
 }
 h1::before,
@@ -223,7 +222,7 @@ a {
 }
 
 a:hover {
-  color: var(--brand)
+  /*! color: var(--brand) */
 }
 
 /* ==========================================================================
@@ -311,7 +310,7 @@ a:hover {
    ========================================================================== */
 .banner {
   background: #f6f6f6;
-  border-bottom: 1px solid #eee
+  /*! border-bottom: 1px solid #eee */
 }
 
 .carousel {
@@ -408,11 +407,12 @@ a:hover {
   border-radius: 8px;
   text-decoration: none;
   margin-top: .5rem;
-  transition: transform .05s ease, filter .15s ease;
-}
+  transition: background-color 0.1s ease, transform 0.1s ease, box-shadow 0.1s ease;
 
+ 
+}
 .btn:hover {
-  filter: brightness(1.05)
+   background: var(--shadow);
 }
 
 .btn:active {
@@ -653,4 +653,43 @@ section {
   .hamburger{ display:none; }
 }
 #page-bg{ position:fixed; inset:0; z-index:0; pointer-events:none; }
-.site-header, main, .site-footer{ position:relative; z-index:1; }
+.site-header{ position:fixed; z-index:1; }
+
+.about.container, .heritage.container, .location.container, .community.container {
+  height: 100svh;
+}
+
+.hero-container p, .hero-container h3, .about.container p,.about.container h3, .heritage.container p,.heritage.container h3, .location.container p, .location.container h3,.community.container p, .community.container h3, .pill-list, details{
+  background: var(--shadow);
+  color: var(--paper);
+}
+
+footer {
+  position:relative;
+  background: var(--shadow) !important;
+  color: var(--paper) !important;
+  border: none !important;
+}
+main {
+  position: relative;
+}
+
+/* --- Stabiili taustakuva myös kun mobiiliselain näyttää piilottaa osoitepalkkia --- */
+#page-bg{
+  /* lukitse mittakaava suurimpaan viewporttiin: ei zoomausta osoitepalkin myötä */
+  background-size: auto 100lvh;      /* pysty ohjaa (potretti) */
+  background-position: center var(--bg-pos, 0%);
+  will-change: transform;            /* vähentää repainteja joillakin moottoreilla */
+}
+
+@media (orientation: landscape){
+  #page-bg{
+    background-size: 100lvw auto;    /* vaakasuunnassa leveys ohjaa */
+  }
+}
+
+/* Vanhat selaimet ilman lvh/lvw-tukea: lukitse korkeus kerran JS:llä (alla). */
+@supports not (height: 100lvh){
+  :root{ --bgH-locked: 100vh; }      /* korvataan JS:llä pikseleiksi */
+  #page-bg{ background-size: auto var(--bgH-locked); }
+}
