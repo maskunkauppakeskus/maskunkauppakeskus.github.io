@@ -148,7 +148,7 @@
 /* Ylikirjoitetaan vain fonttiperheet – muu typografia säilyy */
 body {
   font-weight: 400;
-  min-width: 564px;
+
 }
 
 /* Otsikot Pirata One -fontilla */
@@ -439,7 +439,7 @@ a:hover {
 
   box-shadow: var(--box-shadow);
   margin: 0.5em;
-  min-width: 14em;
+  width: 14em;
   text-align: center;
 }
 
@@ -514,7 +514,7 @@ html {
 
 .hero {
   height: 100svh;
-  display: flex;
+  /*! display: flex; */
   align-items: center;
 }
 
@@ -881,7 +881,7 @@ h1 {
   /* Kasvaa tasalevyiseksi, mutta minimileveys 150px */
   text-align: center;
   padding: 0.75rem 1rem;
-  min-width: 14em;
+  width: 14em;
 
   text-decoration: none;
   border-radius: 6px;
@@ -1146,7 +1146,7 @@ p {
 
 .content li a {
   background: var(--signal);
-  min-width: 25em;
+  width: 25em;
   padding:0.5em;
   border-radius: 0.5em;
   color: var(--paper);
