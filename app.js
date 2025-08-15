@@ -135,19 +135,138 @@
     });
   }
 
-  function initCarouselAndYear() {
-    const y = document.getElementById("year");
-    if (y) y.textContent = new Date().getFullYear();
+function initCarouselAndYear() {
+  const y = document.getElementById("year");
+  if (y) y.textContent = new Date().getFullYear();
+}
 
-    const carousel = document.getElementById("carousel");
-    if (carousel) {
-      let idx = 0;
-      setInterval(() => {
-        idx = (idx + 1) % carousel.children.length;
-        carousel.scrollTo({ left: idx * carousel.clientWidth, behavior: "smooth" });
-      }, 4500);
+// GLOBAALI karuselli (ei jää odottamaan laiskoja kuvia)
+window.initBannerCarousel = async function initBannerCarousel() {
+  const viewport = document.getElementById('carousel');
+  if (!viewport) return;
+
+  if (viewport.dataset._carouselInit === '1') return;
+  viewport.dataset._carouselInit = '1';
+
+  if (viewport._timer) { clearInterval(viewport._timer); viewport._timer = null; }
+
+  // Päätä assets-peruspolku: yritä juurta, muuten suhteellinen
+  async function pickBase() {
+    const tryHead = async (p) => {
+      try { const r = await fetch(p + 'banner_1.png', { method: 'HEAD', credentials: 'same-origin' }); return r.ok; }
+      catch { return false; }
+    };
+    if (await tryHead('/assets/')) return '/assets/';
+    return './assets/';
+  }
+  const ASSETS = await pickBase();
+
+  // 1) Kerää bannerit
+  let files = [];
+  try {
+    const res = await fetch(ASSETS, { credentials: 'same-origin' });
+    const html = await res.text();
+    const rx = /\bbanner_?(\d+)\.(svg|png|jpe?g|webp)\b/gi;
+    for (const m of html.matchAll(rx)) files.push({ file: m[0], n: parseInt(m[1], 10) });
+  } catch { /* ei listaa -> fallback */ }
+
+  if (!files.length) {
+    const exts = ['webp','jpg','jpeg','png','svg'];
+    const probe = (src) => new Promise(res => { const i = new Image(); i.onload = () => res(true); i.onerror = () => res(false); i.src = src; });
+    for (let i = 1; i <= 50; i++) {
+      let pick = null;
+      for (const ext of exts) {
+        // eslint-disable-next-line no-await-in-loop
+        if (await probe(`${ASSETS}banner_${i}.${ext}`)) { pick = `banner_${i}.${ext}`; break; }
+        // eslint-disable-next-line no-await-in-loop
+        if (await probe(`${ASSETS}banner${i}.${ext}`))  { pick = `banner${i}.${ext}`;  break; }
+      }
+      if (pick) files.push({ file: pick, n: i });
     }
   }
+  if (!files.length) return;
+
+  // 2) Deduplikoi (prioriteetti: webp > jpg > png > svg)
+  const pref = ['webp','jpg','jpeg','png','svg'];
+  const byN = new Map();
+  for (const f of files) {
+    const ext = f.file.split('.').pop().toLowerCase();
+    const cur = byN.get(f.n);
+    if (!cur) byN.set(f.n, { file: f.file, n: f.n, ext });
+    else if (pref.indexOf(ext) < pref.indexOf(cur.ext)) byN.set(f.n, { file: f.file, n: f.n, ext });
+  }
+  files = Array.from(byN.values()).sort((a,b)=>a.n-b.n);
+
+  // 3) Rakenna DOM
+  viewport.innerHTML = '';
+  const track = document.createElement('div');
+  track.className = 'track';
+  track.style.display = 'flex';
+  track.style.transition = 'transform 0.6s ease';
+  track.style.willChange = 'transform';
+  viewport.style.overflow = 'hidden';
+  viewport.appendChild(track);
+
+  files.forEach(({ file }, idx) => {
+    const a = document.createElement('a');
+    a.className = 'slide';
+    a.href = '#';
+    a.style.flex = '0 0 100%';
+
+    const img = document.createElement('img');
+    img.src = `${ASSETS}${file}`;
+    img.alt = `Banneri ${file}`;
+    img.decoding = 'async';
+    // TÄRKEÄ: ei laiskaa latausta karusellissa
+    img.loading = 'eager';
+    img.style.width = '100%';
+    img.style.display = 'block';
+
+    // Pieni prefetch varalta
+    if (idx === 0) img.fetchPriority = 'high';
+
+    a.appendChild(img);
+    track.appendChild(a);
+  });
+
+  // 4) Odota vain ensimmäinen kuva valmiiksi -> starttaa heti
+  const firstImg = track.querySelector('img');
+  if (firstImg && !firstImg.complete) {
+    await new Promise(r => { firstImg.onload = firstImg.onerror = r; });
+  }
+
+  // 5) Vaihtologiikka
+  let index = 0;
+  const total = files.length;
+  const DURATION_MS = 5000;
+
+  const show = (i) => {
+    index = (i + total) % total;
+    track.style.transform = `translateX(${-index * 100}%)`;
+  };
+
+  show(0);
+
+  if (total >= 2) {
+    viewport._timer = setInterval(() => show(index + 1), DURATION_MS);
+  }
+
+  // pysäytä/piirrä uudelleen näkyvyyden mukaan
+  const onVisibility = () => {
+    if (document.hidden && viewport._timer) { clearInterval(viewport._timer); viewport._timer = null; }
+    else if (!document.hidden && total >= 2 && !viewport._timer) {
+      viewport._timer = setInterval(() => show(index + 1), DURATION_MS);
+    }
+  };
+  document.addEventListener('visibilitychange', onVisibility);
+
+  window.addEventListener('pjax:navigated', () => {
+    document.removeEventListener('visibilitychange', onVisibility);
+    if (viewport._timer) { clearInterval(viewport._timer); viewport._timer = null; }
+    delete viewport.dataset._carouselInit;
+  }, { once: true });
+};
+
 
   // --- #hash <-> section synkka ----------------------------------------------
   // Päivitykset:
@@ -322,26 +441,32 @@
   }
 
   // --- bootstrap: yksi selkeä onDomReady ------------------------------------
-  async function onDomReady() {
-    const headerEl = document.getElementById("site-header");
-    const footerEl = document.getElementById("site-footer");
-    if (headerEl) await loadPartial(headerEl, headerEl.dataset.partial || "/partials/header.html", "header");
-    if (footerEl) await loadPartial(footerEl, footerEl.dataset.partial || "/partials/footer.html", "footer");
+async function onDomReady() {
+  const headerEl = document.getElementById("site-header");
+  const footerEl = document.getElementById("site-footer");
+  if (headerEl) await loadPartial(headerEl, headerEl.dataset.partial || "/partials/header.html", "header");
+  if (footerEl) await loadPartial(footerEl, footerEl.dataset.partial || "/partials/footer.html", "footer");
 
-    // Käynnistä hamburger myös alkuperäiseen DOMiin
-    if (typeof window.initHamburgerMenu === "function") window.initHamburgerMenu();
+  // Käynnistä hamburger myös alkuperäiseen DOMiin
+  if (typeof window.initHamburgerMenu === "function") window.initHamburgerMenu();
 
-    setActiveNav(location.pathname);
-    initCarouselAndYear();
+  setActiveNav(location.pathname);
+  initCarouselAndYear();
 
-    initSectionHashSync();
-    initInPageAnchorScrolling();
-
-    const initialHash = location.hash.replace(/^#/, "");
-    if (initialHash) {
-      requestAnimationFrame(() => scrollToHash(initialHash, { behavior: "smooth" }));
-    }
+  // Karuselli: käytä GLOBAALIA funktiota
+  if (typeof window.initBannerCarousel === 'function') {
+    await window.initBannerCarousel();
   }
+
+  initSectionHashSync();
+  initInPageAnchorScrolling();
+
+  const initialHash = location.hash.replace(/^#/, "");
+  if (initialHash) {
+    requestAnimationFrame(() => scrollToHash(initialHash, { behavior: "smooth" }));
+  }
+}
+
 
   document.addEventListener("DOMContentLoaded", onDomReady);
 
@@ -365,19 +490,20 @@
 })();
 
 // --- taustakuvan scroll-synkka (event-pohjainen) ----------------------------
-(function initBackgroundScrollSync(){
+// --- taustakuvan scroll-synkka (event-pohjainen) ----------------------------
+(function initBackgroundScrollSync() {
   const root = document.documentElement;
   const el = document.scrollingElement || root;
   let raf = 0;
 
-  function setBgFromScroll(){
+  function setBgFromScroll() {
     const max = Math.max(1, el.scrollHeight - el.clientHeight);
     const y = el.scrollTop || 0;
     const progress = Math.min(1, Math.max(0, y / max));
     root.style.setProperty("--bg-pos", (progress * 100).toFixed(3) + "%");
   }
 
-  function onScroll(){
+  function onScroll() {
     if (raf) return;
     raf = requestAnimationFrame(() => { raf = 0; setBgFromScroll(); });
   }
@@ -386,18 +512,25 @@
   window.addEventListener("load", onScroll);
   window.addEventListener("resize", onScroll);
   window.addEventListener("scroll", onScroll, { passive: true });
-  window.addEventListener("pjax:navigated", () => requestAnimationFrame(setBgFromScroll));
+
+  window.addEventListener("pjax:navigated", () => {
+    // Kun <main> vaihtuu, yritä alustaa karuselli uudelleen
+    setTimeout(() => {
+      if (typeof window.initBannerCarousel === "function") window.initBannerCarousel();
+    }, 0);
+  });
 })();
 
+
 // --- header: piilota alas rullatessa, näytä ylös rullatessa -----------------
-(function initHideOnScrollHeader(){
+(function initHideOnScrollHeader() {
   const el = document.scrollingElement || document.documentElement;
   let header = null;
   let lastY = el.scrollTop || 0;
   let raf = 0;
   let started = false;
 
-  function ensureHeader(){
+  function ensureHeader() {
     if (!header) header = document.querySelector(".site-header");
     if (header && !started) {
       started = true;
@@ -407,7 +540,7 @@
     }
   }
 
-  function update(){
+  function update() {
     const y = el.scrollTop || 0;
     if (header) {
       if (y <= 0) header.classList.remove("site-header--hidden");
@@ -418,7 +551,7 @@
     raf = 0;
   }
 
-  function onScroll(){ if (raf) return; raf = requestAnimationFrame(update); }
+  function onScroll() { if (raf) return; raf = requestAnimationFrame(update); }
 
   // Yritä löytää header heti ja partialin valmistuttua
   ensureHeader();
@@ -562,17 +695,17 @@
     if (e.detail?.key === 'header') initHamburgerMenu();
   });
 })();
-(function lockBgScaleFallback(){
-  var supportsLVH = CSS && CSS.supports && CSS.supports('height','100lvh');
+(function lockBgScaleFallback() {
+  var supportsLVH = CSS && CSS.supports && CSS.supports('height', '100lvh');
   if (supportsLVH) return; // modernit selaimet käyttävät yllä olevaa CSS:ää
 
-  function apply(){
+  function apply() {
     var h = window.innerHeight;               // initial (tai orientaation vaihtuessa)
     document.documentElement.style.setProperty('--bgH-locked', h + 'px');
   }
   apply();
   // Päivitä vain orientaation vaihtuessa (ei scroll-resize looppeja)
-  window.addEventListener('orientationchange', function(){
+  window.addEventListener('orientationchange', function () {
     // pieni viive, että selain ehti kalibroida mitat
     setTimeout(apply, 250);
   }, { passive: true });
@@ -612,8 +745,8 @@
     });
     const parts = fmt.formatToParts(new Date());
     const get = (t) => parts.find(p => p.type === t)?.value;
-    const wdShort = (get('weekday') || '').slice(0,2).toLowerCase();
-    const map = { ma:0, ti:1, ke:2, to:3, pe:4, la:5, su:6 };
+    const wdShort = (get('weekday') || '').slice(0, 2).toLowerCase();
+    const map = { ma: 0, ti: 1, ke: 2, to: 3, pe: 4, la: 5, su: 6 };
     return {
       weekdayIndex: map[wdShort],
       hour: Number(get('hour')),
@@ -648,20 +781,20 @@
   }
   function renderScheduleLines(schedule) {
     const sameWeekdays =
-      schedule.slice(0,5).every(e => e.open===schedule[0].open && e.close===schedule[0].close);
+      schedule.slice(0, 5).every(e => e.open === schedule[0].open && e.close === schedule[0].close);
     const lines = [];
     if (sameWeekdays) {
       const e = schedule[0];
       lines.push(`Ma–Pe: ${hmStr(e.open)}–${hmStr(e.close)}`);
     } else {
-      for (let i=0;i<5;i++) {
+      for (let i = 0; i < 5; i++) {
         const e = schedule[i];
-        lines.push(`${WEEKDAYS_FI[i]}: ${e?.open!=null ? `${hmStr(e.open)}–${hmStr(e.close)}` : 'suljettu'}`);
+        lines.push(`${WEEKDAYS_FI[i]}: ${e?.open != null ? `${hmStr(e.open)}–${hmStr(e.close)}` : 'suljettu'}`);
       }
     }
     const sat = schedule[5], sun = schedule[6];
-    lines.push(`La: ${sat?.open!=null ? `${hmStr(sat.open)}–${hmStr(sat.close)}`:'suljettu'}`);
-    lines.push(`Su: ${sun?.open!=null ? `${hmStr(sun.open)}–${hmStr(sun.close)}`:'suljettu'}`);
+    lines.push(`La: ${sat?.open != null ? `${hmStr(sat.open)}–${hmStr(sat.close)}` : 'suljettu'}`);
+    lines.push(`Su: ${sun?.open != null ? `${hmStr(sun.open)}–${hmStr(sun.close)}` : 'suljettu'}`);
     return lines.join('\n');
   }
   function buildWidgetHTML(status, subline) {
@@ -673,11 +806,11 @@
     `;
   }
   function computeAndRender(el, schedule) {
-    const { weekdayIndex: d, hour:h, minute:m } = getHkiNowParts();
+    const { weekdayIndex: d, hour: h, minute: m } = getHkiNowParts();
     const nowMinutes = h * 60 + m;
     const today = schedule[d];
     const fullLines = renderScheduleLines(schedule);
-    const todayLine = today?.open!=null ? `${hmStr(today.open)}–${hmStr(today.close)}` : 'suljettu';
+    const todayLine = today?.open != null ? `${hmStr(today.open)}–${hmStr(today.close)}` : 'suljettu';
 
     let status = 'Suljettu';
     let subline = 'Ei aukioloaikoja.';
@@ -691,7 +824,7 @@
         : findNextOpen(d, nowMinutes, schedule);
       if (next) {
         const minsUntil = minutesUntil(d, nowMinutes, next.dayIndex, next.minutes);
-        const dayText = next.dayIndex === d ? 'tänään' : ((next.dayIndex === (d+1)%7) ? 'huomenna' : WEEKDAYS_FI[next.dayIndex]);
+        const dayText = next.dayIndex === d ? 'tänään' : ((next.dayIndex === (d + 1) % 7) ? 'huomenna' : WEEKDAYS_FI[next.dayIndex]);
         subline = `Aukeaa ${dayText} klo ${hmStr(next.minutes)} (${formatDuration(minsUntil)}).`;
       }
     }
@@ -730,3 +863,4 @@
     }
   });
 })();
+

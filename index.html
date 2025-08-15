@@ -27,8 +27,6 @@
   <link rel="icon" href="./assets/favicon.ico">
   <link rel="apple-touch-icon" href="./assets/apple-touch-icon.png">
 
-  <!-- Preload hero banner (valinnainen) -->
-  <link rel="preload" as="image" href="./assets/banner1.svg" imagesrcset="./assets/banner1.svg" imagesizes="100vw">
 
   <link rel="stylesheet" href="./styles.css" />
 </head>
@@ -59,15 +57,12 @@
       </div>
     </section>
 
-    <section class="banner" aria-label="Kampanjakaruselli">
-      <div class="carousel" id="carousel">
-        <!-- BANNERS:START -->
-        <a class="slide" href="#" data-editor-target="" style="position: relative;">
-          <img src="./assets/banner1.svg" alt="Tervetuloa Maskuun – ostokset ja palvelut lähelläsi">
-        </a>
-        <!-- BANNERS:END -->
-      </div>
-    </section>
+<section class="banner" aria-label="Kampanjakaruselli">
+  <div class="carousel" id="carousel">
+    <!-- JavaScript lisää tähän .track ja .slide -elementit -->
+  </div>
+</section>
+
 
     <!-- UUSI: Tietoa meistä -->
     <section id="meista" class="about container">
@@ -107,7 +102,7 @@
     <section class="tenants container">
       <div class ="content">
       <h2>Liikkeet ja palvelut</h2>
-      <div class="logo-grid" id="tenants">
+      <div class="logo-grid" id="">
         <!-- TENANTS:START -->
         <a class="tenant" href="https://www.omasp.fi/konttorit/masku" target="_blank" rel="noopener"
           aria-label="OmaSp Masku" data-name="OmaSp">
@@ -162,7 +157,7 @@
           rel="noopener" aria-label="Kotipizza" data-name="Kotipizza">
           <img src="./assets/logot/kotipizza_logo.png" alt="Kotipizza"
             onerror="this.closest('.tenant').classList.add('missing'); this.remove();" />
-          <span class="tenant-name">Kotipizza</span>
+          <span class="tenant-name">Kotipizza Masku Riviera</span>
         </a>
         <!-- TENANTS:END -->
       </div>

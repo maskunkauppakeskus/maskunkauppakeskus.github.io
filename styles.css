@@ -24,6 +24,7 @@
   --header-border: #e5e7eb;
   --radius: 12px;
 }
+
 /* Pirata One – vain Regular (otsikoihin) */
 @font-face {
   font-family: "Pirata One";
@@ -41,6 +42,7 @@
   font-weight: 300;
   font-display: swap;
 }
+
 @font-face {
   font-family: "Open Sans";
   src: url("/fonts/Open_Sans/static/OpenSans-LightItalic.ttf") format("truetype");
@@ -48,6 +50,7 @@
   font-weight: 300;
   font-display: swap;
 }
+
 @font-face {
   font-family: "Open Sans";
   src: url("/fonts/Open_Sans/static/OpenSans-Regular.ttf") format("truetype");
@@ -55,6 +58,7 @@
   font-weight: 400;
   font-display: swap;
 }
+
 @font-face {
   font-family: "Open Sans";
   src: url("/fonts/Open_Sans/static/OpenSans-Italic.ttf") format("truetype");
@@ -62,6 +66,7 @@
   font-weight: 400;
   font-display: swap;
 }
+
 @font-face {
   font-family: "Open Sans";
   src: url("/fonts/Open_Sans/static/OpenSans-Medium.ttf") format("truetype");
@@ -69,6 +74,7 @@
   font-weight: 500;
   font-display: swap;
 }
+
 @font-face {
   font-family: "Open Sans";
   src: url("/fonts/Open_Sans/static/OpenSans-MediumItalic.ttf") format("truetype");
@@ -76,6 +82,7 @@
   font-weight: 500;
   font-display: swap;
 }
+
 @font-face {
   font-family: "Open Sans";
   src: url("/fonts/Open_Sans/static/OpenSans-SemiBold.ttf") format("truetype");
@@ -83,6 +90,7 @@
   font-weight: 600;
   font-display: swap;
 }
+
 @font-face {
   font-family: "Open Sans";
   src: url("/fonts/Open_Sans/static/OpenSans-SemiBoldItalic.ttf") format("truetype");
@@ -90,6 +98,7 @@
   font-weight: 600;
   font-display: swap;
 }
+
 @font-face {
   font-family: "Open Sans";
   src: url("/fonts/Open_Sans/static/OpenSans-Bold.ttf") format("truetype");
@@ -97,6 +106,7 @@
   font-weight: 700;
   font-display: swap;
 }
+
 @font-face {
   font-family: "Open Sans";
   src: url("/fonts/Open_Sans/static/OpenSans-BoldItalic.ttf") format("truetype");
@@ -104,6 +114,7 @@
   font-weight: 700;
   font-display: swap;
 }
+
 @font-face {
   font-family: "Open Sans";
   src: url("/fonts/Open_Sans/static/OpenSans-ExtraBold.ttf") format("truetype");
@@ -111,6 +122,7 @@
   font-weight: 800;
   font-display: swap;
 }
+
 @font-face {
   font-family: "Open Sans";
   src: url("/fonts/Open_Sans/static/OpenSans-ExtraBoldItalic.ttf") format("truetype");
@@ -132,13 +144,16 @@ body {
 
 /* Otsikot Pirata One -fontilla */
 h1,
-h2, b {
+h2,
+b {
   font-family: var(--font-heading);
-  font-weight: 400; /* Pirata One on Regular */
+  font-weight: 400;
+  /* Pirata One on Regular */
   letter-spacing: .01em;
   font-size: 1.5em;
   margin-left: 0.5em;
 }
+
 /* ==========================================================================
    Perustypografia ja asettelu
    ========================================================================== */
@@ -147,10 +162,11 @@ h2, b {
   font-family: var(--font-body);
   box-sizing: border-box;
 }
+
 html {
-    scrollbar-gutter: stable;
-    scrollbar-width: thin !important;
-    scrollbar-color: var(--signal) var(--shadow);
+  scrollbar-gutter: stable;
+  scrollbar-width: thin !important;
+  scrollbar-color: var(--signal) var(--shadow);
 }
 
 html,
@@ -177,18 +193,21 @@ h2 {
   font-size: 3em;
 
   position: relative;
-  isolation: isolate;       /* rajaa pinoamisen otsikon sisään */
+  isolation: isolate;
+  /* rajaa pinoamisen otsikon sisään */
 
   --stroke: .10em;
   --stroke-color: var(--paper);
   text-shadow: none;
 }
+
 h1::before,
 h2::before {
   content: attr(data-text);
   position: absolute;
   inset: 0;
-  z-index: -1;                 /* jää varsinaisen tekstin taakse */
+  z-index: -1;
+  /* jää varsinaisen tekstin taakse */
   pointer-events: none;
   user-select: none;
   white-space: pre-wrap;
@@ -201,17 +220,18 @@ h2::before {
 
 /* Firefox-fallback ilman text-strokea */
 @supports not (-webkit-text-stroke: 1px black) {
+
   h1::before,
   h2::before {
     text-shadow:
-      0   .06em 0 var(--stroke-color),
-      0  -.06em 0 var(--stroke-color),
-      .06em 0   0 var(--stroke-color),
-     -.06em 0   0 var(--stroke-color),
+      0 .06em 0 var(--stroke-color),
+      0 -.06em 0 var(--stroke-color),
+      .06em 0 0 var(--stroke-color),
+      -.06em 0 0 var(--stroke-color),
       .06em .06em 0 var(--stroke-color),
-     -.06em .06em 0 var(--stroke-color),
+      -.06em .06em 0 var(--stroke-color),
       .06em -.06em 0 var(--stroke-color),
-     -.06em -.06em 0 var(--stroke-color);
+      -.06em -.06em 0 var(--stroke-color);
   }
 }
 
@@ -314,17 +334,12 @@ a:hover {
   /*! border-bottom: 1px solid #eee */
 }
 
-.carousel {
-  display: grid;
-  grid-auto-flow: column;
-  grid-auto-columns: 100%;
-  /*! overflow: hidden; */
-}
+
 
 .slide {
   display: block;
   width: 100%;
-  height: 25svh;
+  /*! height: 25svh; */
   object-fit: cover;
   background: var(--signal);
   color: var(--paper);
@@ -385,10 +400,10 @@ a:hover {
   display: grid;
   gap: .5rem;
   grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-    background: var(--paper);
-    height:5em;
+  background: var(--paper);
+  height: 5em;
   align-content: center;
-    text-align: center;
+  text-align: center;
   border-radius: 1em;
   /*! box-shadow: var(--box-shadow); */
 }
@@ -411,12 +426,13 @@ a:hover {
   margin-top: .5rem;
   transition: background-color 0.1s ease, transform 0.1s ease, box-shadow 0.1s ease;
 
- 
+
   box-shadow: var(--box-shadow);
   margin: 0.5em;
 }
+
 .btn:hover {
-   background: var(--shadow);
+  background: var(--shadow);
 }
 
 .btn:active {
@@ -485,8 +501,8 @@ html {
 
 .hero {
   height: 100svh;
-      display: flex;
-    align-items: center; 
+  display: flex;
+  align-items: center;
 }
 
 .hero-container {
@@ -499,23 +515,28 @@ html {
   /*! box-shadow: var(--box-shadow); */
   padding: 0.5em 2em;
 }
+
 /* Header: sticky + piilotus vierityssuunnalla */
-.site-header{
-  position: fixed; /* jo olemassa, ei haittaa duplikaatti */
+.site-header {
+  position: fixed;
+  /* jo olemassa, ei haittaa duplikaatti */
   top: 0;
   z-index: 100;
   transition: transform .16s ease-in-out;
   will-change: transform;
   width: 100%;
 }
-.site-header.site-header--hidden{
+
+.site-header.site-header--hidden {
   transform: translateY(-100%);
 }
+
 section.tenants.container {
   height: 100svh;
 }
 
-section.hours.container, .cta.container {
+section.hours.container,
+.cta.container {
   height: 100svh;
 }
 
@@ -555,116 +576,184 @@ section {
 
 .logo-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr); /* 4 saraketta -> 8 kohdetta kahteen riviin */
+  grid-template-columns: repeat(4, 1fr);
+  /* 4 saraketta -> 8 kohdetta kahteen riviin */
   gap: 1rem;
   align-items: center;
 }
 
 @media (max-width: 768px) {
   .logo-grid {
-    grid-template-columns: repeat(2, 1fr); /* mobiilissa 2 per rivi */
+    grid-template-columns: repeat(2, 1fr);
+    /* mobiilissa 2 per rivi */
   }
 }
+
 .tenant-name {
   color: white;
   text-align: center;
-  margin-top:auto;
+  margin-top: auto;
 }
 
 /* --- NAV reset & layout --- */
-.nav { display:flex; align-items:center; }
+.nav {
+  display: flex;
+  align-items: center;
+}
 
 /* Poista bulletit ja tyhjät marginit */
 .nav-links {
-  list-style:none;
-  margin:0;
-  padding:0;
-  display:flex;
-  align-items:center;
-  gap:1rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
 }
 
 /* Li-kohdat riville desktopissa */
-.nav-links > li { margin:0; padding:0; }
+.nav-links>li {
+  margin: 0;
+  padding: 0;
+}
 
 /* Linkkien perusilme */
 .nav-links a {
-  display:block;
-  padding:.75rem .5rem;
-  text-decoration:none;
-  color:var(--fg);
-  opacity:1;
+  display: block;
+  padding: .75rem .5rem;
+  text-decoration: none;
+  color: var(--fg);
+  opacity: 1;
 }
-.nav-links a:hover { opacity:1; color:var(--shadow); }
+
+.nav-links a:hover {
+  opacity: 1;
+  color: var(--shadow);
+}
 
 /* Mobiili: pinottu paneeli + animointi (yhteensopiva aiemman koodin kanssa) */
-@media (max-width:1226px){
-  .nav-links{
-    position:fixed;
-    top:56px;                 /* tai var(--header-height) */
-    left:0; right:0;
-    background:var(--header-bg);
-    box-shadow:var(--box-shadow);
-    flex-direction:column;
-    align-items:flex-start;
-    padding:.5rem 1rem;
-    display:none;
-    transform:translateY(-10px);
-    opacity:0;
-    transition:transform .2s ease, opacity .2s ease;
-    z-index:1001;
+@media (max-width:1226px) {
+  .nav-links {
+    position: fixed;
+    top: 56px;
+    /* tai var(--header-height) */
+    left: 0;
+    right: 0;
+    background: var(--header-bg);
+    box-shadow: var(--box-shadow);
+    flex-direction: column;
+    align-items: flex-start;
+    padding: .5rem 1rem;
+    display: none;
+    transform: translateY(-10px);
+    opacity: 0;
+    transition: transform .2s ease, opacity .2s ease;
+    z-index: 1001;
   }
-  .nav-links.active{
-    display:flex;
-    transform:translateY(0);
-    opacity:1;
+
+  .nav-links.active {
+    display: flex;
+    transform: translateY(0);
+    opacity: 1;
   }
-  .nav-links a{
-    width:100%;
-    padding:.75rem 0;
+
+  .nav-links a {
+    width: 100%;
+    padding: .75rem 0;
   }
 }
 
 /* Hampurilainen näkyviin mobiilissa */
-.hamburger{
-  display:none;
-  position:relative;
-  width:var(--burger-size, 1.75rem);
-  height:var(--burger-size, 1.75rem);
-  background:transparent;
-  border:none;
-  cursor:pointer;
+.hamburger {
+  display: none;
+  position: relative;
+  width: var(--burger-size, 1.75rem);
+  height: var(--burger-size, 1.75rem);
+  background: transparent;
+  border: none;
+  cursor: pointer;
   margin-left: auto;
 }
-.hamburger span{
-  position:absolute; left:0; right:0;
-  height:var(--burger-line-h, .2rem);
-  background:var(--shadow);
-  border-radius:2px;
-  transform-origin:center;
-  transition:transform .15s ease, opacity .15s ease;
-}
-.hamburger span:nth-child(1){ top:0; }
-.hamburger span:nth-child(2){ top:calc(50% - (var(--burger-line-h, .2rem)/2)); }
-.hamburger span:nth-child(3){ bottom:0; }
-.hamburger.open span:nth-child(1){ transform:translateY(.78rem) rotate(45deg); }
-.hamburger.open span:nth-child(2){ opacity:0; transform:scaleX(0); }
-.hamburger.open span:nth-child(3){ transform:translateY(-.78rem) rotate(-45deg); }
 
-@media (max-width:1226px){
-  .hamburger{ display:flex; }
+.hamburger span {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: var(--burger-line-h, .2rem);
+  background: var(--shadow);
+  border-radius: 2px;
+  transform-origin: center;
+  transition: transform .15s ease, opacity .15s ease;
 }
-@media (min-width:1227px){
-  .hamburger{ display:none; }
-}
-#page-bg{ position:fixed; inset:0; z-index:0; pointer-events:none; }
-.site-header{ position:fixed; z-index:1000; }
 
-.about.container, .heritage.container, .location.container, .community.container {
+.hamburger span:nth-child(1) {
+  top: 0;
+}
+
+.hamburger span:nth-child(2) {
+  top: calc(50% - (var(--burger-line-h, .2rem)/2));
+}
+
+.hamburger span:nth-child(3) {
+  bottom: 0;
+}
+
+.hamburger.open span:nth-child(1) {
+  transform: translateY(.78rem) rotate(45deg);
+}
+
+.hamburger.open span:nth-child(2) {
+  opacity: 0;
+  transform: scaleX(0);
+}
+
+.hamburger.open span:nth-child(3) {
+  transform: translateY(-.78rem) rotate(-45deg);
+}
+
+@media (max-width:1226px) {
+  .hamburger {
+    display: flex;
+  }
+}
+
+@media (min-width:1227px) {
+  .hamburger {
+    display: none;
+  }
+}
+
+#page-bg {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.site-header {
+  position: fixed;
+  z-index: 1000;
+}
+
+.about.container,
+.heritage.container,
+.location.container,
+.community.container {
   height: 100svh;
 }
 
-.hero-container p, .hero-container h3, .about.container p,.about.container h3, .heritage.container p,.heritage.container h3, .location.container p, .location.container h3,.community.container p, .community.container h3, .pill-list, details{
+.hero-container p,
+.hero-container h3,
+.about.container p,
+.about.container h3,
+.heritage.container p,
+.heritage.container h3,
+.location.container p,
+.location.container h3,
+.community.container p,
+.community.container h3,
+.pill-list,
+details {
   /*! background: var(--shadow); */
   color: var(--shadow);
   padding: 1em;
@@ -674,13 +763,14 @@ section {
 }
 
 footer {
-  position:relative;
+  position: relative;
   background: var(--shadow) !important;
   color: var(--paper) !important;
   border: none !important;
   bottom: 0 !important;
   width: 100%;
 }
+
 main {
   position: relative;
 
@@ -688,24 +778,34 @@ main {
 }
 
 /* --- Stabiili taustakuva myös kun mobiiliselain näyttää piilottaa osoitepalkkia --- */
-#page-bg{
+#page-bg {
   /* lukitse mittakaava suurimpaan viewporttiin: ei zoomausta osoitepalkin myötä */
-  background-size: auto 100lvh;      /* pysty ohjaa (potretti) */
+  background-size: auto 100lvh;
+  /* pysty ohjaa (potretti) */
   background-position: center var(--bg-pos, 0%);
-  will-change: transform;            /* vähentää repainteja joillakin moottoreilla */
+  will-change: transform;
+  /* vähentää repainteja joillakin moottoreilla */
 }
 
-@media (orientation: landscape){
-  #page-bg{
-    background-size: 100lvw auto;    /* vaakasuunnassa leveys ohjaa */
+@media (orientation: landscape) {
+  #page-bg {
+    background-size: 100lvw auto;
+    /* vaakasuunnassa leveys ohjaa */
   }
 }
 
 /* Vanhat selaimet ilman lvh/lvw-tukea: lukitse korkeus kerran JS:llä (alla). */
-@supports not (height: 100lvh){
-  :root{ --bgH-locked: 100vh; }      /* korvataan JS:llä pikseleiksi */
-  #page-bg{ background-size: auto var(--bgH-locked); }
+@supports not (height: 100lvh) {
+  :root {
+    --bgH-locked: 100vh;
+  }
+
+  /* korvataan JS:llä pikseleiksi */
+  #page-bg {
+    background-size: auto var(--bgH-locked);
+  }
 }
+
 .pill-list {
   padding-left: 2em;
 }
@@ -720,8 +820,9 @@ main {
 
 h3 {
   font-family: var(--font-base);
-  font-size:16pt;
-  font-weight: bold !important;;
+  font-size: 16pt;
+  font-weight: bold !important;
+  ;
 }
 
 
@@ -729,15 +830,18 @@ h3 {
 body {
   display: flex;
   flex-direction: column;
-  min-height: 100vh; /* vähintään koko ikkunan korkeus */
+  min-height: 100vh;
+  /* vähintään koko ikkunan korkeus */
 }
 
 main {
-  flex: 1; /* ottaa kaiken jäljellä olevan tilan ennen footeria */
+  flex: 1;
+  /* ottaa kaiken jäljellä olevan tilan ennen footeria */
 }
 
 footer {
-  background: #f5f5f5; /* tai oma taustaväri */
+  background: #f5f5f5;
+  /* tai oma taustaväri */
   padding: 1rem;
 }
 
@@ -755,10 +859,11 @@ h1 {
 }
 
 .quick-nav .btn {
-  flex: 1 1 150px; /* Kasvaa tasalevyiseksi, mutta minimileveys 150px */
+  flex: 1 1 150px;
+  /* Kasvaa tasalevyiseksi, mutta minimileveys 150px */
   text-align: center;
   padding: 0.75rem 1rem;
-  min-width:14em;
+  min-width: 14em;
 
   text-decoration: none;
   border-radius: 6px;
@@ -772,44 +877,44 @@ h1 {
   .quick-nav {
     flex-direction: column;
   }
+
   .quick-nav .btn {
     flex: 1 1 auto;
     width: 100%;
   }
 }
+
 .link-list {
-  list-style: none;   /* Poistaa bulletit */
+  list-style: none;
+  /* Poistaa bulletit */
   margin: 0;
   padding-left: 1.5em;
 }
 
 /* Perus fokuskorostus kaikille interaktiivisille elementeille */
-:where(
-  a[href],
+:where(a[href],
   button,
   input,
   select,
   textarea,
   summary,
   [role="button"],
-  [tabindex]:not([tabindex="-1"])
-):focus-visible {
+  [tabindex]:not([tabindex="-1"])):focus-visible {
   outline: 3px solid var(--signal);
   outline-offset: 3px;
 }
 
 /* Safari / vanhat selaimet */
 @supports not selector(:focus-visible) {
-  :where(
-    a[href],
+
+  :where(a[href],
     button,
     input,
     select,
     textarea,
     summary,
     [role="button"],
-    [tabindex]:not([tabindex="-1"])
-  ):focus {
+    [tabindex]:not([tabindex="-1"])):focus {
     outline: 3px solid var(--signal);
     outline-offset: 3px;
   }
@@ -831,10 +936,12 @@ select:focus-visible {
 select {
   accent-color: var(--signal);
 }
+
 /* Tekstin valintavärin muokkaus */
 ::selection {
   background: var(--signal);
-  color: #fff; /* Tekstin väri valinnan aikana */
+  color: #fff;
+  /* Tekstin väri valinnan aikana */
 }
 
 /* Firefox tarvitsee oman version */
@@ -842,12 +949,17 @@ select {
   background: var(--signal);
   color: #fff;
 }
+
 /* Kohdistetaan favicon ja teksti keskelle */
 .link-list a {
-  display: inline-flex;       /* Kuvake ja teksti vierekkäin */
-  align-items: center;        /* Pystysuora keskitys */
-  gap: 0.5rem;                 /* Väli ikonille ja tekstille */
-  line-height: 1.4;            /* Vähän tilaa tekstin ympärille */
+  display: inline-flex;
+  /* Kuvake ja teksti vierekkäin */
+  align-items: center;
+  /* Pystysuora keskitys */
+  gap: 0.5rem;
+  /* Väli ikonille ja tekstille */
+  line-height: 1.4;
+  /* Vähän tilaa tekstin ympärille */
 }
 
 /* Varmistetaan, että favicon ei veny */
@@ -856,3 +968,35 @@ select {
   width: 24px;
   height: 24px;
 }
+
+
+.slide {
+  flex: 0 0 100%;
+}
+
+.slide img {
+  width: 100%;
+  display: block;
+}
+
+#carousel {
+  overflow: hidden;
+  position: relative;
+}
+#carousel .track {
+  display: flex;
+  transition: transform 0.6s ease; /* sulava vaihto */
+  will-change: transform;
+}
+#carousel .slide {
+  flex: 0 0 100%; /* yksi kuva täyttää näkymän */
+}
+#carousel .slide img {
+  display: block;
+  width: 100%;
+  /*! height: auto; */
+}
+#carousel { overflow: hidden; position: relative; }
+#carousel .track { display: flex; transition: transform 0.6s ease; will-change: transform; }
+#carousel .slide { flex: 0 0 100%; }
+#carousel .slide img { display: block; width: 100%; /*! height: auto; */ }
