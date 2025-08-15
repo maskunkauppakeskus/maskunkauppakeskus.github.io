@@ -1047,11 +1047,13 @@ p.lead {
   margin-bottom: 1rem;
   /*! text-shadow: 0px 0px 3px #fff; */
   color: var(--signal);
-  background: var(--paper);
+  /*! background: var(--paper); */
   padding: 1em;
-  max-width: 950px;
-  margin-left: auto;
-  margin-right: auto;
-  box-shadow: var(--box-shadow);
-  border-radius: 0.5em;
+  /*! max-width: 950px; */
+  /*! margin-left: auto; */
+  /*! margin-right: auto; */
+  /*! box-shadow: var(--box-shadow); */
+  /*! border-radius: 0.5em; */
+  text-align: center;
+  font-weight: bold;
 }
