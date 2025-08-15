@@ -955,3 +955,75 @@ async function onDomReady() {
   window.addEventListener('partial:loaded', function () { /* no-op by design */ });
   window.addEventListener('pjax:navigated', function () { /* no-op by design */ });
 })();
+
+(function initBackToTopButton() {
+  const SCROLL_TRIGGER_PX = 300;
+
+  function createButton() {
+    let btn = document.getElementById('back-to-top-btn');
+    if (btn) return btn; // jo olemassa
+
+    btn = document.createElement('button');
+    btn.id = 'back-to-top-btn';
+    btn.setAttribute('aria-label', 'Takaisin ylös');
+    btn.innerHTML = '↑';
+    Object.assign(btn.style, {
+      position: 'fixed',
+      right: '1.2rem',
+      bottom: '1.2rem',
+      width: '48px',
+      height: '48px',
+      borderRadius: '50%',
+      backgroundColor: 'var(--shadow)',
+      color: '#fff',
+      border: 'none',
+      cursor: 'pointer',
+      fontSize: '1.5rem',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      boxShadow: 'var(--box-shadow)',
+      opacity: '0',
+      visibility: 'hidden',
+      transition: 'opacity 0.3s ease, visibility 0.3s ease',
+      zIndex: '9999'
+    });
+
+    btn.addEventListener('click', () => {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+
+    document.body.appendChild(btn);
+    return btn;
+  }
+
+  function init() {
+    const btn = createButton();
+    const scrollEl = document.scrollingElement || document.documentElement;
+
+    function toggleVisibility() {
+      if (scrollEl.scrollTop > SCROLL_TRIGGER_PX) {
+        btn.style.visibility = 'visible';
+        btn.style.opacity = '1';
+      } else {
+        btn.style.opacity = '0';
+        btn.style.visibility = 'hidden';
+      }
+    }
+
+    window.addEventListener('scroll', toggleVisibility, { passive: true });
+    window.addEventListener('resize', toggleVisibility);
+    toggleVisibility();
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+
+  // Uudelleenajastus PJAX-navigoinnin jälkeen
+  window.addEventListener('pjax:navigated', () => {
+    init();
+  });
+})();

@@ -183,7 +183,7 @@ html,
 body {
   margin: 0;
   padding: 0;
-  color: var(--fg);
+  color: var(--shadow);
   background: var(--bg);
 }
 
@@ -411,7 +411,7 @@ a:hover {
   display: grid;
   gap: .5rem;
   grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-  background: var(--paper);
+  /*! background: var(--paper); */
   height: 5em;
   align-content: center;
   text-align: center;
@@ -1171,4 +1171,43 @@ p {
 .content li a span {
   margin-left: auto;
   margin-right: auto;
+}
+
+
+
+#back-to-top-btn {
+  position: fixed;
+  right: 1.2rem;
+  bottom: 1.2rem;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background-color: var(--shadow);
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  font-size: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--box-shadow);
+  opacity: 0;
+  visibility: hidden;
+  z-index: 9999;
+  transition:
+    opacity 0.3s ease,
+    visibility 0.3s ease,
+    background-color 0.2s ease,
+    transform 0.15s ease,
+    box-shadow 0.1s ease;
+}
+
+#back-to-top-btn:hover {
+  background-color: var(--signal) !important;
+  transition:
+    opacity 0.3s ease,
+    visibility 0.3s ease,
+    background-color 0.2s ease,
+    transform 0.15s ease,
+    box-shadow 0.1s ease;
 }
