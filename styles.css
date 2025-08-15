@@ -640,8 +640,9 @@ section {
   display: block;
   padding: .75rem .5rem;
   text-decoration: none;
-  color: var(--fg);
+  color: var(--shadow);
   opacity: 1;
+  transition: background-color 0.15s ease, transform 0.1s ease, box-shadow 0.1s ease;
 }
 
 .nav-links a:hover {
@@ -649,6 +650,7 @@ section {
   color: var(--paper);
   background: var(--signal);
   border-radius: 0.5em;
+  
 }
 
 /* Mobiili: pinottu paneeli + animointi (yhteensopiva aiemman koodin kanssa) */
@@ -831,7 +833,7 @@ main {
 
 .pill-list {
   /*! padding-left: 2em; */
-  width: 50%;
+  width: fit-content;
   margin-left: auto;
   margin-right: auto;
 }
@@ -1155,11 +1157,15 @@ p {
 }
 
 .content li a {
-  background: var(--signal);
+  background-color: var(--signal);
   width: 22em;
   padding:0.5em;
   border-radius: 0.5em;
   color: var(--paper);
+  transition: background-color 0.15s ease, transform 0.1s ease, box-shadow 0.1s ease;
+}
+.content li a:hover {
+  background-color: var(--shadow);
 }
 
 .content li a span {
