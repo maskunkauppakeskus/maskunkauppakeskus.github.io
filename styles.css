@@ -381,7 +381,7 @@ a:hover {
   box-shadow: var(--box-shadow);
   height: 9em;
   transition: background-color 0.1s ease, transform 0.1s ease, box-shadow 0.1s ease;
-  border: 3px var(--paper) solid;
+  /*! border: 3px var(--paper) solid; */
   border-radius: 0.5em;
 }
 
@@ -593,6 +593,7 @@ section {
   /* 4 saraketta -> 8 kohdetta kahteen riviin */
   gap: 1rem;
   align-items: center;
+  margin: 1em;
 }
 
 @media (max-width: 768px) {
@@ -826,7 +827,7 @@ main {
 }
 
 .content {
-  border: 3px var(--paper) solid;
+
   background: var(--paper);
   padding: 1em;
   border-radius: 1em;
@@ -1047,7 +1048,7 @@ select {
 p.lead {
   margin-bottom: 1rem;
   /*! text-shadow: 0px 0px 3px #fff; */
-  color: var(--signal);
+  color: var(--shadow);
   /*! background: var(--paper); */
   padding: 1em;
   /*! max-width: 950px; */
@@ -1061,19 +1062,23 @@ p.lead {
 
 /* === Taustakuva: täysi peitto mobiilissa, myös kun header/hakupalkki piilotetaan === */
 @media (max-width: 768px) {
+
   /* Perus: aina peitä koko näkymä */
   #page-bg {
     background-repeat: no-repeat;
     background-position: center var(--bg-pos, 0%);
-    background-size: cover !important; /* yliajaa aiemman auto 100lvh */
+    background-size: cover !important;
+    /* yliajaa aiemman auto 100lvh */
   }
 
   /* Modernit selaimet: käytä d*vh/d*vw jotta korkeus elää oikein */
   @supports (height: 100dvh) {
+
     /* Potretti: korkeus ohjaa, ei jää vajaaksi vaikka UI-elementtejä piilotetaan */
     #page-bg {
       background-size: auto 100dvh !important;
     }
+
     /* Maisema: leveys ohjaa */
     @media (orientation: landscape) {
       #page-bg {
@@ -1088,25 +1093,66 @@ p.lead {
       /* jos lvh on tuettu, käytä sitä; muuten pudotaan coveriin (yllä) */
       background-size: auto 100lvh !important;
     }
+
     @media (orientation: landscape) {
-      #page-bg { background-size: 100lvw auto !important; }
+      #page-bg {
+        background-size: 100lvw auto !important;
+      }
     }
   }
 }
+
 /* Hero ja pääkontentti venyvät vähintään näkyvän korkeuden */
 @supports (height: 100dvh) {
-  .hero { min-height: 100dvh; }
-  main  { min-height: 100dvh; }
+  .hero {
+    min-height: 100dvh;
+  }
+
+  main {
+    min-height: 100dvh;
+  }
 }
+
 /* Fallback vanhemmille selaimille */
 @supports not (height: 100dvh) {
-  .hero { min-height: 100svh; }
-  main  { min-height: 100svh; }
+  .hero {
+    min-height: 100svh;
+  }
+
+  main {
+    min-height: 100svh;
+  }
 }
 
 .btns {
   display: flex;
-  justify-content: center; /* vaakasuuntaan keskelle */
-  gap: 1rem;               /* väli painikkeiden väliin */
-  flex-wrap: wrap;         /* rivittyy pienillä näytöillä */
+  justify-content: center;
+  /* vaakasuuntaan keskelle */
+  gap: 1rem;
+  /* väli painikkeiden väliin */
+  flex-wrap: wrap;
+  /* rivittyy pienillä näytöillä */
+}
+
+p {
+  text-align: center;
+}
+
+.content li {
+  text-align: center;
+  padding:0.5em;
+  
+}
+
+.content li a {
+  background: var(--signal);
+  min-width: 25em;
+  padding:0.5em;
+  border-radius: 0.5em;
+  color: var(--paper);
+}
+
+.content li a span {
+  margin-left: auto;
+  margin-right: auto;
 }
