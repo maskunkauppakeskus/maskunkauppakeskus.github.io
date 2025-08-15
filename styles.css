@@ -838,6 +838,7 @@ h3 {
   font-size: 16pt;
   font-weight: bold !important;
   ;
+  text-align: center;
 }
 
 
@@ -1056,4 +1057,56 @@ p.lead {
   /*! border-radius: 0.5em; */
   text-align: center;
   font-weight: bold;
+}
+
+/* === Taustakuva: täysi peitto mobiilissa, myös kun header/hakupalkki piilotetaan === */
+@media (max-width: 768px) {
+  /* Perus: aina peitä koko näkymä */
+  #page-bg {
+    background-repeat: no-repeat;
+    background-position: center var(--bg-pos, 0%);
+    background-size: cover !important; /* yliajaa aiemman auto 100lvh */
+  }
+
+  /* Modernit selaimet: käytä d*vh/d*vw jotta korkeus elää oikein */
+  @supports (height: 100dvh) {
+    /* Potretti: korkeus ohjaa, ei jää vajaaksi vaikka UI-elementtejä piilotetaan */
+    #page-bg {
+      background-size: auto 100dvh !important;
+    }
+    /* Maisema: leveys ohjaa */
+    @media (orientation: landscape) {
+      #page-bg {
+        background-size: 100dvw auto !important;
+      }
+    }
+  }
+
+  /* Vanhemmat selaimet: lukitaan suurimpaan näkyvään korkeuteen turvallisesti */
+  @supports not (height: 100dvh) {
+    #page-bg {
+      /* jos lvh on tuettu, käytä sitä; muuten pudotaan coveriin (yllä) */
+      background-size: auto 100lvh !important;
+    }
+    @media (orientation: landscape) {
+      #page-bg { background-size: 100lvw auto !important; }
+    }
+  }
+}
+/* Hero ja pääkontentti venyvät vähintään näkyvän korkeuden */
+@supports (height: 100dvh) {
+  .hero { min-height: 100dvh; }
+  main  { min-height: 100dvh; }
+}
+/* Fallback vanhemmille selaimille */
+@supports not (height: 100dvh) {
+  .hero { min-height: 100svh; }
+  main  { min-height: 100svh; }
+}
+
+.btns {
+  display: flex;
+  justify-content: center; /* vaakasuuntaan keskelle */
+  gap: 1rem;               /* väli painikkeiden väliin */
+  flex-wrap: wrap;         /* rivittyy pienillä näytöillä */
 }
