@@ -160,7 +160,7 @@ b {
   /* Pirata One on Regular */
   letter-spacing: .01em;
   font-size: 1.5em;
-  margin-left: 0.5em;
+  /*! margin-left: 0.5em; */
 }
 
 /* ==========================================================================
@@ -176,6 +176,7 @@ html {
   scrollbar-gutter: stable;
   scrollbar-width: thin !important;
   scrollbar-color: var(--signal) var(--shadow);
+  min-width: 440px;
 }
 
 html,
@@ -199,7 +200,7 @@ h2 {
   margin: 0 0 1rem;
   text-align: center;
   color: var(--shadow);
-  font-size: 3em;
+  font-size: 2em;
 
   position: relative;
   isolation: isolate;
@@ -836,7 +837,7 @@ main {
 
 h3 {
   font-family: var(--font-base);
-  font-size: 16pt;
+  font-size: 1em;
   font-weight: bold !important;
   ;
   text-align: center;
@@ -863,7 +864,7 @@ footer {
 }
 
 h1 {
-  font-size: 3.5em;
+  font-size: 3em;
   font-weight: bolder;
 
   color: var(--signal);
