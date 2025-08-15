@@ -1147,7 +1147,7 @@ p {
 
 .content li a {
   background: var(--signal);
-  width: 25em;
+  width: 22em;
   padding:0.5em;
   border-radius: 0.5em;
   color: var(--paper);
