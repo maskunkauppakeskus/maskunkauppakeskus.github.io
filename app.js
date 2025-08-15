@@ -967,27 +967,7 @@ async function onDomReady() {
     btn.id = 'back-to-top-btn';
     btn.setAttribute('aria-label', 'Takaisin ylös');
     btn.innerHTML = '↑';
-    Object.assign(btn.style, {
-      position: 'fixed',
-      right: '1.2rem',
-      bottom: '1.2rem',
-      width: '48px',
-      height: '48px',
-      borderRadius: '50%',
-      backgroundColor: 'var(--shadow)',
-      color: '#fff',
-      border: 'none',
-      cursor: 'pointer',
-      fontSize: '1.5rem',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      boxShadow: 'var(--box-shadow)',
-      opacity: '0',
-      visibility: 'hidden',
-      transition: 'opacity 0.3s ease, visibility 0.3s ease',
-      zIndex: '9999'
-    });
+
 
     btn.addEventListener('click', () => {
       window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -1026,4 +1006,104 @@ async function onDomReady() {
   window.addEventListener('pjax:navigated', () => {
     init();
   });
+})();
+
+(function initStableBackgroundSizing() {
+  const DOC = document.documentElement;
+  if (DOC.dataset._stableBgInit === '1') return;
+  DOC.dataset._stableBgInit = '1';
+
+  // Pieni ylimitoitus, jotta valkoiset kaistaleet eivät näy edes pikselipyöristysvirheissä
+  const OVERSHOOT = 1.04; // 4%
+  let maxW = 0, maxH = 0;
+
+  function getPageBgEl() {
+    let el = document.getElementById('page-bg');
+    if (!el) {
+      // Jos puuttuu, luodaan – mutta ei peitetä sisältöä (pointer-events:none + fixed inset:0)
+      el = document.createElement('div');
+      el.id = 'page-bg';
+      el.setAttribute('aria-hidden', 'true');
+      Object.assign(el.style, { position: 'fixed', inset: '0', pointerEvents: 'none', zIndex: '0' });
+      document.body.prepend(el);
+    }
+    return el;
+  }
+
+  function updateMaxFrom(w, h) {
+    if (!w || !h) return;
+    if (w > maxW) maxW = Math.round(w);
+    if (h > maxH) maxH = Math.round(h);
+
+    // Viedään myös CSS-muuttujiin, jos haluat hyödyntää tyyleissä
+    DOC.style.setProperty('--bg-max-w-px', maxW + 'px');
+    DOC.style.setProperty('--bg-max-h-px', maxH + 'px');
+  }
+
+  function readWindowFallback() {
+    const w = Math.max(window.innerWidth || 0, DOC.clientWidth || 0);
+    const h = Math.max(window.innerHeight || 0, DOC.clientHeight || 0);
+    updateMaxFrom(w, h);
+  }
+
+  function applySize() {
+    const el = getPageBgEl();
+    if (!el) return;
+    const isLandscape = window.matchMedia('(orientation: landscape)').matches;
+
+    // Lasketaan yliajoarvo pikseleinä
+    if (isLandscape) {
+      const pxW = Math.round(maxW * OVERSHOOT) + 'px';
+      el.style.setProperty('background-size', pxW + ' auto', 'important');
+    } else {
+      const pxH = Math.round(maxH * OVERSHOOT) + 'px';
+      el.style.setProperty('background-size', 'auto ' + pxH, 'important');
+    }
+
+    // Varmistetaan, ettei selaimen komposointi “kelluta”
+    el.style.transform = 'translateZ(0)';
+    el.style.backfaceVisibility = 'hidden';
+  }
+
+  let raf = 0;
+  function scheduleRecalc() {
+    if (raf) return;
+    raf = requestAnimationFrame(() => {
+      raf = 0;
+      const vv = window.visualViewport;
+      if (vv && typeof vv.width === 'number' && typeof vv.height === 'number') {
+        updateMaxFrom(vv.width, vv.height);
+      } else {
+        readWindowFallback();
+      }
+      applySize();
+    });
+  }
+
+  // Ensilataus: kerää molemmista lähteistä
+  (function bootstrap() {
+    const vv = window.visualViewport;
+    if (vv) updateMaxFrom(vv.width, vv.height);
+    readWindowFallback();
+    applySize();
+  })();
+
+  // Kuuntelijat: vv (iOS/Android) + window (yleinen)
+  if (window.visualViewport) {
+    visualViewport.addEventListener('resize', scheduleRecalc, { passive: true });
+    visualViewport.addEventListener('scroll', scheduleRecalc, { passive: true }); // iOS siirtää vv:tä
+  }
+  window.addEventListener('resize', scheduleRecalc, { passive: true });
+
+  // Suunnan vaihtuessa aloita puhtaalta pöydältä (kerrytä uudet maksimit)
+  window.addEventListener('orientationchange', function () {
+    maxW = 0; maxH = 0;
+    setTimeout(scheduleRecalc, 60);
+  }, { passive: true });
+
+  // PJAX: sisältö vaihtuu, viewport ei – mutta varmistetaan silti
+  window.addEventListener('pjax:navigated', scheduleRecalc);
+
+  // Täysin latautuneena vielä yksi mittaus
+  window.addEventListener('load', () => setTimeout(scheduleRecalc, 0));
 })();

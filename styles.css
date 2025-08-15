@@ -1211,3 +1211,38 @@ p {
     transform 0.15s ease,
     box-shadow 0.1s ease;
 }
+/* === Stabiili sivutausta: skaalaa aina suurimpaan mitattuun viewporttiin === */
+:root {
+  /* px-arvot, jotka JS ylläpitää */
+  --bg-max-h-px: 100dvh; /* fallback ennen JS:ää */
+  --bg-max-w-px: 100dvw; /* fallback ennen JS:ää */
+
+  /* pieni turvakerroin valkoisten raitojen varalle */
+  --bg-overshoot: 1.04; /* 4 % ylimittaa */
+}
+
+#page-bg {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background-image: url("./assets/bg1.avif");
+  background-repeat: no-repeat;
+  background-position: center var(--bg-pos, 0%);
+  /* Käytä mitattua maksimi-kokoa + overshoot */
+  background-size: auto calc(var(--bg-max-h-px) * var(--bg-overshoot));
+  will-change: transform;
+}
+
+@media (orientation: landscape) {
+  #page-bg {
+    background-size: calc(var(--bg-max-w-px) * var(--bg-overshoot)) auto;
+  }
+}
+
+/* Jos lvh/dvh ei ole tuettu, annetaan perus-cover varalle */
+@supports not (height: 100dvh) {
+  #page-bg {
+    background-size: cover;
+  }
+}
