@@ -1169,18 +1169,19 @@ p {
 #page-bg::before {
   content: "";
   position: fixed;
-  top: 0;                 /* ankkuroi yläreunaan */
-  left: 50%;             /* keskitä X-suunnassa */
+  top: 0;
+  left: 50%;
   transform: translateX(-50%);
-  width: 120lvw;         /* overscan => ei vilahdu reunoja */
+  width: 120lvw;              /* overscan mobiilin kromi-vaihteluihin */
   height: 120lvh;
   z-index: -1;
   background-image: url("./assets/bg1.avif");
   background-repeat: no-repeat;
-  background-position: center top;  /* FOKUS: keskellä ylhäällä */
-  background-size: cover;           /* säilytä cover-käytös */
+  background-position: center top;   /* mobiilissa EI rullaa */
+  background-size: cover;
   will-change: transform;
 }
+
 
 /* Fallback ilman lvh/lvw-tukea */
 @supports not (height: 100lvh) {
@@ -1192,6 +1193,15 @@ p {
   }
 }
 
+@media (hover: hover) and (pointer: fine) {
+  #page-bg::before {
+    /* halutessasi voi keventää overscanin desktopissa */
+    width: 100vw;
+    height: 100vh;
+    transform: translateX(-50%); /* säilytä vaakakeskitys */
+    background-position: center var(--bg-pos, 0%); /* rullaa */
+  }
+}
 /* ---------------------------------------------------------
    Osioiden korkeudet: poista svh-lukitus ja käytä lvh:ta
    --------------------------------------------------------- */
