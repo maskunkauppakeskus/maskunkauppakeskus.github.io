@@ -1166,30 +1166,33 @@ p {
   background: none;
 }
 
-/* Lukittu “cover”-tausta pseudo-elementissä:
-   elementin koko = 120lvw x 120lvh → aina hieman ylisuuri,
-   eikä muutu URL-palkin piiloutuessa. */
+
+/* Lukittu cover-tausta ankkuroituna ylänurkkaan */
 #page-bg::before {
   content: "";
   position: fixed;
-  left: 50%;
-  top: 50%;
-  width: 120lvw;                 /* overscan molempiin suuntiin */
+  top: 0;
+  left: 0;
+  width: 120lvw;                 /* overscan => ei vilahdu reunoja */
   height: 120lvh;
-  transform: translate(-50%, -50%);
-  z-index: -1;                   /* pysyy sisällön takana */
-  background: url("./assets/bg1.avif") center var(--bg-pos, 0%) / cover no-repeat;
+  z-index: -1;
+  background-image: url("./assets/bg1.avif");
+  background-repeat: no-repeat;
+  background-position: left top; /* FOKUS: ylänurkka */
+  background-size: cover;        /* säilytä cover-käytös */
   will-change: transform;
 }
 
-/* Fallback selaimille ilman lvh/lvw-tukea (dynaaminen, mutta iso) */
+/* Fallback ilman lvh/lvw-tukea */
 @supports not (height: 100lvh) {
   #page-bg::before {
     width: 120vw;
     height: 120vh;
+    background-position: left top;
     background-size: cover;
   }
 }
+
 
 /* ---------------------------------------------------------
    Osioiden korkeudet: poista svh-lukitus ja käytä lvh:ta
