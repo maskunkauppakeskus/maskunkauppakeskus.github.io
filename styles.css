@@ -643,13 +643,15 @@ section {
   color: var(--shadow);
   opacity: 1;
   transition: background-color 0.15s ease, transform 0.1s ease, box-shadow 0.1s ease;
+
+  border-radius: 0.5em;
 }
 
 .nav-links a:hover {
   opacity: 1;
   color: var(--paper);
   background: var(--signal);
-  border-radius: 0.5em;
+
   
 }
 
