@@ -1153,11 +1153,10 @@ p {
 /* =========================================================
    STABIILI COVER-TAUSTA (lvw/lvh) + KORJAUKSET
    ========================================================= */
-
 /* Jos --bg puuttuu, ota paperi taustaksi (ei muuta brändiä) */
 :root { --bg: var(--paper); }
 
-/* Nollaa aiemmat page-bg taustat; käytämme vain ::before-kerrosta */
+/* Nollaa aiemmat page-bg-taustat; käytämme vain ::before-kerrosta */
 #page-bg {
   position: fixed;
   inset: 0;
@@ -1166,20 +1165,20 @@ p {
   background: none;
 }
 
-
-/* Lukittu cover-tausta ankkuroituna ylänurkkaan */
+/* Lukittu cover-tausta: yläreuna kiinni, vaakasuunnassa keskellä */
 #page-bg::before {
   content: "";
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 120lvw;                 /* overscan => ei vilahdu reunoja */
+  top: 0;                 /* ankkuroi yläreunaan */
+  left: 50%;             /* keskitä X-suunnassa */
+  transform: translateX(-50%);
+  width: 120lvw;         /* overscan => ei vilahdu reunoja */
   height: 120lvh;
   z-index: -1;
   background-image: url("./assets/bg1.avif");
   background-repeat: no-repeat;
-  background-position: left top; /* FOKUS: ylänurkka */
-  background-size: cover;        /* säilytä cover-käytös */
+  background-position: center top;  /* FOKUS: keskellä ylhäällä */
+  background-size: cover;           /* säilytä cover-käytös */
   will-change: transform;
 }
 
@@ -1188,11 +1187,10 @@ p {
   #page-bg::before {
     width: 120vw;
     height: 120vh;
-    background-position: left top;
+    background-position: center top;
     background-size: cover;
   }
 }
-
 
 /* ---------------------------------------------------------
    Osioiden korkeudet: poista svh-lukitus ja käytä lvh:ta
@@ -1210,7 +1208,7 @@ section.hours.container,
 }
 
 /* Pienet vakausparannukset (ei sivun lukitusta) */
-html, body { 
+html, body {
   overscroll-behavior: none;
   background: var(--bg);
 }
