@@ -1072,69 +1072,6 @@ p.lead {
   font-weight: bold;
 }
 
-/* === Taustakuva: täysi peitto mobiilissa, myös kun header/hakupalkki piilotetaan === */
-@media (max-width: 768px) {
-
-  /* Perus: aina peitä koko näkymä */
-  #page-bg {
-    background-repeat: no-repeat;
-    background-position: center var(--bg-pos, 0%);
-    background-size: cover !important;
-    /* yliajaa aiemman auto 100lvh */
-  }
-
-  /* Modernit selaimet: käytä d*vh/d*vw jotta korkeus elää oikein */
-  @supports (height: 100dvh) {
-
-    /* Potretti: korkeus ohjaa, ei jää vajaaksi vaikka UI-elementtejä piilotetaan */
-    #page-bg {
-      background-size: auto 100dvh !important;
-    }
-
-    /* Maisema: leveys ohjaa */
-    @media (orientation: landscape) {
-      #page-bg {
-        background-size: 100dvw auto !important;
-      }
-    }
-  }
-
-  /* Vanhemmat selaimet: lukitaan suurimpaan näkyvään korkeuteen turvallisesti */
-  @supports not (height: 100dvh) {
-    #page-bg {
-      /* jos lvh on tuettu, käytä sitä; muuten pudotaan coveriin (yllä) */
-      background-size: auto 100lvh !important;
-    }
-
-    @media (orientation: landscape) {
-      #page-bg {
-        background-size: 100lvw auto !important;
-      }
-    }
-  }
-}
-
-/* Hero ja pääkontentti venyvät vähintään näkyvän korkeuden */
-@supports (height: 100dvh) {
-  .hero {
-    min-height: 100dvh;
-  }
-
-  main {
-    min-height: 100dvh;
-  }
-}
-
-/* Fallback vanhemmille selaimille */
-@supports not (height: 100dvh) {
-  .hero {
-    min-height: 100svh;
-  }
-
-  main {
-    min-height: 100svh;
-  }
-}
 
 .btns {
   display: flex;
@@ -1211,38 +1148,87 @@ p {
     transform 0.15s ease,
     box-shadow 0.1s ease;
 }
-/* === Stabiili sivutausta: skaalaa aina suurimpaan mitattuun viewporttiin === */
-:root {
-  /* px-arvot, jotka JS ylläpitää */
-  --bg-max-h-px: 100dvh; /* fallback ennen JS:ää */
-  --bg-max-w-px: 100dvw; /* fallback ennen JS:ää */
-
-  /* pieni turvakerroin valkoisten raitojen varalle */
-  --bg-overshoot: 1.04; /* 4 % ylimittaa */
-}
-
 #page-bg {
   position: fixed;
   inset: 0;
   z-index: 0;
   pointer-events: none;
-  background-image: url("./assets/bg1.avif");
+  background-image: url("./assets/bg1.avif"); /* varmistetaan lähde */
   background-repeat: no-repeat;
   background-position: center var(--bg-pos, 0%);
-  /* Käytä mitattua maksimi-kokoa + overshoot */
-  background-size: auto calc(var(--bg-max-h-px) * var(--bg-overshoot));
+  background-size: cover; /* fallback vanhoille selaimille */
+  background-color: var(--bg);
   will-change: transform;
 }
 
-@media (orientation: landscape) {
-  #page-bg {
-    background-size: calc(var(--bg-max-w-px) * var(--bg-overshoot)) auto;
+/* Modernit selaimet: käytä LVH + overscan-reunoja */
+@supports (height: 100lvh) {
+  #page-bg::before {
+    content: "";
+    position: fixed;
+    /* venytä yli reunojen -> ei vilahda valkoista, kun osoitepalkki vaihtaa tilaa */
+    inset: -12lvh;
+    z-index: -1;
+    background: url("./assets/bg1.avif") center var(--bg-pos, 0%) / cover no-repeat;
+    will-change: transform;
   }
 }
 
-/* Jos lvh/dvh ei ole tuettu, annetaan perus-cover varalle */
-@supports not (height: 100dvh) {
+/* Fallback ilman lvh-tukea: pidä kuva edelleen ylikorkeana */
+@supports not (height: 100lvh) {
+  :root { --bgH-locked: 110vh; } /* hieman yli -> "liian iso" aina */
   #page-bg {
-    background-size: cover;
+    background-size: auto var(--bgH-locked);
   }
+}
+
+/* Vaakasuunnassa leveys ohjaa myös overscanin kanssa */
+@media (orientation: landscape) {
+  @supports (width: 100lvw) {
+    #page-bg::before {
+      inset: -12lvw;
+      background-size: cover;
+    }
+  }
+}
+
+/* =========================================================
+   2) Sisältöosiot: vaihda svh -> lvh (aina mitoitus suurimman
+      viewportin mukaan; ei "pienene" kun osoitepalkki näkyy)
+   ========================================================= */
+
+/* Korvaa:  .hero { height: 100svh; }  ->  min-height: 100lvh; */
+.hero { min-height: 100lvh; }
+
+/* Korvaa: section.tenants.container { height: 100svh; } */
+section.tenants.container { min-height: 100lvh; }
+
+/* Korvaa: section.hours.container, .cta.container { height: 100svh; } */
+section.hours.container,
+.cta.container { min-height: 100lvh; }
+
+/* Korvaa: .about/.heritage/.location/.community { height: 100svh; } */
+.about.container,
+.heritage.container,
+.location.container,
+.community.container { min-height: 100lvh; }
+
+/* Varmista, ettei mikään lukitse dokumenttia dynaamiseen vh:hon */
+html, body {
+  background: var(--bg);
+  /* älä aseta height:100vh; (sinulla ei olekaan), jätetään pois tarkoituksella */
+}
+
+/* =========================================================
+   3) Pienet vakausparannukset
+   ========================================================= */
+
+/* Estetään nykäyksiä iOS/Android: */
+html, body {
+  overscroll-behavior: none;
+}
+
+/* Taustalle tumma varjoväri vilkahdusten varalle (ei näy overscanilla) */
+body {
+  background-color: var(--bg);
 }
