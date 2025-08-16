@@ -1222,3 +1222,35 @@ html, body {
   overscroll-behavior: none;
   background: var(--bg);
 }
+
+.logo-grid .tenant img {
+  /* piilotetaan alkuperäinen valkoinen kuva "maskiksi" */
+  filter: brightness(0) invert(1); /* muutetaan se maskattavaksi */
+  -webkit-mask-image: url("./assets/logot/omasp_logo.avif");
+  -webkit-mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  -webkit-mask-size: contain;
+  mask-image: url("./assets/logot/omasp_logo.avif");
+  mask-repeat: no-repeat;
+  mask-position: center;
+  mask-size: contain;
+
+  background-color: var(--paper); /* väri tulee tästä */
+  width: 150px; /* säädä koko */
+  height: 100px; /* säädä koko */
+}
+/* Esimerkki: tee span.logo:sta maski ja täytä se var(--paper)-värillä */
+.tenant .logo {
+  display: inline-block;
+  width: 160px;            /* säädä tarpeen mukaan */
+  height: 90px;            /* säädä tarpeen mukaan */
+  background-color: var(--paper);
+  -webkit-mask-image: var(--logo);
+  -webkit-mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  -webkit-mask-size: contain;
+  mask-image: var(--logo);
+  mask-repeat: no-repeat;
+  mask-position: center;
+  mask-size: contain;
+}
