@@ -1150,104 +1150,64 @@ p {
     transform 0.15s ease,
     box-shadow 0.1s ease;
 }
+/* =========================================================
+   STABIILI COVER-TAUSTA (lvw/lvh) + KORJAUKSET
+   ========================================================= */
+
+/* Jos --bg puuttuu, ota paperi taustaksi (ei muuta brändiä) */
+:root { --bg: var(--paper); }
+
+/* Nollaa aiemmat page-bg taustat; käytämme vain ::before-kerrosta */
 #page-bg {
   position: fixed;
   inset: 0;
   z-index: 0;
   pointer-events: none;
-  background: none; /* estä aiemman layerin cover-laskenta */
+  background: none;
 }
 
-/* Pääkerros: “liian iso” mutta mittakaava ei muutu scrollissa */
+/* Lukittu “cover”-tausta pseudo-elementissä:
+   elementin koko = 120lvw x 120lvh → aina hieman ylisuuri,
+   eikä muutu URL-palkin piiloutuessa. */
 #page-bg::before {
   content: "";
   position: fixed;
   left: 50%;
   top: 50%;
-  width: 100lvw;          /* lukittu suurimpaan viewporttiin */
-  height: 100lvh;         /* ei muutu URL-palkin myötä */
+  width: 120lvw;                 /* overscan molempiin suuntiin */
+  height: 120lvh;
   transform: translate(-50%, -50%);
-  z-index: -1;
-  background-image: url("./assets/bg1.avif");
-  background-repeat: no-repeat;
-  background-position: center var(--bg-pos, 0%);
-  /* Skaalaa aina hieman yli, mutta ÄLÄ käytä coveria => ei relayouttia */
-  background-size: auto max(120lvh, 120lvw);
-  /* ylimääräinen overscan jos haluat: */
-  /* filter: brightness(1); */
+  z-index: -1;                   /* pysyy sisällön takana */
+  background: url("./assets/bg1.avif") center var(--bg-pos, 0%) / cover no-repeat;
+  will-change: transform;
 }
 
-/* Modernit selaimet: käytä LVH + overscan-reunoja */
-@supports (height: 100lvh) {
-  #page-bg::before {
-    content: "";
-    position: fixed;
-    /* venytä yli reunojen -> ei vilahda valkoista, kun osoitepalkki vaihtaa tilaa */
-    inset: -12lvh;
-    z-index: -1;
-    background: url("./assets/bg1.avif") center var(--bg-pos, 0%) / cover no-repeat;
-    will-change: transform;
-  }
-}
-
-/* Vaakasuuntainen asento: varmistetaan että leveys ohjaa järkevästi */
-@media (orientation: landscape) {
-  #page-bg::before {
-    background-size: max(120lvw, 120lvh) auto; /* säilytä kuvasuhde */
-  }
-}
-
-/* Fallback ilman lvh/lvw-tukea: lukitaan pikseleihin yhden kerran */
+/* Fallback selaimille ilman lvh/lvw-tukea (dynaaminen, mutta iso) */
 @supports not (height: 100lvh) {
-  :root {
-    /* asetetaan “hiukan liian suuri” korkeus ja leveys */
-    --vh-lock: 110vh;
-    --vw-lock: 110vw;
-  }
   #page-bg::before {
-    width: var(--vw-lock);
-    height: var(--vh-lock);
-    background-size: auto var(--vh-lock);
+    width: 120vw;
+    height: 120vh;
+    background-size: cover;
   }
 }
 
-/* =========================================================
-   2) Sisältöosiot: vaihda svh -> lvh (aina mitoitus suurimman
-      viewportin mukaan; ei "pienene" kun osoitepalkki näkyy)
-   ========================================================= */
-
-/* Korvaa:  .hero { height: 100svh; }  ->  min-height: 100lvh; */
-.hero { min-height: 100lvh; }
-
-/* Korvaa: section.tenants.container { height: 100svh; } */
-section.tenants.container { min-height: 100lvh; }
-
-/* Korvaa: section.hours.container, .cta.container { height: 100svh; } */
+/* ---------------------------------------------------------
+   Osioiden korkeudet: poista svh-lukitus ja käytä lvh:ta
+   --------------------------------------------------------- */
+.hero,
+section.tenants.container,
 section.hours.container,
-.cta.container { min-height: 100lvh; }
-
-/* Korvaa: .about/.heritage/.location/.community { height: 100svh; } */
+.cta.container,
 .about.container,
 .heritage.container,
 .location.container,
-.community.container { min-height: 100lvh; }
-
-/* Varmista, ettei mikään lukitse dokumenttia dynaamiseen vh:hon */
-html, body {
-  background: var(--bg);
-  /* älä aseta height:100vh; (sinulla ei olekaan), jätetään pois tarkoituksella */
+.community.container {
+  height: auto !important;   /* kumoaa aiemman height:100svh */
+  min-height: 100lvh;        /* mitoita suurimman viewportin mukaan */
 }
 
-/* =========================================================
-   3) Pienet vakausparannukset
-   ========================================================= */
-
-/* Estetään nykäyksiä iOS/Android: */
-html, body {
+/* Pienet vakausparannukset (ei sivun lukitusta) */
+html, body { 
   overscroll-behavior: none;
-}
-
-/* Taustalle tumma varjoväri vilkahdusten varalle (ei näy overscanilla) */
-body {
-  background-color: var(--bg);
+  background: var(--bg);
 }
