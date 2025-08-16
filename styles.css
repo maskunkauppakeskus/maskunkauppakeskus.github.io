@@ -1155,12 +1155,26 @@ p {
   inset: 0;
   z-index: 0;
   pointer-events: none;
-  background-image: url("./assets/bg1.avif"); /* varmistetaan lähde */
+  background: none; /* estä aiemman layerin cover-laskenta */
+}
+
+/* Pääkerros: “liian iso” mutta mittakaava ei muutu scrollissa */
+#page-bg::before {
+  content: "";
+  position: fixed;
+  left: 50%;
+  top: 50%;
+  width: 100lvw;          /* lukittu suurimpaan viewporttiin */
+  height: 100lvh;         /* ei muutu URL-palkin myötä */
+  transform: translate(-50%, -50%);
+  z-index: -1;
+  background-image: url("./assets/bg1.avif");
   background-repeat: no-repeat;
   background-position: center var(--bg-pos, 0%);
-  background-size: cover; /* fallback vanhoille selaimille */
-  background-color: var(--bg);
-  will-change: transform;
+  /* Skaalaa aina hieman yli, mutta ÄLÄ käytä coveria => ei relayouttia */
+  background-size: auto max(120lvh, 120lvw);
+  /* ylimääräinen overscan jos haluat: */
+  /* filter: brightness(1); */
 }
 
 /* Modernit selaimet: käytä LVH + overscan-reunoja */
@@ -1176,21 +1190,24 @@ p {
   }
 }
 
-/* Fallback ilman lvh-tukea: pidä kuva edelleen ylikorkeana */
-@supports not (height: 100lvh) {
-  :root { --bgH-locked: 110vh; } /* hieman yli -> "liian iso" aina */
-  #page-bg {
-    background-size: auto var(--bgH-locked);
+/* Vaakasuuntainen asento: varmistetaan että leveys ohjaa järkevästi */
+@media (orientation: landscape) {
+  #page-bg::before {
+    background-size: max(120lvw, 120lvh) auto; /* säilytä kuvasuhde */
   }
 }
 
-/* Vaakasuunnassa leveys ohjaa myös overscanin kanssa */
-@media (orientation: landscape) {
-  @supports (width: 100lvw) {
-    #page-bg::before {
-      inset: -12lvw;
-      background-size: cover;
-    }
+/* Fallback ilman lvh/lvw-tukea: lukitaan pikseleihin yhden kerran */
+@supports not (height: 100lvh) {
+  :root {
+    /* asetetaan “hiukan liian suuri” korkeus ja leveys */
+    --vh-lock: 110vh;
+    --vw-lock: 110vw;
+  }
+  #page-bg::before {
+    width: var(--vw-lock);
+    height: var(--vh-lock);
+    background-size: auto var(--vh-lock);
   }
 }
 
