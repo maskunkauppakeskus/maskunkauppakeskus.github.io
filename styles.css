@@ -190,6 +190,7 @@ a:hover {}
     height: 9em;
     transition: background-color 0.1s ease, transform 0.1s ease, box-shadow 0.1s ease;
     border-radius: 0.5em;
+    max-width: 100%;
 }
 .tenant:hover {
     background: var(--dark-gray);
@@ -802,8 +803,8 @@ html {
 }
 .tenant .logo {
     display: inline-block;
-    width: 160px;
-    height: 90px;
+    width: 8rem;
+    height: 5rem;
     background-color: var(--beige);
     -webkit-mask-image: var(--logo);
     -webkit-mask-repeat: no-repeat;
