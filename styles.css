@@ -534,7 +534,7 @@ main {
     box-shadow: var(--box-shadow);
 }
 h3 {
-    font-family: var(--font-base);
+    font-family: var(--font-body);
     font-size: 1em;
     font-weight: bold !important;
     text-align: center;
@@ -711,8 +711,8 @@ p {
     width: 48px;
     height: 48px;
     border-radius: 50%;
-    background-color: var(--warm-beige);
-    color: var(--dark-gray);
+    background-color: var(--moss-green);
+    color: var(--beige);
     border: none;
     cursor: pointer;
     font-size: 1.5rem;

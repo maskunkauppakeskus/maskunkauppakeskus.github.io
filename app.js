@@ -153,7 +153,7 @@ window.initBannerCarousel = async function initBannerCarousel() {
   // Päätä assets-peruspolku: yritä juurta, muuten suhteellinen
   async function pickBase() {
     const tryHead = async (p) => {
-      try { const r = await fetch(p + 'banner_1.png', { method: 'HEAD', credentials: 'same-origin' }); return r.ok; }
+      try { const r = await fetch(p + 'banner_1.avif', { method: 'HEAD', credentials: 'same-origin' }); return r.ok; }
       catch { return false; }
     };
     if (await tryHead('/assets/')) return '/assets/';
@@ -166,12 +166,12 @@ window.initBannerCarousel = async function initBannerCarousel() {
   try {
     const res = await fetch(ASSETS, { credentials: 'same-origin' });
     const html = await res.text();
-    const rx = /\bbanner_?(\d+)\.(svg|png|jpe?g|webp)\b/gi;
+    const rx = /\bbanner_?(\d+)\.(svg|png|jpe?g|webp|avif)\b/gi;
     for (const m of html.matchAll(rx)) files.push({ file: m[0], n: parseInt(m[1], 10) });
   } catch { /* ei listaa -> fallback */ }
 
   if (!files.length) {
-    const exts = ['webp','jpg','jpeg','png','svg'];
+    const exts = ['webp','jpg','jpeg','png','svg', 'avif'];
     const probe = (src) => new Promise(res => { const i = new Image(); i.onload = () => res(true); i.onerror = () => res(false); i.src = src; });
     for (let i = 1; i <= 50; i++) {
       let pick = null;
@@ -187,7 +187,7 @@ window.initBannerCarousel = async function initBannerCarousel() {
   if (!files.length) return;
 
   // 2) Deduplikoi (prioriteetti: webp > jpg > png > svg)
-  const pref = ['webp','jpg','jpeg','png','svg'];
+  const pref = ['webp','jpg','jpeg','png','svg', 'avif'];
   const byN = new Map();
   for (const f of files) {
     const ext = f.file.split('.').pop().toLowerCase();
@@ -1008,102 +1008,3 @@ async function onDomReady() {
   });
 })();
 
-(function initStableBackgroundSizing() {
-  const DOC = document.documentElement;
-  if (DOC.dataset._stableBgInit === '1') return;
-  DOC.dataset._stableBgInit = '1';
-
-  // Pieni ylimitoitus, jotta valkoiset kaistaleet eivät näy edes pikselipyöristysvirheissä
-  const OVERSHOOT = 1.04; // 4%
-  let maxW = 0, maxH = 0;
-
-  function getPageBgEl() {
-    let el = document.getElementById('page-bg');
-    if (!el) {
-      // Jos puuttuu, luodaan – mutta ei peitetä sisältöä (pointer-events:none + fixed inset:0)
-      el = document.createElement('div');
-      el.id = 'page-bg';
-      el.setAttribute('aria-hidden', 'true');
-      Object.assign(el.style, { position: 'fixed', inset: '0', pointerEvents: 'none', zIndex: '0' });
-      document.body.prepend(el);
-    }
-    return el;
-  }
-
-  function updateMaxFrom(w, h) {
-    if (!w || !h) return;
-    if (w > maxW) maxW = Math.round(w);
-    if (h > maxH) maxH = Math.round(h);
-
-    // Viedään myös CSS-muuttujiin, jos haluat hyödyntää tyyleissä
-    DOC.style.setProperty('--bg-max-w-px', maxW + 'px');
-    DOC.style.setProperty('--bg-max-h-px', maxH + 'px');
-  }
-
-  function readWindowFallback() {
-    const w = Math.max(window.innerWidth || 0, DOC.clientWidth || 0);
-    const h = Math.max(window.innerHeight || 0, DOC.clientHeight || 0);
-    updateMaxFrom(w, h);
-  }
-
-  function applySize() {
-    const el = getPageBgEl();
-    if (!el) return;
-    const isLandscape = window.matchMedia('(orientation: landscape)').matches;
-
-    // Lasketaan yliajoarvo pikseleinä
-    if (isLandscape) {
-      const pxW = Math.round(maxW * OVERSHOOT) + 'px';
-      el.style.setProperty('background-size', pxW + ' auto', 'important');
-    } else {
-      const pxH = Math.round(maxH * OVERSHOOT) + 'px';
-      el.style.setProperty('background-size', 'auto ' + pxH, 'important');
-    }
-
-    // Varmistetaan, ettei selaimen komposointi “kelluta”
-    el.style.transform = 'translateZ(0)';
-    el.style.backfaceVisibility = 'hidden';
-  }
-
-  let raf = 0;
-  function scheduleRecalc() {
-    if (raf) return;
-    raf = requestAnimationFrame(() => {
-      raf = 0;
-      const vv = window.visualViewport;
-      if (vv && typeof vv.width === 'number' && typeof vv.height === 'number') {
-        updateMaxFrom(vv.width, vv.height);
-      } else {
-        readWindowFallback();
-      }
-      applySize();
-    });
-  }
-
-  // Ensilataus: kerää molemmista lähteistä
-  (function bootstrap() {
-    const vv = window.visualViewport;
-    if (vv) updateMaxFrom(vv.width, vv.height);
-    readWindowFallback();
-    applySize();
-  })();
-
-  // Kuuntelijat: vv (iOS/Android) + window (yleinen)
-  if (window.visualViewport) {
-    visualViewport.addEventListener('resize', scheduleRecalc, { passive: true });
-    visualViewport.addEventListener('scroll', scheduleRecalc, { passive: true }); // iOS siirtää vv:tä
-  }
-  window.addEventListener('resize', scheduleRecalc, { passive: true });
-
-  // Suunnan vaihtuessa aloita puhtaalta pöydältä (kerrytä uudet maksimit)
-  window.addEventListener('orientationchange', function () {
-    maxW = 0; maxH = 0;
-    setTimeout(scheduleRecalc, 60);
-  }, { passive: true });
-
-  // PJAX: sisältö vaihtuu, viewport ei – mutta varmistetaan silti
-  window.addEventListener('pjax:navigated', scheduleRecalc);
-
-  // Täysin latautuneena vielä yksi mittaus
-  window.addEventListener('load', () => setTimeout(scheduleRecalc, 0));
-})();
