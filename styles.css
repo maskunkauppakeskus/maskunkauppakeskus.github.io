@@ -1,1256 +1,816 @@
-/* ==========================================================================
-   Peruspaletti – Saaristolaisteema (4 keskeistä sävyä)
-   --------------------------------------------------------------------------
-   --sea    : tumma merensininen (brändi)
-   --signal : signaalin punainen (korostus/toinen accent)
-   --paper  : valkoinen tausta
-   --ink    : tumma harmaa "mustana"
-   ========================================================================== */
 :root {
-  --sea: #004765;
-  --shadow: #001b31;
-  --signal: #A50D1A;
-  --paper: #fff2d7;
-  --ink: #1d1f22;
-  --box-shadow: 0 4px 20px #0a284425;
-
-
+    --moss-green: #3D513D;
+    --dark-gray: #2e2e2e;
+    --tile-red: #BA3F36;
+    --beige: #f4e9dd;
+    --warm-beige: #ebcfaf;
+    --ink: #1d1f22;
+    --box-shadow: 0 4px 20px #0a284425;
 }
-
 @font-face {
-  font-family: "Barlow";
-  src: url("/fonts/Barlow_Semi_Condensed/BarlowSemiCondensed-Bold.ttf") format("truetype");
-  font-style: normal;
-  font-weight: 400;
-  font-display: swap;
+    font-family: "Barlow";
+    src: url("/fonts/Barlow_Semi_Condensed/BarlowSemiCondensed-Bold.ttf") format("truetype");
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
 }
-
 @font-face {
-  font-family: "Montserrat";
-  src: url("/fonts/Montserrat/Montserrat-VariableFont_wght.ttf") format("truetype");
-  font-style: normal;
-  font-weight: 400;
-  font-display: swap;
+    font-family: "Montserrat";
+    src: url("/fonts/Montserrat/Montserrat-VariableFont_wght.ttf") format("truetype");
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
 }
 
-/* Pirata One – vain Regular (otsikoihin) */
-@font-face {
-  font-family: "Pirata One";
-  src: url("/fonts/Pirata_One/PirataOne-Regular.ttf") format("truetype");
-  font-style: normal;
-  font-weight: 400;
-  font-display: swap;
-}
-
-/* Open Sans – painot ja kursiivit */
-@font-face {
-  font-family: "Open Sans";
-  src: url("/fonts/Open_Sans/static/OpenSans-Light.ttf") format("truetype");
-  font-style: normal;
-  font-weight: 300;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: "Open Sans";
-  src: url("/fonts/Open_Sans/static/OpenSans-LightItalic.ttf") format("truetype");
-  font-style: italic;
-  font-weight: 300;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: "Open Sans";
-  src: url("/fonts/Open_Sans/static/OpenSans-Regular.ttf") format("truetype");
-  font-style: normal;
-  font-weight: 400;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: "Open Sans";
-  src: url("/fonts/Open_Sans/static/OpenSans-Italic.ttf") format("truetype");
-  font-style: italic;
-  font-weight: 400;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: "Open Sans";
-  src: url("/fonts/Open_Sans/static/OpenSans-Medium.ttf") format("truetype");
-  font-style: normal;
-  font-weight: 500;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: "Open Sans";
-  src: url("/fonts/Open_Sans/static/OpenSans-MediumItalic.ttf") format("truetype");
-  font-style: italic;
-  font-weight: 500;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: "Open Sans";
-  src: url("/fonts/Open_Sans/static/OpenSans-SemiBold.ttf") format("truetype");
-  font-style: normal;
-  font-weight: 600;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: "Open Sans";
-  src: url("/fonts/Open_Sans/static/OpenSans-SemiBoldItalic.ttf") format("truetype");
-  font-style: italic;
-  font-weight: 600;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: "Open Sans";
-  src: url("/fonts/Open_Sans/static/OpenSans-Bold.ttf") format("truetype");
-  font-style: normal;
-  font-weight: 700;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: "Open Sans";
-  src: url("/fonts/Open_Sans/static/OpenSans-BoldItalic.ttf") format("truetype");
-  font-style: italic;
-  font-weight: 700;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: "Open Sans";
-  src: url("/fonts/Open_Sans/static/OpenSans-ExtraBold.ttf") format("truetype");
-  font-style: normal;
-  font-weight: 800;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: "Open Sans";
-  src: url("/fonts/Open_Sans/static/OpenSans-ExtraBoldItalic.ttf") format("truetype");
-  font-style: italic;
-  font-weight: 800;
-  font-display: swap;
-}
-
-/* Fonttimuuttujat (ei kosketa aiempiin väri ym. muuttujiin) */
 :root {
-  --font-heading: "Barlow", system-ui, -apple-system, "Segoe UI", Roboto, Ubuntu, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
-  --font-body: "Montserrat", system-ui, -apple-system, "Segoe UI", Roboto, Ubuntu, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+    --font-heading: "Barlow", system-ui, -apple-system, "Segoe UI", Roboto, Ubuntu, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+    --font-body: "Montserrat", system-ui, -apple-system, "Segoe UI", Roboto, Ubuntu, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
 }
-
-/* Ylikirjoitetaan vain fonttiperheet – muu typografia säilyy */
 body {
-  font-weight: 400;
-
+    font-weight: 400;
 }
-
-/* Otsikot Pirata One -fontilla */
-h1,
-h2,
-b {
-  font-family: var(--font-heading);
-  font-weight: 400;
-  /* Pirata One on Regular */
-  letter-spacing: .01em;
-  font-size: 1.5em;
-  /*! margin-left: 0.5em; */
-}
-
-/* ==========================================================================
-   Perustypografia ja asettelu
-   ========================================================================== */
-
-* {
-  font-family: var(--font-body);
-  box-sizing: border-box;
-}
-
-html {
-  scrollbar-gutter: stable;
-  scrollbar-width: thin !important;
-  scrollbar-color: var(--signal) var(--shadow);
-  min-width: 440px;
-}
-
-html,
-body {
-  margin: 0;
-  padding: 0;
-  color: var(--shadow);
-  background: var(--bg);
-}
-
-.container {
-  /*! max-width: 1100px; */
-  margin: 0 auto;
-  padding: 0 1rem
-}
-
-/* Otsikot */
+b,
 h1,
 h2 {
-  line-height: 1.2;
-  margin: 0 0 1rem;
-  text-align: center;
-  color: var(--shadow);
-  font-size: 2em;
-
-  position: relative;
-  isolation: isolate;
-  /* rajaa pinoamisen otsikon sisään */
-
-  --stroke: .10em;
-  --stroke-color: var(--paper);
-  text-shadow: none;
+    font-family: var(--font-heading);
+    font-weight: 400;
+    letter-spacing: 0.01em;
+    font-size: 1.5em;
 }
-
+* {
+    font-family: var(--font-body);
+    box-sizing: border-box;
+}
+html {
+    scrollbar-gutter: stable;
+    scrollbar-width: thin !important;
+    scrollbar-color: var(--tile-red) var(--dark-gray);
+    min-width: 440px;
+}
+body,
+html {
+    margin: 0;
+    padding: 0;
+    color: var(--dark-gray);
+    background: var(--bg);
+}
+.container {
+    margin: 0 auto;
+    padding: 0 1rem;
+}
+h1,
+h2 {
+    line-height: 1.2;
+    margin: 0 0 1rem;
+    text-align: center;
+    color: var(--dark-gray);
+    font-size: 2em;
+    position: relative;
+    isolation: isolate;
+    --stroke: 0.10em;
+    --stroke-color: var(--beige);
+    text-shadow: none;
+}
 h1::before,
 h2::before {
-  content: attr(data-text);
-  position: absolute;
-  inset: 0;
-  z-index: -1;
-  /* jää varsinaisen tekstin taakse */
-  pointer-events: none;
-  user-select: none;
-  white-space: pre-wrap;
-  text-align: inherit;
-
-  -webkit-text-stroke: var(--stroke) var(--stroke-color);
-  -webkit-text-fill-color: transparent;
-  color: transparent;
+    content: attr(data-text);
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    user-select: none;
+    white-space: pre-wrap;
+    text-align: inherit;
+    -webkit-text-stroke: var(--stroke) var(--stroke-color);
+    -webkit-text-fill-color: transparent;
+    color: transparent;
 }
-
-/* Firefox-fallback ilman text-strokea */
 @supports not (-webkit-text-stroke: 1px black) {
-
-  h1::before,
-  h2::before {
-    text-shadow:
-      0 .06em 0 var(--stroke-color),
-      0 -.06em 0 var(--stroke-color),
-      .06em 0 0 var(--stroke-color),
-      -.06em 0 0 var(--stroke-color),
-      .06em .06em 0 var(--stroke-color),
-      -.06em .06em 0 var(--stroke-color),
-      .06em -.06em 0 var(--stroke-color),
-      -.06em -.06em 0 var(--stroke-color);
-  }
+    h1::before,
+    h2::before {
+        text-shadow: 0 0.06em 0 var(--stroke-color), 0 -.06em 0 var(--stroke-color), 0.06em 0 0 var(--stroke-color), -.06em 0 0 var(--stroke-color), 0.06em 0.06em 0 var(--stroke-color), -.06em 0.06em 0 var(--stroke-color), 0.06em -.06em 0 var(--stroke-color), -.06em -.06em 0 var(--stroke-color);
+    }
 }
-
-/* Linkit (yleinen) */
 a {
-  color: inherit;
-  text-decoration: none;
+    color: inherit;
+    text-decoration: none;
 }
-
-a:hover {
-  /*! color: var(--brand) */
-}
-
-/* ==========================================================================
-   Yläpalkki (header) – logo ja nav samalla tasolla
-   ========================================================================== */
+a:hover {}
 .site-header {
-  position: sticky;
-  top: 0;
-  z-index: 10;
-  background: var(--paper);
-  /*! border-bottom: 1px solid var(--paper); */
-  box-shadow: var(--box-shadow);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background: var(--beige);
+    box-shadow: var(--box-shadow);
 }
-
 .site-header .container {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  /*! gap: 1rem; */
-  min-height: 56px;
-  min-width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    min-height: 56px;
+    min-width: 100%;
 }
-
 .site-header .brand {
-  display: inline-flex;
-  align-items: center;
-  gap: .5rem;
-  font-weight: 700;
-  font-size: 1.125rem;
-  color: var(--shadow);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 700;
+    font-size: 1.125rem;
+    color: var(--dark-gray);
 }
-
 .site-header .brand img {
-  display: block;
-  height: 36px;
-  width: auto
+    display: block;
+    height: 36px;
+    width: auto;
 }
-
-/* Navigaatio */
 #nav {
-  display: flex;
-  align-items: center;
-  gap: 1rem
+    display: flex;
+    align-items: center;
+    gap: 1rem;
 }
-
 #nav a {
-  padding: .75rem .25rem;
-  opacity: .85;
+    padding: 0.75rem 0.25rem;
+    opacity: 0.85;
 }
-
 #nav a.active,
 #nav a:hover {
-  opacity: 1;
-  color: var(--shadow);
+    opacity: 1;
+    color: var(--dark-gray);
 }
-
-/* Pieni näyttö: burger + pinottu linkkilista */
 #nav-toggle {
-  display: none;
-  margin-left: .5rem
-}
-
-@media (max-width:966px) {
-  #nav {
-    flex-direction: column;
-    align-items: flex-end;
-    gap: .25rem
-  }
-
-  #nav-toggle {
-    display: inline-flex
-  }
-
-  #nav a {
     display: none;
-    padding: .5rem 0
-  }
-
-  #nav.open a {
-    display: block
-  }
+    margin-left: 0.5rem;
 }
-
-/* ==========================================================================
-   Banneri & karuselli
-   ========================================================================== */
+@media (max-width:966px) {
+    #nav {
+        flex-direction: column;
+        align-items: flex-end;
+        gap: 0.25rem;
+    }
+    #nav-toggle {
+        display: inline-flex;
+    }
+    #nav a {
+        display: none;
+        padding: 0.5rem 0;
+    }
+    #nav.open a {
+        display: block;
+    }
+}
 .banner {
-  background: #f6f6f6;
-  /*! border-bottom: 1px solid #eee */
+    background: #f6f6f6;
 }
-
-
-
 .slide {
-  display: block;
-  width: 100%;
-  /*! height: 25svh; */
-  object-fit: cover;
-  background: var(--signal);
-  color: var(--paper);
-  align-content: center;
-  text-align: center;
-  box-shadow: var(--box-shadow);
-  /*! z-index: 10000000; */
+    display: block;
+    width: 100%;
+    object-fit: cover;
+    background: var(--tile-red);
+    color: var(--beige);
+    align-content: center;
+    text-align: center;
+    box-shadow: var(--box-shadow);
 }
-
-/* ==========================================================================
-   Liikelogot
-   ========================================================================== */
 .logo-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-  gap: 1rem;
-  align-items: center;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 1rem;
+    align-items: center;
 }
-
 .tenant {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-
-  border-radius: var(--radius);
-  padding: 1rem;
-  background: var(--signal);
-  z-index: 1;
-  box-shadow: var(--box-shadow);
-  height: 9em;
-  transition: background-color 0.1s ease, transform 0.1s ease, box-shadow 0.1s ease;
-  /*! border: 3px var(--paper) solid; */
-  border-radius: 0.5em;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--radius);
+    padding: 1rem;
+    background: var(--moss-green);
+    z-index: 1;
+    box-shadow: var(--box-shadow);
+    height: 9em;
+    transition: background-color 0.1s ease, transform 0.1s ease, box-shadow 0.1s ease;
+    border-radius: 0.5em;
 }
-
 .tenant:hover {
-  background: var(--shadow);
+    background: var(--dark-gray);
 }
-
 .tenant img {
-  max-width: 100%;
-  max-height: 82px;
-  object-fit: contain
+    max-width: 100%;
+    max-height: 82px;
+    object-fit: contain;
 }
-
 .tenant div a {
-  font-size: .875rem;
-  opacity: .8
+    font-size: 0.875rem;
+    opacity: 0.8;
 }
-
-/* ==========================================================================
-   Aukiolot
-   ========================================================================== */
 .hours-list {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  display: grid;
-  gap: .5rem;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-  /*! background: var(--paper); */
-  height: 5em;
-  align-content: center;
-  text-align: center;
-  border-radius: 1em;
-  /*! box-shadow: var(--box-shadow); */
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    gap: 0.5rem;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    height: 5em;
+    align-content: center;
+    text-align: center;
+    border-radius: 1em;
 }
-
 .hours-list li {
-
-  font-size: 1.2em;
+    font-size: 1.2em;
 }
-
-/* ==========================================================================
-   Nappi-komponentit
-   ========================================================================== */
 .btn {
-  display: inline-block;
-  background: var(--signal);
-  color: var(--paper);
-  padding: .6rem .9rem;
-  border-radius: 8px;
-  text-decoration: none;
-  margin-top: .5rem;
-  transition: background-color 0.1s ease, transform 0.1s ease, box-shadow 0.1s ease;
-
-
-  box-shadow: var(--box-shadow);
-  margin: 0.5em;
-  width: 14em;
-  text-align: center;
-  align-content: center;
+    display: inline-block;
+    background: var(--tile-red);
+    color: var(--beige);
+    padding: 0.6rem 0.9rem;
+    border-radius: 8px;
+    text-decoration: none;
+    margin-top: 0.5rem;
+    transition: background-color 0.1s ease, transform 0.1s ease, box-shadow 0.1s ease;
+    box-shadow: var(--box-shadow);
+    margin: 0.5em;
+    width: 14em;
+    text-align: center;
+    align-content: center;
 }
-
 .btn:hover {
-  background: var(--shadow);
+    background: var(--dark-gray);
 }
-
 .btn:active {
-  transform: translateY(1px)
+    transform: translateY(1px);
 }
-
-.btn--signal {
-  background: var(--signal)
+.btn--tile-red {
+    background: var(--tile-red);
 }
-
-/* ==========================================================================
-   Main & footer
-   ========================================================================== */
 main {
-  padding: 1.25rem 0
+    padding: 1.25rem 0;
 }
-
 .site-footer {
-  border-top: 1px solid #eee;
-  margin-top: 3rem;
-  padding: 2rem 0;
-  color: var(--muted);
+    border-top: 1px solid #eee;
+    margin-top: 3rem;
+    padding: 2rem 0;
+    color: var(--muted);
 }
-
-/* ==========================================================================
-   Sivun taustakuva (bg1.png) + sulava scroll
-   - Kuva keskitetään vaakasuunnassa
-   - Leveys rajataan maxiin, korkeus mittasuhteiden mukaan
-   - Pystypositio sidotaan scroll-prosenttiin muuttujalla --bg-pos
-   ========================================================================== */
 :root {
-  /* Säädä tarvittaessa: maksimi "renderöity leveys" taustalle */
-  --bg-max-width: 1340px;
+    --bg-max-width: 1340px;
 }
-
-/* Sulava vieritys ankkureille ja ohjelmallisille scroll-käskyille */
 html {
-  scroll-behavior: smooth;
+    scroll-behavior: smooth;
 }
-
-/* Kiinteä taustakerros: ensimmäinen lapsi <body>:ssa */
 #page-bg {
-  position: fixed;
-  inset: 0;
-  /* täyttää näkymän */
-  pointer-events: none;
-  /* ei blokkaa klikkauksia */
-  background-image: url("./assets/bg1.avif");
-  background-repeat: no-repeat;
-  background-position: center var(--bg-pos, 0%);
-  /* y=0% sivun alussa, 100% sivun lopussa */
-  background-size: cover;
-
-  /* max leveys, korkeus suhteessa */
-}
-
-/* Varmistetaan, että sisältö pysyy luettavana */
-.banner {
-  background: rgba(246, 246, 246, 0.9);
-  box-shadow: var(--box-shadow);
-}
-
-.site-footer {
-  background: rgba(255, 255, 255, 0.9);
-  margin-top: auto;
-}
-
-.hero {
-  height: 100svh;
-  /*! display: flex; */
-  align-items: center;
-}
-
-.hero-container {
-
-  text-align: center;
-  position: relative;
-  /*! background: var(--paper); */
-  max-width: var(--bg-max-width);
-  margin: 0 auto;
-  /*! box-shadow: var(--box-shadow); */
-  padding: 0.5em 2em;
-}
-
-/* Header: sticky + piilotus vierityssuunnalla */
-.site-header {
-  position: fixed;
-  /* jo olemassa, ei haittaa duplikaatti */
-  top: 0;
-  z-index: 100;
-  transition: transform .16s ease-in-out;
-  will-change: transform;
-  width: 100%;
-}
-
-.site-header.site-header--hidden {
-  transform: translateY(-100%);
-}
-
-section.tenants.container {
-  height: 100svh;
-}
-
-section.hours.container,
-.cta.container {
-  height: 100svh;
-}
-
-section {
-  align-content: center
-}
-
-.container {
-  max-width: var(--bg-max-width);
-}
-
-/* ----- Tenant-logo fallback jos kuva puuttuu ----- */
-.tenant.missing {
-  position: relative;
-  background: #fafafa;
-  border-style: dashed;
-}
-
-.tenant.missing::before {
-  content: attr(data-name);
-  display: inline-block;
-  font-weight: 600;
-  text-align: center;
-  line-height: 1.1;
-  padding: .25rem .5rem;
-  border-radius: .5rem;
-  border: 1px solid #e5e7eb;
-}
-
-.tenant.missing::after {
-  content: "Logo tulossa";
-  display: block;
-  font-size: .75rem;
-  opacity: .6;
-  margin-top: .25rem;
-}
-
-.logo-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  /* 4 saraketta -> 8 kohdetta kahteen riviin */
-  gap: 1rem;
-  align-items: center;
-  margin: 1em;
-}
-
-@media (max-width: 768px) {
-  .logo-grid {
-    grid-template-columns: repeat(2, 1fr);
-    /* mobiilissa 2 per rivi */
-  }
-}
-
-.tenant-name {
-  color: white;
-  text-align: center;
-  margin-top: auto;
-}
-
-/* --- NAV reset & layout --- */
-.nav {
-  display: flex;
-  align-items: center;
-}
-
-/* Poista bulletit ja tyhjät marginit */
-.nav-links {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-}
-
-/* Li-kohdat riville desktopissa */
-.nav-links>li {
-  margin: 0;
-  padding: 0;
-  margin-left: auto;
-  margin-right: auto;
-}
-
-/* Linkkien perusilme */
-.nav-links a {
-  display: block;
-  padding: .75rem .5rem;
-  text-decoration: none;
-  color: var(--shadow);
-  opacity: 1;
-  transition: background-color 0.15s ease, transform 0.1s ease, box-shadow 0.1s ease;
-
-  border-radius: 0.5em;
-}
-
-.nav-links a:hover {
-  opacity: 1;
-  color: var(--paper);
-  background: var(--signal);
-
-  
-}
-
-/* Mobiili: pinottu paneeli + animointi (yhteensopiva aiemman koodin kanssa) */
-@media (max-width:1226px) {
-  .nav-links {
     position: fixed;
-    top: 56px;
-    /* tai var(--header-height) */
+    inset: 0;
+    pointer-events: none;
+    background-image: url("./assets/bg1.avif");
+    background-repeat: no-repeat;
+    background-position: center var(--bg-pos, 0%);
+    background-size: cover;
+}
+.banner {
+    background: rgba(246, 246, 246, 0.9);
+    box-shadow: var(--box-shadow);
+}
+.site-footer {
+    background: rgba(255, 255, 255, 0.9);
+    margin-top: auto;
+}
+.hero {
+    height: 100svh;
+    align-items: center;
+}
+.hero-container {
+    text-align: center;
+    position: relative;
+    max-width: var(--bg-max-width);
+    margin: 0 auto;
+    padding: 0.5em 2em;
+}
+.site-header {
+    position: fixed;
+    top: 0;
+    z-index: 100;
+    transition: transform 0.16s ease-in-out;
+    will-change: transform;
+    width: 100%;
+}
+.site-header.site-header--hidden {
+    transform: translateY(-100%);
+}
+section.tenants.container {
+    height: 100svh;
+}
+.cta.container,
+section.hours.container {
+    height: 100svh;
+}
+section {
+    align-content: center;
+}
+.container {
+    max-width: var(--bg-max-width);
+}
+.tenant.missing {
+    position: relative;
+    background: #fafafa;
+    border-style: dashed;
+}
+.tenant.missing::before {
+    content: attr(data-name);
+    display: inline-block;
+    font-weight: 600;
+    text-align: center;
+    line-height: 1.1;
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.5rem;
+    border: 1px solid #e5e7eb;
+}
+.tenant.missing::after {
+    content: "Logo tulossa";
+    display: block;
+    font-size: 0.75rem;
+    opacity: 0.6;
+    margin-top: 0.25rem;
+}
+.logo-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1rem;
+    align-items: center;
+    margin: 1em;
+}
+@media (max-width: 768px) {
+    .logo-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+.tenant-name {
+    color: var(--beige);
+    text-align: center;
+    margin-top: auto;
+}
+.nav {
+    display: flex;
+    align-items: center;
+}
+.nav-links {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+.nav-links > li {
+    margin: 0;
+    padding: 0;
+    margin-left: auto;
+    margin-right: auto;
+}
+.nav-links a {
+    display: block;
+    padding: 0.75rem 0.5rem;
+    text-decoration: none;
+    color: var(--dark-gray);
+    opacity: 1;
+    transition: background-color 0.15s ease, transform 0.1s ease, box-shadow 0.1s ease;
+    border-radius: 0.5em;
+}
+.nav-links a:hover {
+    opacity: 1;
+    color: var(--beige);
+    background: var(--tile-red);
+}
+@media (max-width:1226px) {
+    .nav-links {
+        position: fixed;
+        top: 56px;
+        left: 0;
+        right: 0;
+        background: var(--beige);
+        box-shadow: var(--box-shadow);
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 0.5rem 1rem;
+        display: none;
+        transform: translateY(-10px);
+        opacity: 0;
+        transition: transform 0.2s ease, opacity 0.2s ease;
+        z-index: 1001;
+    }
+    .nav-links.active {
+        display: flex;
+        transform: translateY(0);
+        opacity: 1;
+    }
+    .nav-links a {
+        width: 96vw;
+        padding: 0.75rem 0;
+        text-align: center;
+        border-radius: 0.5em;
+    }
+}
+.hamburger {
+    display: none;
+    position: relative;
+    width: var(--burger-size, 1.75rem);
+    height: var(--burger-size, 1.75rem);
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    margin-left: auto;
+}
+.hamburger span {
+    position: absolute;
     left: 0;
     right: 0;
-    background: var(--paper);
-    box-shadow: var(--box-shadow);
-    flex-direction: column;
-    align-items: flex-start;
-    padding: .5rem 1rem;
-    display: none;
-    transform: translateY(-10px);
-    opacity: 0;
-    transition: transform .2s ease, opacity .2s ease;
-    z-index: 1001;
-    /*! color: var(--paper); */
-  }
-
-  .nav-links.active {
-    display: flex;
-    transform: translateY(0);
-    opacity: 1;
-  }
-
-  .nav-links a {
-    width: 96vw;
-    padding: .75rem 0;
-    text-align: center;
-    border-radius: 0.5em;
-  }
+    height: var(--burger-line-h, .2rem);
+    background: var(--dark-gray);
+    border-radius: 2px;
+    transform-origin: center;
+    transition: transform 0.15s ease, opacity 0.15s ease;
 }
-
-/* Hampurilainen näkyviin mobiilissa */
-.hamburger {
-  display: none;
-  position: relative;
-  width: var(--burger-size, 1.75rem);
-  height: var(--burger-size, 1.75rem);
-  background: transparent;
-  border: none;
-  cursor: pointer;
-  margin-left: auto;
-}
-
-.hamburger span {
-  position: absolute;
-  left: 0;
-  right: 0;
-  height: var(--burger-line-h, .2rem);
-  background: var(--shadow);
-  border-radius: 2px;
-  transform-origin: center;
-  transition: transform .15s ease, opacity .15s ease;
-}
-
 .hamburger span:nth-child(1) {
-  top: 0;
+    top: 0;
 }
-
 .hamburger span:nth-child(2) {
-  top: calc(50% - (var(--burger-line-h, .2rem)/2));
+    top: calc(50% - (var(--burger-line-h, .2rem)/2));
 }
-
 .hamburger span:nth-child(3) {
-  bottom: 0;
+    bottom: 0;
 }
-
 .hamburger.open span:nth-child(1) {
-  transform: translateY(.78rem) rotate(45deg);
+    transform: translateY(.78rem) rotate(45deg);
 }
-
 .hamburger.open span:nth-child(2) {
-  opacity: 0;
-  transform: scaleX(0);
+    opacity: 0;
+    transform: scaleX(0);
 }
-
 .hamburger.open span:nth-child(3) {
-  transform: translateY(-.78rem) rotate(-45deg);
+    transform: translateY(-.78rem) rotate(-45deg);
 }
-
 @media (max-width:1226px) {
-  .hamburger {
-    display: flex;
-  }
+    .hamburger {
+        display: flex;
+    }
 }
-
 @media (min-width:1227px) {
-  .hamburger {
-    display: none;
-  }
+    .hamburger {
+        display: none;
+    }
 }
-
 #page-bg {
-  position: fixed;
-  inset: 0;
-  z-index: 0;
-  pointer-events: none;
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
 }
-
 .site-header {
-  position: fixed;
-  z-index: 1000;
+    position: fixed;
+    z-index: 1000;
 }
-
 .about.container,
+.community.container,
 .heritage.container,
-.location.container,
-.community.container {
-  height: 100svh;
+.location.container {
+    height: 100svh;
 }
-
-.hero-container p,
-.hero-container h3,
-.about.container p,
 .about.container h3,
-.heritage.container p,
-.heritage.container h3,
-.location.container p,
-.location.container h3,
-.community.container p,
+.about.container p,
 .community.container h3,
+.community.container p,
+.heritage.container h3,
+.heritage.container p,
+.hero-container h3,
+.hero-container p,
+.location.container h3,
+.location.container p,
 .pill-list,
 details {
-  /*! background: var(--shadow); */
-  color: var(--shadow);
-  padding-top: 1em;
-  margin: 0;
-  font-weight: normal;
-  font-size: 14pt;
+    color: var(--dark-gray);
+    padding-top: 1em;
+    margin: 0;
+    font-weight: normal;
+    font-size: 14pt;
 }
-
 footer {
-  position: relative;
-  background: var(--shadow) !important;
-  color: var(--paper) !important;
-  border: none !important;
-  bottom: 0 !important;
-  width: 100%;
-}
-
-main {
-  position: relative;
-
-  align-content: center;
-}
-
-/* --- Stabiili taustakuva myös kun mobiiliselain näyttää piilottaa osoitepalkkia --- */
-#page-bg {
-  /* lukitse mittakaava suurimpaan viewporttiin: ei zoomausta osoitepalkin myötä */
-  background-size: auto 100lvh;
-  /* pysty ohjaa (potretti) */
-  background-position: center var(--bg-pos, 0%);
-  will-change: transform;
-  /* vähentää repainteja joillakin moottoreilla */
-}
-
-@media (orientation: landscape) {
-  #page-bg {
-    background-size: 100lvw auto;
-    /* vaakasuunnassa leveys ohjaa */
-  }
-}
-
-/* Vanhat selaimet ilman lvh/lvw-tukea: lukitse korkeus kerran JS:llä (alla). */
-@supports not (height: 100lvh) {
-  :root {
-    --bgH-locked: 105vh;
-  }
-
-  /* korvataan JS:llä pikseleiksi */
-  #page-bg {
-    background-size: auto var(--bgH-locked);
-  }
-}
-
-.pill-list {
-  /*! padding-left: 2em; */
-  width: fit-content;
-  margin-left: auto;
-  margin-right: auto;
-}
-
-.content {
-
-  background: var(--paper);
-  padding: 1em;
-  border-radius: 1em;
-  box-shadow: var(--box-shadow);
-}
-
-h3 {
-  font-family: var(--font-base);
-  font-size: 1em;
-  font-weight: bold !important;
-  ;
-  text-align: center;
-}
-
-
-
-body {
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
-  /* vähintään koko ikkunan korkeus */
-}
-
-main {
-  flex: 1;
-  /* ottaa kaiken jäljellä olevan tilan ennen footeria */
-}
-
-footer {
-  background: #f5f5f5;
-  /* tai oma taustaväri */
-  padding: 1rem;
-}
-
-h1 {
-  font-size: 3em;
-  font-weight: bolder;
-
-  color: var(--signal);
-}
-
-/* Pikavalikon napit */
-.quick-nav {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-}
-
-.quick-nav .btn {
-  flex: 1 1 150px;
-  /* Kasvaa tasalevyiseksi, mutta minimileveys 150px */
-  text-align: center;
-  padding: 0.75rem 1rem;
-  width: 14em;
-
-  text-decoration: none;
-  border-radius: 6px;
-  font-weight: 600;
-
-}
-
-
-/* Pienillä näytöillä jokainen nappi omalle rivilleen */
-@media (max-width: 500px) {
-  .quick-nav {
-    flex-direction: column;
-  }
-
-  .quick-nav .btn {
-    flex: 1 1 auto;
+    position: relative;
+    background: var(--tile-red) !important;
+    color: var(--beige) !important;
+    border: none !important;
+    bottom: 0 !important;
     width: 100%;
-  }
 }
-
+main {
+    position: relative;
+    align-content: center;
+}
+#page-bg {
+    background-size: auto 100lvh;
+    background-position: center var(--bg-pos, 0%);
+    will-change: transform;
+}
+@media (orientation: landscape) {
+    #page-bg {
+        background-size: 100lvw auto;
+    }
+}
+@supports not (height: 100lvh) {
+    :root {
+        --bgH-locked: 105vh;
+    }
+    #page-bg {
+        background-size: auto var(--bgH-locked);
+    }
+}
+.pill-list {
+    width: fit-content;
+    margin-left: auto;
+    margin-right: auto;
+}
+.content {
+    background: var(--beige);
+    padding: 1em;
+    border-radius: 1em;
+    box-shadow: var(--box-shadow);
+}
+h3 {
+    font-family: var(--font-base);
+    font-size: 1em;
+    font-weight: bold !important;
+    text-align: center;
+}
+body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+main {
+    flex: 1;
+}
+footer {
+    background: #f5f5f5;
+    padding: 1rem;
+}
+h1 {
+    font-size: 3em;
+    font-weight: bolder;
+    color: var(--tile-red);
+}
+.quick-nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+.quick-nav .btn {
+    flex: 1 1 150px;
+    text-align: center;
+    padding: 0.75rem 1rem;
+    width: 14em;
+    text-decoration: none;
+    border-radius: 6px;
+    font-weight: 600;
+}
+@media (max-width: 500px) {
+    .quick-nav {
+        flex-direction: column;
+    }
+    .quick-nav .btn {
+        flex: 1 1 auto;
+        width: 100%;
+    }
+}
 .link-list {
-  list-style: none;
-  /* Poistaa bulletit */
-  margin: 0;
-  padding-left: 0em;
+    list-style: none;
+    margin: 0;
+    padding-left: 0;
 }
-
-/* Perus fokuskorostus kaikille interaktiivisille elementeille */
-:where(a[href],
-  button,
-  input,
-  select,
-  textarea,
-  summary,
-  [role="button"],
-  [tabindex]:not([tabindex="-1"])):focus-visible {
-  outline: 3px solid var(--signal);
-  outline-offset: 3px;
-}
-
-/* Safari / vanhat selaimet */
-@supports not selector(:focus-visible) {
-
-  :where(a[href],
-    button,
-    input,
-    select,
-    textarea,
-    summary,
-    [role="button"],
-    [tabindex]:not([tabindex="-1"])):focus {
-    outline: 3px solid var(--signal);
+:where(a[href], button, input, select, textarea, summary, [role="button"], [tabindex]:not([tabindex="-1"])):focus-visible {
+    outline: 3px solid var(--tile-red);
     outline-offset: 3px;
-  }
 }
-
-/* Select-elementtien oma värimaailma */
+@supports not selector(:focus-visible) {
+    :where(a[href], button, input, select, textarea, summary, [role="button"], [tabindex]:not([tabindex="-1"])):focus {
+        outline: 3px solid var(--tile-red);
+        outline-offset: 3px;
+    }
+}
 select {
-  border: 2px solid transparent;
-  background-color: white;
+    border: 2px solid transparent;
+    background-color: white;
 }
-
-/* Fokushetkellä käytä samaa väriä */
 select:focus-visible {
-  border-color: var(--signal);
-  box-shadow: 0 0 0 3px var(--signal);
+    border-color: var(--tile-red);
+    box-shadow: 0 0 0 3px var(--tile-red);
 }
-
-/* Jos haluat myös nuolen/ikonin väriä hallita (vain modernit selaimet) */
 select {
-  accent-color: var(--signal);
+    accent-color: var(--tile-red);
 }
-
-/* Tekstin valintavärin muokkaus */
 ::selection {
-  background: var(--signal);
-  color: #fff;
-  /* Tekstin väri valinnan aikana */
+    background: var(--tile-red);
+    color: #fff;
 }
-
-/* Firefox tarvitsee oman version */
 ::-moz-selection {
-  background: var(--signal);
-  color: var(--paper);
+    background: var(--tile-red);
+    color: var(--beige);
 }
-
-/* Kohdistetaan favicon ja teksti keskelle */
 .link-list a {
-  display: inline-flex;
-  /* Kuvake ja teksti vierekkäin */
-  align-items: center;
-  /* Pystysuora keskitys */
-  gap: 0.5rem;
-  /* Väli ikonille ja tekstille */
-  line-height: 1.4;
-  /* Vähän tilaa tekstin ympärille */
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    line-height: 1.4;
 }
-
-/* Varmistetaan, että favicon ei veny */
 .link-list a img.favicon {
-  display: block;
-  width: 24px;
-  height: 24px;
+    display: block;
+    width: 24px;
+    height: 24px;
 }
-
-
 .slide {
-  flex: 0 0 100%;
+    flex: 0 0 100%;
 }
-
 .slide img {
-  width: 100%;
-  display: block;
+    width: 100%;
+    display: block;
 }
-
 #carousel {
-  overflow: hidden;
-  position: relative;
+    overflow: hidden;
+    position: relative;
 }
-
 #carousel .track {
-  display: flex;
-  transition: transform 0.6s ease;
-  /* sulava vaihto */
-  will-change: transform;
+    display: flex;
+    transition: transform 0.6s ease;
+    will-change: transform;
 }
-
 #carousel .slide {
-  flex: 0 0 100%;
-  /* yksi kuva täyttää näkymän */
+    flex: 0 0 100%;
 }
-
 #carousel .slide img {
-  display: block;
-  width: 100%;
-  /*! height: auto; */
+    display: block;
+    width: 100%;
 }
-
 #carousel {
-  overflow: hidden;
-  position: relative;
+    overflow: hidden;
+    position: relative;
 }
-
 #carousel .track {
-  display: flex;
-  transition: transform 0.6s ease;
-  will-change: transform;
+    display: flex;
+    transition: transform 0.6s ease;
+    will-change: transform;
 }
-
 #carousel .slide {
-  flex: 0 0 100%;
+    flex: 0 0 100%;
 }
-
 #carousel .slide img {
-  display: block;
-  width: 100%;
-  /*! height: auto; */
-  max-width: var(--bg-max-width);
-  align-self: center;
-  margin-left: auto;
-  margin-right: auto;
+    display: block;
+    width: 100%;
+    max-width: var(--bg-max-width);
+    align-self: center;
+    margin-left: auto;
+    margin-right: auto;
 }
-
 p.lead {
-  margin-bottom: 1rem;
-  /*! text-shadow: 0px 0px 3px #fff; */
-  color: var(--shadow);
-  /*! background: var(--paper); */
-  padding: 1em;
-  /*! max-width: 950px; */
-  /*! margin-left: auto; */
-  /*! margin-right: auto; */
-  /*! box-shadow: var(--box-shadow); */
-  /*! border-radius: 0.5em; */
-  text-align: center;
-  font-weight: bold;
+    margin-bottom: 1rem;
+    color: var(--dark-gray);
+    padding: 1em;
+    text-align: center;
+    /*! font-weight: bold; */
+    /*! font-size: 18px; */
 }
-
-
 .btns {
-  display: flex;
-  justify-content: center;
-  /* vaakasuuntaan keskelle */
-  gap: 1rem;
-  /* väli painikkeiden väliin */
-  flex-wrap: wrap;
-  /* rivittyy pienillä näytöillä */
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    flex-wrap: wrap;
 }
-
 p {
-  text-align: center;
+    text-align: center;
+    font-size: 18px;
 }
-
 .content li {
-  text-align: center;
-  padding:0.5em;
-  
+    text-align: center;
+    padding: 0.5em;
 }
-
 .content li a {
-  background-color: var(--signal);
-  width: 22em;
-  padding:0.5em;
-  border-radius: 0.5em;
-  color: var(--paper);
-  transition: background-color 0.15s ease, transform 0.1s ease, box-shadow 0.1s ease;
+    background-color: var(--tile-red);
+    width: 22em;
+    padding: 0.5em;
+    border-radius: 0.5em;
+    color: var(--beige);
+    transition: background-color 0.15s ease, transform 0.1s ease, box-shadow 0.1s ease;
 }
 .content li a:hover {
-  background-color: var(--shadow);
+    background-color: var(--dark-gray);
 }
-
 .content li a span {
-  margin-left: auto;
-  margin-right: auto;
+    margin-left: auto;
+    margin-right: auto;
 }
-
-
-
 #back-to-top-btn {
-  position: fixed;
-  right: 1.2rem;
-  bottom: 1.2rem;
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
-  background-color: var(--shadow);
-  color: #fff;
-  border: none;
-  cursor: pointer;
-  font-size: 1.5rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: var(--box-shadow);
-  opacity: 0;
-  visibility: hidden;
-  z-index: 9999;
-  transition:
-    opacity 0.3s ease,
-    visibility 0.3s ease,
-    background-color 0.2s ease,
-    transform 0.15s ease,
-    box-shadow 0.1s ease;
+    position: fixed;
+    right: 1.2rem;
+    bottom: 1.2rem;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background-color: var(--warm-beige);
+    color: var(--dark-gray);
+    border: none;
+    cursor: pointer;
+    font-size: 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: var(--box-shadow);
+    opacity: 0;
+    visibility: hidden;
+    z-index: 9999;
+    transition: opacity 0.3s ease, visibility 0.3s ease, background-color 0.2s ease, transform 0.15s ease, box-shadow 0.1s ease;
 }
-
 #back-to-top-btn:hover {
-  background-color: var(--signal) !important;
-  transition:
-    opacity 0.3s ease,
-    visibility 0.3s ease,
-    background-color 0.2s ease,
-    transform 0.15s ease,
-    box-shadow 0.1s ease;
+    background-color: var(--tile-red) !important;
+    transition: opacity 0.3s ease, visibility 0.3s ease, background-color 0.2s ease, transform 0.15s ease, box-shadow 0.1s ease;
 }
-/* =========================================================
-   STABIILI COVER-TAUSTA (lvw/lvh) + KORJAUKSET
-   ========================================================= */
-/* Jos --bg puuttuu, ota paperi taustaksi (ei muuta brändiä) */
-:root { --bg: var(--paper); }
-
-/* Nollaa aiemmat page-bg-taustat; käytämme vain ::before-kerrosta */
+:root {
+    --bg: var(--beige);
+}
 #page-bg {
-  position: fixed;
-  inset: 0;
-  z-index: 0;
-  pointer-events: none;
-  background: none;
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background: none;
 }
-
-/* Lukittu cover-tausta: yläreuna kiinni, vaakasuunnassa keskellä */
 #page-bg::before {
-  content: "";
-  position: fixed;
-  top: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 120lvw;              /* overscan mobiilin kromi-vaihteluihin */
-  height: 120lvh;
-  z-index: -1;
-  background-image: url("./assets/bg1.avif");
-  background-repeat: no-repeat;
-  background-position: center top;   /* mobiilissa EI rullaa */
-  background-size: cover;
-  will-change: transform;
-}
-
-
-/* Fallback ilman lvh/lvw-tukea */
-@supports not (height: 100lvh) {
-  #page-bg::before {
-    width: 120vw;
-    height: 120vh;
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 120lvw;
+    height: 120lvh;
+    z-index: -1;
+    background-image: url("./assets/bg1.avif");
+    background-repeat: no-repeat;
     background-position: center top;
     background-size: cover;
-  }
+    will-change: transform;
 }
-
+@supports not (height: 100lvh) {
+    #page-bg::before {
+        width: 120vw;
+        height: 120vh;
+        background-position: center top;
+        background-size: cover;
+    }
+}
 @media (hover: hover) and (pointer: fine) {
-  #page-bg::before {
-    /* halutessasi voi keventää overscanin desktopissa */
-    width: 100vw;
-    height: 100vh;
-    transform: translateX(-50%); /* säilytä vaakakeskitys */
-    background-position: center var(--bg-pos, 0%); /* rullaa */
-  }
+    #page-bg::before {
+        width: 100vw;
+        height: 100vh;
+        transform: translateX(-50%);
+        background-position: center var(--bg-pos, 0%);
+    }
 }
-/* ---------------------------------------------------------
-   Osioiden korkeudet: poista svh-lukitus ja käytä lvh:ta
-   --------------------------------------------------------- */
-.hero,
-section.tenants.container,
-section.hours.container,
-.cta.container,
 .about.container,
+.community.container,
+.cta.container,
 .heritage.container,
+.hero,
 .location.container,
-.community.container {
-  height: auto !important;   /* kumoaa aiemman height:100svh */
-  min-height: 100lvh;        /* mitoita suurimman viewportin mukaan */
+section.hours.container,
+section.tenants.container {
+    height: auto !important;
+    min-height: 100lvh;
 }
-
-/* Pienet vakausparannukset (ei sivun lukitusta) */
-html, body {
-  overscroll-behavior: none;
-  background: var(--bg);
+body,
+html {
+    overscroll-behavior: none;
+    background: var(--bg);
 }
-
 .logo-grid .tenant img {
-  /* piilotetaan alkuperäinen valkoinen kuva "maskiksi" */
-  filter: brightness(0) invert(1); /* muutetaan se maskattavaksi */
-  -webkit-mask-image: url("./assets/logot/omasp_logo.avif");
-  -webkit-mask-repeat: no-repeat;
-  -webkit-mask-position: center;
-  -webkit-mask-size: contain;
-  mask-image: url("./assets/logot/omasp_logo.avif");
-  mask-repeat: no-repeat;
-  mask-position: center;
-  mask-size: contain;
-
-  background-color: var(--paper); /* väri tulee tästä */
-  width: 150px; /* säädä koko */
-  height: 100px; /* säädä koko */
+    filter: brightness(0) invert(1);
+    -webkit-mask-image: url("./assets/logot/omasp_logo.avif");
+    -webkit-mask-repeat: no-repeat;
+    -webkit-mask-position: center;
+    -webkit-mask-size: contain;
+    mask-image: url("./assets/logot/omasp_logo.avif");
+    mask-repeat: no-repeat;
+    mask-position: center;
+    mask-size: contain;
+    background-color: var(--beige);
+    width: 150px;
+    height: 100px;
 }
-/* Esimerkki: tee span.logo:sta maski ja täytä se var(--paper)-värillä */
 .tenant .logo {
-  display: inline-block;
-  width: 160px;            /* säädä tarpeen mukaan */
-  height: 90px;            /* säädä tarpeen mukaan */
-  background-color: var(--paper);
-  -webkit-mask-image: var(--logo);
-  -webkit-mask-repeat: no-repeat;
-  -webkit-mask-position: center;
-  -webkit-mask-size: contain;
-  mask-image: var(--logo);
-  mask-repeat: no-repeat;
-  mask-position: center;
-  mask-size: contain;
+    display: inline-block;
+    width: 160px;
+    height: 90px;
+    background-color: var(--beige);
+    -webkit-mask-image: var(--logo);
+    -webkit-mask-repeat: no-repeat;
+    -webkit-mask-position: center;
+    -webkit-mask-size: contain;
+    mask-image: var(--logo);
+    mask-repeat: no-repeat;
+    mask-position: center;
+    mask-size: contain;
 }
