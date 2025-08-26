@@ -1040,8 +1040,6 @@ section.hero.container>#carousel {
     overflow: hidden;
 }
 
-
-
 @media (max-width: 440px) {
     .carousel {
         position: relative;
