@@ -135,138 +135,137 @@
     });
   }
 
-function initCarouselAndYear() {
-  const y = document.getElementById("year");
-  if (y) y.textContent = new Date().getFullYear();
-}
-
-// GLOBAALI karuselli (ei jää odottamaan laiskoja kuvia)
-window.initBannerCarousel = async function initBannerCarousel() {
-  const viewport = document.getElementById('carousel');
-  if (!viewport) return;
-
-  if (viewport.dataset._carouselInit === '1') return;
-  viewport.dataset._carouselInit = '1';
-
-  if (viewport._timer) { clearInterval(viewport._timer); viewport._timer = null; }
-
-  // Päätä assets-peruspolku: yritä juurta, muuten suhteellinen
-  async function pickBase() {
-    const tryHead = async (p) => {
-      try { const r = await fetch(p + 'banner_1.avif', { method: 'HEAD', credentials: 'same-origin' }); return r.ok; }
-      catch { return false; }
-    };
-    if (await tryHead('/assets/')) return '/assets/';
-    return './assets/';
+  function initCarouselAndYear() {
+    const y = document.getElementById("year");
+    if (y) y.textContent = new Date().getFullYear();
   }
-  const ASSETS = await pickBase();
 
-  // 1) Kerää bannerit
-  let files = [];
-  try {
-    const res = await fetch(ASSETS, { credentials: 'same-origin' });
-    const html = await res.text();
-    const rx = /\bbanner_?(\d+)\.(svg|png|jpe?g|webp|avif)\b/gi;
-    for (const m of html.matchAll(rx)) files.push({ file: m[0], n: parseInt(m[1], 10) });
-  } catch { /* ei listaa -> fallback */ }
+  // GLOBAALI karuselli (ei jää odottamaan laiskoja kuvia)
+  window.initBannerCarousel = async function initBannerCarousel() {
+    const viewport = document.getElementById('carousel');
+    if (!viewport) return;
 
-  if (!files.length) {
-    const exts = ['webp','jpg','jpeg','png','svg', 'avif'];
-    const probe = (src) => new Promise(res => { const i = new Image(); i.onload = () => res(true); i.onerror = () => res(false); i.src = src; });
-    for (let i = 1; i <= 50; i++) {
-      let pick = null;
-      for (const ext of exts) {
-        // eslint-disable-next-line no-await-in-loop
-        if (await probe(`${ASSETS}banner_${i}.${ext}`)) { pick = `banner_${i}.${ext}`; break; }
-        // eslint-disable-next-line no-await-in-loop
-        if (await probe(`${ASSETS}banner${i}.${ext}`))  { pick = `banner${i}.${ext}`;  break; }
-      }
-      if (pick) files.push({ file: pick, n: i });
+    if (viewport.dataset._carouselInit === '1') return;
+    viewport.dataset._carouselInit = '1';
+
+    if (viewport._timer) { clearInterval(viewport._timer); viewport._timer = null; }
+
+    // Päätä assets-peruspolku: yritä juurta, muuten suhteellinen
+    async function pickBase() {
+      const tryHead = async (p) => {
+        try { const r = await fetch(p + 'banner_1.avif', { method: 'HEAD', credentials: 'same-origin' }); return r.ok; }
+        catch { return false; }
+      };
+      if (await tryHead('/assets/')) return '/assets/';
+      return './assets/';
     }
-  }
-  if (!files.length) return;
+    const ASSETS = await pickBase();
 
-  // 2) Deduplikoi (prioriteetti: webp > jpg > png > svg)
-  const pref = ['webp','jpg','jpeg','png','svg', 'avif'];
-  const byN = new Map();
-  for (const f of files) {
-    const ext = f.file.split('.').pop().toLowerCase();
-    const cur = byN.get(f.n);
-    if (!cur) byN.set(f.n, { file: f.file, n: f.n, ext });
-    else if (pref.indexOf(ext) < pref.indexOf(cur.ext)) byN.set(f.n, { file: f.file, n: f.n, ext });
-  }
-  files = Array.from(byN.values()).sort((a,b)=>a.n-b.n);
+    // 1) Kerää bannerit
+    let files = [];
+    try {
+      const res = await fetch(ASSETS, { credentials: 'same-origin' });
+      const html = await res.text();
+      const rx = /\bbanner_?(\d+)\.(svg|png|jpe?g|webp|avif)\b/gi;
+      for (const m of html.matchAll(rx)) files.push({ file: m[0], n: parseInt(m[1], 10) });
+    } catch { /* ei listaa -> fallback */ }
 
-  // 3) Rakenna DOM
-  viewport.innerHTML = '';
-  const track = document.createElement('div');
-  track.className = 'track';
-  track.style.display = 'flex';
-  track.style.transition = 'transform 0.6s ease';
-  track.style.willChange = 'transform';
-  viewport.style.overflow = 'hidden';
-  viewport.appendChild(track);
+    if (!files.length) {
+      const exts = ['webp', 'jpg', 'jpeg', 'png', 'svg', 'avif'];
+      const probe = (src) => new Promise(res => { const i = new Image(); i.onload = () => res(true); i.onerror = () => res(false); i.src = src; });
+      for (let i = 1; i <= 50; i++) {
+        let pick = null;
+        for (const ext of exts) {
+          // eslint-disable-next-line no-await-in-loop
+          if (await probe(`${ASSETS}banner_${i}.${ext}`)) { pick = `banner_${i}.${ext}`; break; }
+          // eslint-disable-next-line no-await-in-loop
+          if (await probe(`${ASSETS}banner${i}.${ext}`)) { pick = `banner${i}.${ext}`; break; }
+        }
+        if (pick) files.push({ file: pick, n: i });
+      }
+    }
+    if (!files.length) return;
 
-  files.forEach(({ file }, idx) => {
-    const a = document.createElement('a');
-    a.className = 'slide';
-    a.href = '#';
-    a.style.flex = '0 0 100%';
+    // 2) Deduplikoi (prioriteetti: webp > jpg > png > svg)
+    const pref = ['webp', 'jpg', 'jpeg', 'png', 'svg', 'avif'];
+    const byN = new Map();
+    for (const f of files) {
+      const ext = f.file.split('.').pop().toLowerCase();
+      const cur = byN.get(f.n);
+      if (!cur) byN.set(f.n, { file: f.file, n: f.n, ext });
+      else if (pref.indexOf(ext) < pref.indexOf(cur.ext)) byN.set(f.n, { file: f.file, n: f.n, ext });
+    }
+    files = Array.from(byN.values()).sort((a, b) => a.n - b.n);
 
-    const img = document.createElement('img');
-    img.src = `${ASSETS}${file}`;
-    img.alt = `Banneri ${file}`;
-    img.decoding = 'async';
-    // TÄRKEÄ: ei laiskaa latausta karusellissa
-    img.loading = 'eager';
-    img.style.width = '100%';
-    img.style.display = 'block';
+    // 3) Rakenna DOM
+    viewport.innerHTML = '';
+    const track = document.createElement('div');
+    track.className = 'track';
+    track.style.display = 'flex';
+    track.style.transition = 'transform 0.6s ease';
+    track.style.willChange = 'transform';
+    viewport.style.overflow = 'hidden';
+    viewport.appendChild(track);
 
-    // Pieni prefetch varalta
-    if (idx === 0) img.fetchPriority = 'high';
+    files.forEach(({ file }, idx) => {
+      const a = document.createElement('a');
+      a.className = 'slide';
+      a.href = '#';
+      a.style.flex = '0 0 100%';
 
-    a.appendChild(img);
-    track.appendChild(a);
-  });
+      const img = document.createElement('img');
+      img.src = `${ASSETS}${file}`;
+      img.alt = `Banneri ${file}`;
+      img.decoding = 'async';
+      // TÄRKEÄ: ei laiskaa latausta karusellissa
+      img.loading = 'eager';
+      img.style.width = '100%';
+      img.style.display = 'block';
 
-  // 4) Odota vain ensimmäinen kuva valmiiksi -> starttaa heti
-  const firstImg = track.querySelector('img');
-  if (firstImg && !firstImg.complete) {
-    await new Promise(r => { firstImg.onload = firstImg.onerror = r; });
-  }
+      // Pieni prefetch varalta
+      if (idx === 0) img.fetchPriority = 'high';
 
-  // 5) Vaihtologiikka
-  let index = 0;
-  const total = files.length;
-  const DURATION_MS = 5000;
+      a.appendChild(img);
+      track.appendChild(a);
+    });
 
-  const show = (i) => {
-    index = (i + total) % total;
-    track.style.transform = `translateX(${-index * 100}%)`;
-  };
+    // 4) Odota vain ensimmäinen kuva valmiiksi -> starttaa heti
+    const firstImg = track.querySelector('img');
+    if (firstImg && !firstImg.complete) {
+      await new Promise(r => { firstImg.onload = firstImg.onerror = r; });
+    }
 
-  show(0);
+    // 5) Vaihtologiikka
+    let index = 0;
+    const total = files.length;
+    const DURATION_MS = 5000;
 
-  if (total >= 2) {
-    viewport._timer = setInterval(() => show(index + 1), DURATION_MS);
-  }
+    const show = (i) => {
+      index = (i + total) % total;
+      track.style.transform = `translateX(${-index * 100}%)`;
+    };
 
-  // pysäytä/piirrä uudelleen näkyvyyden mukaan
-  const onVisibility = () => {
-    if (document.hidden && viewport._timer) { clearInterval(viewport._timer); viewport._timer = null; }
-    else if (!document.hidden && total >= 2 && !viewport._timer) {
+    show(0);
+
+    if (total >= 2) {
       viewport._timer = setInterval(() => show(index + 1), DURATION_MS);
     }
+
+    // pysäytä/piirrä uudelleen näkyvyyden mukaan
+    const onVisibility = () => {
+      if (document.hidden && viewport._timer) { clearInterval(viewport._timer); viewport._timer = null; }
+      else if (!document.hidden && total >= 2 && !viewport._timer) {
+        viewport._timer = setInterval(() => show(index + 1), DURATION_MS);
+      }
+    };
+    document.addEventListener('visibilitychange', onVisibility);
+
+    window.addEventListener('pjax:navigated', () => {
+      document.removeEventListener('visibilitychange', onVisibility);
+      if (viewport._timer) { clearInterval(viewport._timer); viewport._timer = null; }
+      delete viewport.dataset._carouselInit;
+    }, { once: true });
   };
-  document.addEventListener('visibilitychange', onVisibility);
-
-  window.addEventListener('pjax:navigated', () => {
-    document.removeEventListener('visibilitychange', onVisibility);
-    if (viewport._timer) { clearInterval(viewport._timer); viewport._timer = null; }
-    delete viewport.dataset._carouselInit;
-  }, { once: true });
-};
-
 
   // --- #hash <-> section synkka ----------------------------------------------
   // Päivitykset:
@@ -311,26 +310,26 @@ window.initBannerCarousel = async function initBannerCarousel() {
     return Math.max(0, Math.round(h));
   }
 
-function smoothScrollTo(el, opts = {}) {
-  if (!el) return;
+  function smoothScrollTo(el, opts = {}) {
+    if (!el) return;
 
-  const html = document.documentElement;
-  html.classList.add('scrolling-by-script'); // estä headerin piilotus rullatessa
+    const html = document.documentElement;
+    html.classList.add('scrolling-by-script'); // estä headerin piilotus rullatessa
 
-  const scrollEl = document.scrollingElement || document.documentElement;
-  const headerPx = headerOffsetPx();
-  const yNow = scrollEl.scrollTop || window.scrollY || 0;
+    const scrollEl = document.scrollingElement || document.documentElement;
+    const headerPx = headerOffsetPx();
+    const yNow = scrollEl.scrollTop || window.scrollY || 0;
 
-  // Lasketaan tavoite ja rajataan selailtavaan alueeseen
-  const rawTarget = yNow + el.getBoundingClientRect().top - headerPx - 8;
-  const max = Math.max(0, scrollEl.scrollHeight - scrollEl.clientHeight);
-  const target = Math.min(Math.max(0, Math.round(rawTarget)), max);
+    // Lasketaan tavoite ja rajataan selailtavaan alueeseen
+    const rawTarget = yNow + el.getBoundingClientRect().top - headerPx - 8;
+    const max = Math.max(0, scrollEl.scrollHeight - scrollEl.clientHeight);
+    const target = Math.min(Math.max(0, Math.round(rawTarget)), max);
 
-  window.scrollTo({ top: target, behavior: opts.behavior || "smooth" });
+    window.scrollTo({ top: target, behavior: opts.behavior || "smooth" });
 
-  // Poista lippu pian (riittää kun animaatio on päättynyt)
-  setTimeout(() => html.classList.remove('scrolling-by-script'), 800);
-}
+    // Poista lippu pian (riittää kun animaatio on päättynyt)
+    setTimeout(() => html.classList.remove('scrolling-by-script'), 800);
+  }
 
 
   function findSectionByHash(hash) {
@@ -357,131 +356,131 @@ function smoothScrollTo(el, opts = {}) {
     lastHash = finalSlug || null;
     history.replaceState(history.state || { href: url.href }, "", url.href);
   }
-let sectionTopLineDetach = null;
-function initSectionHashSync() {
-  // Pysäytä aiemmat tarkkailijat/kuuntelijat
-  if (sectionObserver) { sectionObserver.disconnect(); sectionObserver = null; }
-  if (typeof sectionTopLineDetach === "function") { sectionTopLineDetach(); sectionTopLineDetach = null; }
+  let sectionTopLineDetach = null;
+  function initSectionHashSync() {
+    // Pysäytä aiemmat tarkkailijat/kuuntelijat
+    if (sectionObserver) { sectionObserver.disconnect(); sectionObserver = null; }
+    if (typeof sectionTopLineDetach === "function") { sectionTopLineDetach(); sectionTopLineDetach = null; }
 
-  const sections = Array.from(document.querySelectorAll("main section"));
-  if (!sections.length) return;
+    const sections = Array.from(document.querySelectorAll("main section"));
+    if (!sections.length) return;
 
-  // Kokoa slugit
-  const withSlug = sections
-    .map((s) => ({ el: s, slug: getSectionSlug(s) }))
-    .filter((x) => !!x.slug);
+    // Kokoa slugit
+    const withSlug = sections
+      .map((s) => ({ el: s, slug: getSectionSlug(s) }))
+      .filter((x) => !!x.slug);
 
-  if (!withSlug.length) return;
+    if (!withSlug.length) return;
 
-  lastHash = location.hash.replace(/^#/, "") || null;
+    lastHash = location.hash.replace(/^#/, "") || null;
 
-  // Yläreunaviiva = header-offset + 1px
-  const topLineY = () => Math.round(headerOffsetPx()) + 1;
+    // Yläreunaviiva = header-offset + 1px
+    const topLineY = () => Math.round(headerOffsetPx()) + 1;
 
-  let raf = 0;
-  const recompute = () => {
-    raf = 0;
-    const y = topLineY();
+    let raf = 0;
+    const recompute = () => {
+      raf = 0;
+      const y = topLineY();
 
-    // Etsi osio, jonka sisällä yläreuna on
-    let current = null;
-    for (const { el, slug } of withSlug) {
-      const r = el.getBoundingClientRect();
-      if (r.top <= y && r.bottom > y) {
-        if (!NO_HASH_SECTIONS.has(slug)) current = slug;
-        break;
+      // Etsi osio, jonka sisällä yläreuna on
+      let current = null;
+      for (const { el, slug } of withSlug) {
+        const r = el.getBoundingClientRect();
+        if (r.top <= y && r.bottom > y) {
+          if (!NO_HASH_SECTIONS.has(slug)) current = slug;
+          break;
+        }
       }
-    }
 
-    // Päivitä hash vain jos muuttuu ja sallittu; muuten tyhjennä
-    if (current) updateHash(current);
-    else updateHash("");
-  };
+      // Päivitä hash vain jos muuttuu ja sallittu; muuten tyhjennä
+      if (current) updateHash(current);
+      else updateHash("");
+    };
 
-  const onScroll = () => { if (!raf) raf = requestAnimationFrame(recompute); };
+    const onScroll = () => { if (!raf) raf = requestAnimationFrame(recompute); };
 
-  window.addEventListener("scroll", onScroll, { passive: true });
-  window.addEventListener("resize", onScroll);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll);
 
-  // Mahdollista irrotus myöhemmin
-  sectionTopLineDetach = () => {
-    window.removeEventListener("scroll", onScroll);
-    window.removeEventListener("resize", onScroll);
-  };
+    // Mahdollista irrotus myöhemmin
+    sectionTopLineDetach = () => {
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+    };
 
-  // Alkusynkka: anna layoutin asettua
-  requestAnimationFrame(() => { onScroll(); });
-}
-function scrollToHash(hash, opts = {}) {
-  const target = findSectionByHash(hash);
-  if (!target) return;
+    // Alkusynkka: anna layoutin asettua
+    requestAnimationFrame(() => { onScroll(); });
+  }
+  function scrollToHash(hash, opts = {}) {
+    const target = findSectionByHash(hash);
+    if (!target) return;
 
-  // Rullaa pehmeästi osion alkuun header-offset huomioiden
-  smoothScrollTo(target, opts);
+    // Rullaa pehmeästi osion alkuun header-offset huomioiden
+    smoothScrollTo(target, opts);
 
-  // ÄLÄ päivitä hashia tässä – se päivittyy kun yläreuna on osion sisällä
-  // initSectionHashSync:n scroll-kuuntelija hoitaa muutoksen.
-}
+    // ÄLÄ päivitä hashia tässä – se päivittyy kun yläreuna on osion sisällä
+    // initSectionHashSync:n scroll-kuuntelija hoitaa muutoksen.
+  }
 
   // Delegoitu pehmeä rullaus ankkureille koko dokumentissa
-function initInPageAnchorScrolling() {
-  document.removeEventListener("click", onDocumentClickForAnchors);
-  document.addEventListener("click", onDocumentClickForAnchors);
-}
-
-function onDocumentClickForAnchors(e) {
-  // Kaikki linkit, joissa on # – myös ./#id ja /polku/#id
-  const a = e.target.closest('a[href*="#"]');
-  if (!a) return;
-
-  const raw = a.getAttribute("href") || "";
-  // Älä estä, jos target on uusi välilehti
-  if (a.target === "_blank") return;
-
-  // Parsitaan URL turvallisesti nykyosoitteeseen perustuen
-  let url;
-  try { url = new URL(raw, location.href); } catch { return; }
-
-  const hash = (url.hash || "").replace(/^#/, "");
-  if (!hash) return;
-
-  // Vain saman dokumentin sisäiset ankkurit: sama origin + polku
-  if (url.origin === location.origin && url.pathname === location.pathname) {
-    e.preventDefault();
-    // Pehmeä rullaus header-offset huomioiden (päivitetty smoothScrollTo hoitaa tämän)
-    scrollToHash(hash, { behavior: "smooth" });
+  function initInPageAnchorScrolling() {
+    document.removeEventListener("click", onDocumentClickForAnchors);
+    document.addEventListener("click", onDocumentClickForAnchors);
   }
-  // Muuten anna mennä normaalisti (esim. toisen sivun ankkuri)
-}
+
+  function onDocumentClickForAnchors(e) {
+    // Kaikki linkit, joissa on # – myös ./#id ja /polku/#id
+    const a = e.target.closest('a[href*="#"]');
+    if (!a) return;
+
+    const raw = a.getAttribute("href") || "";
+    // Älä estä, jos target on uusi välilehti
+    if (a.target === "_blank") return;
+
+    // Parsitaan URL turvallisesti nykyosoitteeseen perustuen
+    let url;
+    try { url = new URL(raw, location.href); } catch { return; }
+
+    const hash = (url.hash || "").replace(/^#/, "");
+    if (!hash) return;
+
+    // Vain saman dokumentin sisäiset ankkurit: sama origin + polku
+    if (url.origin === location.origin && url.pathname === location.pathname) {
+      e.preventDefault();
+      // Pehmeä rullaus header-offset huomioiden (päivitetty smoothScrollTo hoitaa tämän)
+      scrollToHash(hash, { behavior: "smooth" });
+    }
+    // Muuten anna mennä normaalisti (esim. toisen sivun ankkuri)
+  }
 
 
 
   // --- bootstrap: yksi selkeä onDomReady ------------------------------------
-async function onDomReady() {
-  const headerEl = document.getElementById("site-header");
-  const footerEl = document.getElementById("site-footer");
-  if (headerEl) await loadPartial(headerEl, headerEl.dataset.partial || "/partials/header.html", "header");
-  if (footerEl) await loadPartial(footerEl, footerEl.dataset.partial || "/partials/footer.html", "footer");
+  async function onDomReady() {
+    const headerEl = document.getElementById("site-header");
+    const footerEl = document.getElementById("site-footer");
+    if (headerEl) await loadPartial(headerEl, headerEl.dataset.partial || "/partials/header.html", "header");
+    if (footerEl) await loadPartial(footerEl, footerEl.dataset.partial || "/partials/footer.html", "footer");
 
-  // Käynnistä hamburger myös alkuperäiseen DOMiin
-  if (typeof window.initHamburgerMenu === "function") window.initHamburgerMenu();
+    // Käynnistä hamburger myös alkuperäiseen DOMiin
+    if (typeof window.initHamburgerMenu === "function") window.initHamburgerMenu();
 
-  setActiveNav(location.pathname);
-  initCarouselAndYear();
+    setActiveNav(location.pathname);
+    initCarouselAndYear();
 
-  // Karuselli: käytä GLOBAALIA funktiota
-  if (typeof window.initBannerCarousel === 'function') {
-    await window.initBannerCarousel();
+    // Karuselli: käytä GLOBAALIA funktiota
+    if (typeof window.initBannerCarousel === 'function') {
+      await window.initBannerCarousel();
+    }
+
+    initSectionHashSync();
+    initInPageAnchorScrolling();
+
+    const initialHash = location.hash.replace(/^#/, "");
+    if (initialHash) {
+      requestAnimationFrame(() => scrollToHash(initialHash, { behavior: "smooth" }));
+    }
   }
-
-  initSectionHashSync();
-  initInPageAnchorScrolling();
-
-  const initialHash = location.hash.replace(/^#/, "");
-  if (initialHash) {
-    requestAnimationFrame(() => scrollToHash(initialHash, { behavior: "smooth" }));
-  }
-}
 
 
   document.addEventListener("DOMContentLoaded", onDomReady);
@@ -573,24 +572,24 @@ async function onDomReady() {
     raf = 0;
   }
 
-  function onScroll() { 
-    if (raf) return; 
-    raf = requestAnimationFrame(update); 
+  function onScroll() {
+    if (raf) return;
+    raf = requestAnimationFrame(update);
   }
 
   // Yritä löytää header heti ja partialin valmistuttua
   ensureHeader();
   window.addEventListener("partial:loaded", (e) => {
-    if (e.detail?.key === "header") { 
-      header = null; 
-      started = false; 
-      ensureHeader(); 
+    if (e.detail?.key === "header") {
+      header = null;
+      started = false;
+      ensureHeader();
     }
   });
   // PJAXin jälkeen nollaa tila ja yritä uudelleen
   window.addEventListener("pjax:navigated", () => {
     lastY = el.scrollTop || 0;
-    header = null; 
+    header = null;
     started = false;
     ensureHeader();
     requestAnimationFrame(update);
