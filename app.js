@@ -166,14 +166,14 @@
     try {
       const res = await fetch(ASSETS, { credentials: 'same-origin' });
       const html = await res.text();
-      const rx = /\bbanner_?(\d+)\.(svg|png|jpe?g|webp|avif)\b/gi;
+      const rx = /\bbanner_?(\d+)\.(svg|avif)\b/gi;
       for (const m of html.matchAll(rx)) files.push({ file: m[0], n: parseInt(m[1], 10) });
     } catch { /* ei listaa -> fallback */ }
 
     if (!files.length) {
       const exts = ['webp', 'jpg', 'jpeg', 'png', 'svg', 'avif'];
       const probe = (src) => new Promise(res => { const i = new Image(); i.onload = () => res(true); i.onerror = () => res(false); i.src = src; });
-      for (let i = 1; i <= 50; i++) {
+      for (let i = 1; i <= 4; i++) {
         let pick = null;
         for (const ext of exts) {
           // eslint-disable-next-line no-await-in-loop
