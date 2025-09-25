@@ -1007,3 +1007,188 @@
   });
 })();
 
+/* Klikattava kuvan suurennus (lightbox) about-osiolle – korjattu versio */
+(function initAboutMediaLightbox() {
+  const root = document.documentElement;
+  if (root.dataset._aboutLightboxInit === '1') return;
+  root.dataset._aboutLightboxInit = '1';
+
+  // -------- helpers ----------
+  function lockScroll(lock) {
+    document.documentElement.classList.toggle('no-scroll', !!lock);
+    document.body.style.overflow = lock ? 'hidden' : '';
+  }
+  function fitContain(nw, nh, maxW, maxH) {
+    const r = Math.min(maxW / nw, maxH / nh, 1);
+    return { w: Math.round(nw * r), h: Math.round(nh * r) };
+  }
+  function viewportBox(padX = 32, padY = 32) {
+    const vw = Math.max(320, window.innerWidth || document.documentElement.clientWidth || 0);
+    const vh = Math.max(320, window.innerHeight || document.documentElement.clientHeight || 0);
+    return { maxW: vw - padX * 2, maxH: vh - padY * 2 };
+  }
+
+  // -------- overlay rakentaja ----------
+  function ensureOverlay() {
+    let overlay = document.getElementById('about-media-lightbox');
+    if (overlay) return overlay;
+
+    overlay = document.createElement('div');
+    overlay.id = 'about-media-lightbox';
+    overlay.setAttribute('role', 'dialog');
+    overlay.setAttribute('aria-modal', 'true');
+    overlay.setAttribute('aria-label', 'Kuvan esikatselu');
+
+    Object.assign(overlay.style, {
+      position: 'fixed',
+      inset: '0',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      background: 'rgba(0,0,0,.75)',
+      padding: 'min(4vh,32px) min(4vw,32px)',
+      zIndex: '2147483647',
+      opacity: '0',
+      visibility: 'hidden',
+      transition: 'opacity .18s ease, visibility 0s linear .18s'
+    });
+
+    const figure = document.createElement('figure');
+    Object.assign(figure.style, {
+      margin: 0,
+      position: 'relative',
+      borderRadius: '12px',
+      overflow: 'hidden',
+      background: '#111',
+      boxShadow: '0 10px 40px rgba(0,0,0,.45)'
+    });
+
+    const img = document.createElement('img');
+    img.id = 'about-media-lightbox-img';
+    img.alt = '';
+    Object.assign(img.style, {
+      display: 'block',
+      width: 'auto',
+      height: 'auto',
+      maxWidth: '100%',
+      maxHeight: '100%',
+      objectFit: 'contain'
+    });
+
+    const closeBtn = document.createElement('button');
+    closeBtn.id = 'about-media-lightbox-close';
+    closeBtn.type = 'button';
+    closeBtn.setAttribute('aria-label', 'Sulje kuva');
+    closeBtn.innerHTML = '✕';
+    Object.assign(closeBtn.style, {
+      position: 'absolute',
+      top: '8px',
+      right: '8px',
+      lineHeight: 1,
+      fontSize: '20px',
+      border: 0,
+      borderRadius: '999px',
+      padding: '8px 10px',
+      cursor: 'pointer',
+      background: 'rgba(255,255,255,.92)'
+    });
+
+    figure.appendChild(img);
+    figure.appendChild(closeBtn);
+    overlay.appendChild(figure);
+    document.body.appendChild(overlay);
+    return overlay;
+  }
+
+  let lastFocus = null;
+
+  async function openLightbox(src, alt) {
+    const overlay = ensureOverlay();
+    const img = overlay.querySelector('#about-media-lightbox-img');
+
+    // Preloadaa ja decode ennen näyttöä -> ei vilkkuvaa alt-tekstiä
+    const probe = new Image();
+    probe.src = src;
+    try { await (probe.decode ? probe.decode() : new Promise(r => { probe.onload = r; probe.onerror = r; })); }
+    catch { /* jatketaan silti */ }
+
+    // Aseta koko juuri VW/VH mukaan
+    const { maxW, maxH } = viewportBox(32, 32);
+    const size = fitContain(probe.naturalWidth || 2000, probe.naturalHeight || 1500, maxW, maxH);
+    const figure = overlay.firstElementChild;
+    Object.assign(figure.style, { width: size.w + 'px', height: size.h + 'px' });
+
+    img.src = src;
+    img.alt = alt || '';
+
+    overlay.style.visibility = 'visible';
+    overlay.style.opacity = '1';
+    overlay.style.transition = 'opacity .18s ease, visibility 0s';
+    lockScroll(true);
+
+    lastFocus = document.activeElement;
+    overlay.querySelector('#about-media-lightbox-close').focus({ preventScroll: true });
+  }
+
+  function closeLightbox() {
+    const overlay = document.getElementById('about-media-lightbox');
+    if (!overlay || overlay.style.visibility === 'hidden') return;
+
+    overlay.style.opacity = '0';
+    overlay.style.transition = 'opacity .18s ease, visibility 0s linear .18s';
+    overlay.style.visibility = 'hidden';
+
+    // ÄLÄ koske img.src -> alt-teksti ei vilku missään vaiheessa
+    lockScroll(false);
+
+    if (lastFocus && document.contains(lastFocus)) {
+      try { lastFocus.focus({ preventScroll: true }); } catch {}
+    }
+  }
+
+  // Delegoitu klikkaus – toimii myös PJAXin jälkeen
+  function onDocClick(e) {
+    const img = e.target.closest('.about.container.section.section--inner.has-media .about-media img');
+    if (img) {
+      e.preventDefault();
+      const full = img.getAttribute('data-fullsrc') || img.currentSrc || img.src;
+      const alt = img.getAttribute('alt') || 'Maskun Kauppakeskuksen sisätilaa – suurennettu kuva.';
+      openLightbox(full, alt);
+      return;
+    }
+
+    // Sulje taustaa klikatessa
+    const overlay = e.target.closest('#about-media-lightbox');
+    if (overlay && e.target === overlay) closeLightbox();
+
+    // Sulkunappi
+    if (e.target.closest('#about-media-lightbox-close')) {
+      e.preventDefault();
+      closeLightbox();
+    }
+  }
+
+  function onKey(e) {
+    if (e.key === 'Escape') closeLightbox();
+  }
+
+  document.addEventListener('click', onDocClick);
+  document.addEventListener('keydown', onKey);
+  window.addEventListener('resize', () => {
+    // Päivitä koko, jos overlay on auki
+    const overlay = document.getElementById('about-media-lightbox');
+    if (!overlay || overlay.style.visibility === 'hidden') return;
+    const img = overlay.querySelector('#about-media-lightbox-img');
+    if (!img || !img.naturalWidth) return;
+    const { maxW, maxH } = viewportBox(32, 32);
+    const size = fitContain(img.naturalWidth, img.naturalHeight, maxW, maxH);
+    const figure = overlay.firstElementChild;
+    Object.assign(figure.style, { width: size.w + 'px', height: size.h + 'px' });
+  });
+
+  // Varmista kiinni myös sivun vaihtuessa
+  window.addEventListener('pjax:navigated', closeLightbox);
+
+  // Tarvittaessa käytettävä muista skripteistä
+  window.closeAboutMediaLightbox = closeLightbox;
+})();

@@ -70,12 +70,13 @@
         <nav class="quick-nav" aria-label="Pikavalikko">
           <a class="btn" href="#hours">Aukioloajat</a>
           <a class="btn" href="#tenants">Liikkeet & palvelut</a>
-          <a class="btn" href="https://lounaat.info/lounas/kahvilaravintola-riviera/masku" target="_blank">Lounaslista</a>          <a class="btn" href="#meista">Tietoa meistä</a>
+          <a class="btn" href="https://lounaat.info/lounas/kahvilaravintola-riviera/masku"
+            target="_blank">Lounaslista</a> <a class="btn" href="#meista">Tietoa meistä</a>
           <a class="btn" href="#sijainti">Sijainti & saapuminen</a>
         </nav>
 
       </div>
-                <div class="carousel" id="carousel">
+      <div class="carousel" id="carousel">
         <!-- JavaScript lisää tähän .track ja .slide -elementit -->
       </div>
 
@@ -143,50 +144,46 @@
       </div>
     </section>
 
-
-
-
-
-    <!-- TIETOA MEISTÄ -->
-    <section id="meista" class="about container">
+    <section id="meista" class="about container section section--inner has-media" aria-labelledby="meista-title">
       <div class="content">
-        <h2>Maskun Kauppakeskus – juuret Varsinais-Suomessa</h2>
+        <h2 id="meista-title">Maskun Kauppakeskus – juuret Varsinais-Suomessa</h2>
         <p>
-          Maskun Kauppakeskus on juurtunut vahvasti Varsinais-Suomeen ja sen arkeen. Meille Masku on enemmän kuin
-          sijainti – se on yhteisö, jonka ihmiset, tarinat ja tarpeet luovat kauppakeskuksemme sydämen. Täällä
-          paikallisuus, mutkaton asiointi ja lämminhenkinen kohtaaminen kulkevat käsi kädessä.
+          Maskun Kauppakeskus on osa varsinaissuomalaista arkea. Masku ei meille ole pelkkä piste kartalla, vaan
+          yhteisö, jonka ihmiset, tarinat ja toiveet antavat keskukselle sen luonteen. Täällä paikallisuus, sujuva
+          asiointi ja lämmin palvelu kohtaavat.
         </p>
-        <p>
-          Kauppakeskuksemme palvelut on suunniteltu helpottamaan arkea: ruokaa ja hyvinvointia, kodin ratkaisuja ja
-          liikkumisen palveluja. Selkeät tilat, esteetön kulku ja maksuton pysäköinti tekevät asioinnista vaivatonta,
-          olipa kyse nopeasta piipahduksesta tai rauhallisesta viikonloppuhetkestä.
+        <!-- Tämä ei ole hero-kuva, vaan osion oma media alempana sivulla -->
+        <figure class="about-media">
+          <img src="assets/interior.avif"
+            alt="Avara, luonnonvalossa kylpevä Maskun Kauppakeskuksen sisätila: leveä käytävä, liikkeiden näyteikkunat, istuinalueita ja vihersomisteita; rauhallinen istuinalue ja selkeä opastus helpottavat asiointia."
+            loading="lazy" decoding="async" fetchpriority="low" />
 
-        </p>
-        <p>
-          Maskun historia ja yrittäjähenkisyys näkyvät myös meidän toiminnassamme. Teemme yhteistyötä paikallisten
-          yritysten kanssa, vahvistamme alueen osaamista ja rakennamme palveluita kestävällä ja pitkäjänteisellä
-          otteella.
+        </figure>
 
+        <p>
+          Palveluvalikoimamme helpottaa jokapäiväistä elämää: ruokaa ja hyvinvointia, kodin ratkaisuja sekä liikkumisen
+          palveluja saman katon alta. Selkeä tilasuunnittelu, esteetön kulku ja maksuton pysäköinti tekevät käynnistä
+          mutkattoman – olipa kyse nopeasta asioinnista tai rennosta viikonloppuhetkestä.
         </p>
+
       </div>
     </section>
-
-
 
     <!-- UUSI: Sijainti ja saavutettavuus -->
     <section id="sijainti" class="location container">
 
       <div class="content">
         <h2>Sijainti & saapuminen</h2>
+        <section aria-labelledby="destination-coords">
+          <h3 id="destination-coords">Osoite: Maskuntie 224, 21250 Masku</h3>
+
+        </section>
         <p>Maskun Kauppakeskus sijaitsee keskeisellä paikalla Maskuntiellä, jonne on helppo saapua niin autolla,
           pyörällä kuin joukkoliikenteelläkin. Vaihtoehtoja liikkumiseen löytyy runsaasti – voit hyödyntää
           reittiopaspalveluja, paikallisia takseja tai kyytipalveluita päästäksesi kätevästi perille.</p>
         <div id="ARRIVAL">
           <!-- ARRIVAL:START -->
-          <section aria-labelledby="destination-coords">
-            <h3 id="destination-coords">Osoite: Maskuntie 224, 21250 Masku</h3>
 
-          </section>
 
           <section aria-labelledby="by-car">
             <h3 id="by-car">Autolla tai pyörällä</h3>
