@@ -32,6 +32,9 @@
 body {
     font-weight: 400;
     min-width: 440px;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
 }
 
 b,
@@ -110,13 +113,13 @@ a {
     text-decoration: none;
 }
 
-a:hover {}
+
 
 .site-header {
     position: sticky;
     top: 0;
     z-index: 10;
-    background: var(--beige);
+    background: var(--moss-green);
     box-shadow: var(--box-shadow);
 }
 
@@ -134,7 +137,7 @@ a:hover {}
     gap: 1rem;
     font-weight: 700;
     font-size: 1.125rem;
-    color: var(--dark-gray);
+    color: var(--beige);
 }
 
 .site-header .brand img {
@@ -191,14 +194,7 @@ a:hover {}
 }
 
 .slide {
-    display: block;
-    width: 100%;
-    object-fit: cover;
     background: var(--tile-red);
-    color: var(--beige);
-    align-content: center;
-    text-align: center;
-    box-shadow: var(--box-shadow);
 }
 
 .logo-grid {
@@ -311,7 +307,7 @@ html {
     background-repeat: no-repeat;
     background-position: center var(--bg-pos, 0%);
     background-size: cover;
-    margin-left:-1px;
+    margin-left: -1px;
 }
 
 .banner {
@@ -437,7 +433,7 @@ section {
     display: block;
     padding: 0.75rem 0.5rem;
     text-decoration: none;
-    color: var(--dark-gray);
+    color: var(--beige);
     opacity: 1;
     transition: background-color 0.15s ease, transform 0.1s ease, box-shadow 0.1s ease;
     border-radius: 0.5em;
@@ -446,7 +442,7 @@ section {
 .nav-links a:hover {
     opacity: 1;
     color: var(--beige);
-    background: var(--tile-red);
+    background: var(--dark-gray);
 }
 
 @media (max-width:1226px) {
@@ -474,10 +470,11 @@ section {
     }
 
     .nav-links a {
-        width: 96vw;
+        width: 90vw;
         padding: 0.75rem 0;
         text-align: center;
         border-radius: 0.5em;
+        color: var(--dark-gray);
     }
 }
 
@@ -497,7 +494,7 @@ section {
     left: 0;
     right: 0;
     height: var(--burger-line-h, .2rem);
-    background: var(--dark-gray);
+    background: var(--beige);
     border-radius: 2px;
     transform-origin: center;
     transition: transform 0.15s ease, opacity 0.15s ease;
@@ -590,6 +587,7 @@ footer {
 main {
     position: relative;
     align-content: center;
+    overflow: hidden;
 }
 
 #page-bg {
@@ -715,13 +713,9 @@ select {
     accent-color: var(--tile-red);
 }
 
-::selection {
-    background: var(--tile-red);
-    color: #fff;
-}
 
 ::-moz-selection {
-    background: var(--tile-red);
+    background: var(--dark-gray);
     color: var(--beige);
 }
 
@@ -738,22 +732,11 @@ select {
     height: 24px;
 }
 
-.slide {
-    flex: 0 0 100%;
-}
-
-.slide img {}
-
-
-
-
 #carousel .track {
     display: flex;
     transition: transform 0.6s ease;
     will-change: transform;
 }
-
-
 
 #carousel .slide img {
     display: block;
@@ -767,10 +750,7 @@ select {
 p.lead {
     margin-bottom: 1rem;
     color: var(--dark-gray);
-    /*! padding: 1em; */
     text-align: center;
-    /*! font-weight: bold; */
-    /*! font-size: 18px; */
 }
 
 .btns {
@@ -927,13 +907,11 @@ section.hero.container>#carousel {
     position: absolute;
     bottom: 0;
     /* keskitys viewporttiin, ei konttiin */
-    width: 99.75lvw;
     /* koko näkymän leveys */
     max-width: none;
     /* ohita .container max-width */
     margin: 0;
     z-index: 0;
-    left: 0;
 }
 
 .hero .social-links {
@@ -1010,12 +988,9 @@ section.hero.container>#carousel {
     position: relative;
     width: 100vw;
     left: 50% !important;
-    
     right: 50% !important;
-    
     margin-left: -50vw !important;
     margin-right: -50vw !important;
-    
     overflow: hidden;
 }
 
@@ -1024,12 +999,9 @@ section.hero.container>#carousel {
         position: relative;
         width: 100vw;
         left: 0 !important;
-        
         right: 0 !important;
-        
         margin-left: 0 !important;
         margin-right: 0 !important;
-        
         overflow: hidden;
         min-width: 440px;
     }
