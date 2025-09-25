@@ -1101,11 +1101,6 @@ section.hero.container>#carousel {
   padding: .5rem .8rem; border-radius: 8px; display: inline-block;
 }
 
-/* pikanavi vain tällä sivulla */
-#TENANTS ~ .btns, /* jättää alapainikkeen rauhaan */
-#TENANTS .quick-nav { /* jos quick-nav on #TENANTS sisällä */
-  /* ei muutoksia */
-}
 #TENANTS .quick-nav {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
