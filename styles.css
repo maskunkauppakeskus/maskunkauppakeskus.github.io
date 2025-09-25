@@ -78,11 +78,11 @@ h2 {
     text-align: center;
     color: var(--dark-gray);
     font-size: 2em;
-    position: relative;
-    isolation: isolate;
-    --stroke: 0.10em;
-    --stroke-color: var(--beige);
-    text-shadow: none;
+    /*! position: relative; */
+    /*! isolation: isolate; */
+    /*! --stroke: 0.10em; */
+    /*! --stroke-color: var(--beige); */
+    /*! text-shadow: none; */
 }
 
 h1::before,
@@ -220,8 +220,8 @@ a {
     max-width: 100%;
 }
 
-.tenant:hover {
-    background: var(--dark-gray);
+.tenant:hover, .tenant-card__logo:hover, .tenant-link:hover {
+    background: var(--dark-gray) !important;;
 }
 
 .tenant img {
@@ -783,6 +783,7 @@ p.lead {
     justify-content: center;
     gap: 1rem;
     flex-wrap: wrap;
+    margin-bottom: 1em;
 }
 
 p {
@@ -1031,4 +1032,101 @@ section.hero.container>#carousel {
         min-width: 440px;
     }
 
+}
+/* ===== Liikkeet & palvelut — vain tämän sivun (#TENANTS) korjaukset ===== */
+
+/* vihreä taustalohko vain tälle sivulle */
+#TENANTS {
+  /*! background: var(--moss-green); */
+  /*! border-radius: 20px; */
+  /*! padding: clamp(88px, 8vw, 112px) 18px 28px; */ /* yläpadding korjaa sticky-headerin */
+  /*! margin-top: 10px; */
+  /*! background-image: none !important; */ /* jos teema asettaa kuvia, poistetaan */
+}
+
+/* ankkurihypyt pysähtyvät nätisti headerin alle */
+#TENANTS .tenant-card { scroll-margin-top: clamp(88px, 8vw, 112px); }
+
+/* lista ja kortit: logo vasemmalle, teksti oikealle */
+#TENANTS .tenant-list {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 18px;
+  margin-top: 14px;
+}
+
+#TENANTS .tenant-card {
+  display: grid;
+  grid-template-columns: 170px 1fr;
+  align-items: center;
+  gap: 20px;
+  background: var(--beige);
+  border-radius: 16px;
+  padding: 18px;
+  box-shadow: 0 6px 18px rgba(0,0,0,.12);
+  margin-bottom: 1em;
+}
+
+/* logokehys + logo: EI maskeja tai väritinttejä */
+#TENANTS .tenant-card__logo {
+  display: grid;
+  place-items: center;
+  background: var(--moss-green);
+  border-radius: 12px;
+  height: 120px;
+  min-width: 170px;
+  overflow: hidden;
+  padding: 10px;
+}
+
+#TENANTS .tenant-card__logo .logo {
+  width: 100%;
+  height: 100%;
+  background-image: var(--logo);
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+  -webkit-mask: none !important;
+  mask: none !important;
+  background-color: transparent !important;
+}
+
+/* tekstit vasempaan reunaan tämän sivun korteissa */
+#TENANTS .tenant-card__body { display: grid; gap: .4rem; /*! text-align: left; */ }
+#TENANTS .tenant-card__title { margin: 0; color: #1f2b21; text-align: left; }
+#TENANTS .tenant-card__desc { margin: 0; /*! color: #2c2c2c; */ }
+#TENANTS .tenant-card__links { margin-top: .35rem; }
+#TENANTS .tenant-card__links .tenant-link {
+  background: var(--moss-green); color: #fff; text-decoration: none;
+  padding: .5rem .8rem; border-radius: 8px; display: inline-block;
+}
+
+/* pikanavi vain tällä sivulla */
+#TENANTS ~ .btns, /* jättää alapainikkeen rauhaan */
+#TENANTS .quick-nav { /* jos quick-nav on #TENANTS sisällä */
+  /* ei muutoksia */
+}
+#TENANTS .quick-nav {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 12px;
+  margin-bottom: 8px;
+}
+#TENANTS .quick-nav .btn {
+  background: var(--beige);
+  color: #1f2b21;
+  border: 1px solid rgba(0,0,0,.06);
+}
+
+/* mobiili: logo ylös, teksti alle — vain tällä sivulla */
+@media (max-width: 720px) {
+  #TENANTS .tenant-card { grid-template-columns: 1fr; padding: 14px; }
+  #TENANTS .tenant-card__logo { min-width: 0; height: 110px; }
+}
+.section--inner {
+    margin-top:4em;
+}
+
+.tenant-card__body p {
+    text-align: left;
 }
