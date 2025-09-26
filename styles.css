@@ -222,6 +222,7 @@ a {
 
 .tenant:hover, .tenant-card__logo:hover, .tenant-link:hover {
     background: var(--dark-gray) !important;;
+    transition: background-color 0.1s ease, transform 0.1s ease, box-shadow 0.1s ease;
 }
 
 .tenant img {
@@ -843,7 +844,7 @@ p {
 }
 
 :root {
-    --bg: var(--beige);
+    --bg: var(--dark-gray);
 }
 
 #page-bg {
@@ -1078,6 +1079,7 @@ section.hero.container>#carousel {
   min-width: 170px;
   overflow: hidden;
   padding: 10px;
+  transition: background-color 0.1s ease, transform 0.1s ease, box-shadow 0.1s ease;
 }
 
 #TENANTS .tenant-card__logo .logo {

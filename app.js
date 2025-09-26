@@ -855,6 +855,10 @@
    Julkinen API: window.initOpeningHours(selectorOrElement, customSchedule?)
    Lisäksi autokäynnistyy, jos #aukiolo-widget löytyy DOM:ista.
 */
+/* Aukiolo-widget (Europe/Helsinki)
+   Julkinen API: window.initOpeningHours(selectorOrElement, customSchedule?)
+   Autokäynnistyy myös PJAX-navigaatioiden jälkeen.
+*/
 (function () {
   const TZ = 'Europe/Helsinki';
   const MIN_PER_DAY = 24 * 60;
@@ -983,26 +987,41 @@
 
     computeAndRender(el, schedule);
     const id = setInterval(() => computeAndRender(el, schedule), 60 * 1000);
-    return { destroy: () => clearInterval(id), updateSchedule: (s) => computeAndRender(el, s || schedule) };
+    return {
+      destroy: () => clearInterval(id),
+      updateSchedule: (s) => computeAndRender(el, s || schedule)
+    };
   }
 
-  // Julkinen funktio
+  // Julkinen API vain kerran
   if (!('initOpeningHours' in window)) {
     window.initOpeningHours = initOpeningHours;
   }
 
-  // Autokäynnistys: ei vaadi inline-kutsua
-  document.addEventListener('DOMContentLoaded', function () {
+  // -------- AUTOMAATTINEN MOUNT PJAX-YMPÄRISTÖSSÄ (idempotentti) ------------
+  const Auto = { el: null, handle: null };
+
+  function autoMountOpeningHours() {
     const el = document.querySelector('#aukiolo-widget');
-    if (el) {
-      // Käynnistä vain kerran (merkki attribuutilla)
-      if (!el.__aukioloStarted) {
-        el.__aukioloStarted = true;
-        window.initOpeningHours(el);
-      }
+
+    // Jos elementti vaihtui tai poistui -> siivoa vanha instanssi
+    if (Auto.el && (!Auto.el.isConnected || Auto.el !== el)) {
+      try { Auto.handle?.destroy?.(); } catch {}
+      Auto.el = null;
+      Auto.handle = null;
     }
-  });
+
+    // Jos löytyi uusi elementti eikä instanssia -> luo uusi
+    if (el && !Auto.handle) {
+      Auto.handle = initOpeningHours(el);
+      Auto.el = el;
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', autoMountOpeningHours);
+  window.addEventListener('pjax:navigated', autoMountOpeningHours);
 })();
+
 
 (function enableHamburgerOutsideClose() {
   function bind() {
