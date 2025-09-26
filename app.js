@@ -63,11 +63,32 @@
   }
 
   function shouldIntercept(a) {
-    const href = a.getAttribute("href");
-    if (!href || href.startsWith("#") || a.target === "_blank") return false;
-    const url = new URL(href, location.href);
-    return url.origin === location.origin && url.pathname.endsWith(".html");
+    if (!a) return false;
+
+    // Opt-outit
+    if (a.hasAttribute('download') || a.dataset.noPjax === '1' || a.closest('[data-pjax="false"]')) return false;
+
+    const raw = (a.getAttribute('href') || '').trim();
+    if (!raw || raw.startsWith('#') || a.target === '_blank') return false;
+
+    // Protokollat joita ei koskaan PJAXata
+    if (/^(mailto:|tel:|sms:|javascript:)/i.test(raw)) return false;
+
+    let url;
+    try { url = new URL(raw, location.href); } catch { return false; }
+
+    // Vain sama origin
+    if (url.origin !== location.origin) return false;
+
+    // Estä binäärit/tiedostohaut; salli .html/.htm ja päätteen puuttuminen (hakemistopolut)
+    const m = url.pathname.match(/\.([a-z0-9]+)$/i);
+    const ext = m ? m[1].toLowerCase() : '';
+    if (ext && ext !== 'html' && ext !== 'htm') return false;
+
+    return true;
   }
+
+
 
   // --- PJAX navigointi --------------------------------------------------------
   async function navigate(href, replace = false) {
@@ -81,19 +102,24 @@
     if (newMain) {
       const currentMain = document.querySelector("main");
       currentMain.replaceWith(newMain);
+
+      // Varmista että lähdetään AINA ylhäältä ilman välähdystä, jos ei #ankkuria
+      const hash = url.hash?.replace(/^#/, "") || "";
+      if (!hash) {
+        startAtTopUntilSettled(newMain); // ← UUSI KUTSU
+      }
+
+      // (valinnainen mutta suositeltu) – jos käytössäsi, anna myös mountPartialille mahdollisuus
+      try { mountPartial(newMain); } catch { }
+
       executeScripts(newMain, url);
       setActiveNav(url.pathname);
 
-      const hash = url.hash?.replace(/^#/, "") || "";
       if (hash) {
-        requestAnimationFrame(() => {
-          scrollToHash(hash, { behavior: "smooth" });
-        });
-      } else {
-        window.scrollTo({ top: 0, behavior: "smooth" });
+        requestAnimationFrame(() => { scrollToHash(hash, { behavior: "smooth" }); });
       }
 
-      // Hash-synkka uuden <main>:in kanssa
+      // Hash-synkka + ankkurirullaus (jo entuudestaan koodissasi)
       initSectionHashSync();
       initInPageAnchorScrolling();
     }
@@ -103,6 +129,8 @@
 
     window.dispatchEvent(new CustomEvent("pjax:navigated", { detail: { href: url.href } }));
   }
+
+
 
   // Viedään käytettäväksi tarvittaessa muissa skripteissä
   window.navigate = navigate;
@@ -314,21 +342,22 @@
     if (!el) return;
 
     const html = document.documentElement;
-    html.classList.add('scrolling-by-script'); // estä headerin piilotus rullatessa
-
     const scrollEl = document.scrollingElement || document.documentElement;
     const headerPx = headerOffsetPx();
     const yNow = scrollEl.scrollTop || window.scrollY || 0;
 
-    // Lasketaan tavoite ja rajataan selailtavaan alueeseen
+    // Merkitse ohjelmalliseksi ja jäädytä hash-päivitykset
+    if (typeof window.__suppressHash === 'function') window.__suppressHash(1000);
+    html.classList.add('scrolling-by-script');
+
     const rawTarget = yNow + el.getBoundingClientRect().top - headerPx - 8;
     const max = Math.max(0, scrollEl.scrollHeight - scrollEl.clientHeight);
     const target = Math.min(Math.max(0, Math.round(rawTarget)), max);
 
     window.scrollTo({ top: target, behavior: opts.behavior || "smooth" });
 
-    // Poista lippu pian (riittää kun animaatio on päättynyt)
-    setTimeout(() => html.classList.remove('scrolling-by-script'), 800);
+    // Poista lippu varmuusviiveellä
+    setTimeout(() => html.classList.remove('scrolling-by-script'), 900);
   }
 
 
@@ -356,16 +385,25 @@
     lastHash = finalSlug || null;
     history.replaceState(history.state || { href: url.href }, "", url.href);
   }
+  // --- hash-suppressio ohjelmallisen rullauksen ajaksi -------------------------
+  let __hashSuppressed = false;
+  let __hashTimer = 0;
+  function __suppressHash(ms = 900) {
+    __hashSuppressed = true;
+    if (__hashTimer) clearTimeout(__hashTimer);
+    __hashTimer = setTimeout(() => { __hashSuppressed = false; }, ms);
+  }
+  // Tarjolle myös muille IIFElle (esim. back-to-top)
+  window.__suppressHash = __suppressHash;
+
   let sectionTopLineDetach = null;
   function initSectionHashSync() {
-    // Pysäytä aiemmat tarkkailijat/kuuntelijat
     if (sectionObserver) { sectionObserver.disconnect(); sectionObserver = null; }
     if (typeof sectionTopLineDetach === "function") { sectionTopLineDetach(); sectionTopLineDetach = null; }
 
     const sections = Array.from(document.querySelectorAll("main section"));
     if (!sections.length) return;
 
-    // Kokoa slugit
     const withSlug = sections
       .map((s) => ({ el: s, slug: getSectionSlug(s) }))
       .filter((x) => !!x.slug);
@@ -374,15 +412,18 @@
 
     lastHash = location.hash.replace(/^#/, "") || null;
 
-    // Yläreunaviiva = header-offset + 1px
     const topLineY = () => Math.round(headerOffsetPx()) + 1;
 
     let raf = 0;
     const recompute = () => {
       raf = 0;
-      const y = topLineY();
 
-      // Etsi osio, jonka sisällä yläreuna on
+      // Älä muuta hashia, jos suppressio päällä (ohjelmallinen rullaus kesken)
+      if (__hashSuppressed) return;
+
+      // Pieni hysteresis
+      const y = topLineY() + 4;
+
       let current = null;
       for (const { el, slug } of withSlug) {
         const r = el.getBoundingClientRect();
@@ -392,7 +433,6 @@
         }
       }
 
-      // Päivitä hash vain jos muuttuu ja sallittu; muuten tyhjennä
       if (current) updateHash(current);
       else updateHash("");
     };
@@ -402,25 +442,27 @@
     window.addEventListener("scroll", onScroll, { passive: true });
     window.addEventListener("resize", onScroll);
 
-    // Mahdollista irrotus myöhemmin
     sectionTopLineDetach = () => {
       window.removeEventListener("scroll", onScroll);
       window.removeEventListener("resize", onScroll);
     };
 
-    // Alkusynkka: anna layoutin asettua
     requestAnimationFrame(() => { onScroll(); });
   }
+
   function scrollToHash(hash, opts = {}) {
     const target = findSectionByHash(hash);
     if (!target) return;
 
-    // Rullaa pehmeästi osion alkuun header-offset huomioiden
-    smoothScrollTo(target, opts);
+    // Aseta kohdehash heti – UI ei näytä edellistä
+    updateHash(hash);
 
-    // ÄLÄ päivitä hashia tässä – se päivittyy kun yläreuna on osion sisällä
-    // initSectionHashSync:n scroll-kuuntelija hoitaa muutoksen.
+    // Jäädytä hash päivityksiltä rullauksen ajaksi
+    if (typeof window.__suppressHash === 'function') window.__suppressHash(1000);
+
+    smoothScrollTo(target, opts);
   }
+
 
   // Delegoitu pehmeä rullaus ankkureille koko dokumentissa
   function initInPageAnchorScrolling() {
@@ -429,34 +471,82 @@
   }
 
   function onDocumentClickForAnchors(e) {
-    // Kaikki linkit, joissa on # – myös ./#id ja /polku/#id
     const a = e.target.closest('a[href*="#"]');
     if (!a) return;
-
-    const raw = a.getAttribute("href") || "";
-    // Älä estä, jos target on uusi välilehti
     if (a.target === "_blank") return;
 
-    // Parsitaan URL turvallisesti nykyosoitteeseen perustuen
     let url;
-    try { url = new URL(raw, location.href); } catch { return; }
+    try { url = new URL(a.getAttribute("href") || "", location.href); } catch { return; }
 
     const hash = (url.hash || "").replace(/^#/, "");
     if (!hash) return;
 
-    // Vain saman dokumentin sisäiset ankkurit: sama origin + polku
     if (url.origin === location.origin && url.pathname === location.pathname) {
       e.preventDefault();
-      // Pehmeä rullaus header-offset huomioiden (päivitetty smoothScrollTo hoitaa tämän)
+      if (typeof window.__suppressHash === 'function') window.__suppressHash(1000);
       scrollToHash(hash, { behavior: "smooth" });
     }
-    // Muuten anna mennä normaalisti (esim. toisen sivun ankkuri)
   }
 
+
+  function startAtTopUntilSettled(newMain, opts = {}) {
+    const html = document.documentElement;
+    const scrollEl = document.scrollingElement || html;
+    const hardMs = Math.max(300, Math.min(2000, opts.hardMs || 900));
+    const softMs = Math.max(150, Math.min(1500, opts.softMs || 500));
+    let done = false;
+
+    // Jäädytä hash koko “lukituksen” ajaksi
+    if (typeof window.__suppressHash === 'function') window.__suppressHash(hardMs + softMs + 100);
+
+    const prevScrollBehavior = html.style.scrollBehavior;
+    html.style.scrollBehavior = 'auto';
+    html.classList.add('scrolling-by-script');
+
+    const toTop = () => { scrollEl.scrollTop = 0; window.scrollTo(0, 0); };
+
+    toTop();
+    requestAnimationFrame(() => { toTop(); requestAnimationFrame(toTop); });
+
+    const hardEnd = performance.now() + hardMs;
+    function onScroll() {
+      if (done) return;
+      if (performance.now() < hardEnd) { toTop(); }
+    }
+    window.addEventListener('scroll', onScroll, true);
+
+    const imgs = newMain ? Array.from(newMain.querySelectorAll('img')).filter(i => !i.complete) : [];
+    let pending = imgs.length;
+    function onImgDone() {
+      if (done) return;
+      toTop();
+      pending = Math.max(0, pending - 1);
+      if (pending === 0) settleSoon();
+    }
+    imgs.forEach(img => {
+      img.addEventListener('load', onImgDone, { once: true });
+      img.addEventListener('error', onImgDone, { once: true });
+    });
+
+    function settleSoon() {
+      if (done) return;
+      done = true;
+      setTimeout(() => {
+        window.removeEventListener('scroll', onScroll, true);
+        html.style.scrollBehavior = prevScrollBehavior || '';
+        html.classList.remove('scrolling-by-script');
+      }, softMs);
+    }
+
+    if (!imgs.length) setTimeout(settleSoon, softMs);
+    setTimeout(settleSoon, hardMs + softMs);
+  }
 
 
   // --- bootstrap: yksi selkeä onDomReady ------------------------------------
   async function onDomReady() {
+    try { if ('scrollRestoration' in history) history.scrollRestoration = 'manual'; } catch { }
+
     const headerEl = document.getElementById("site-header");
     const footerEl = document.getElementById("site-footer");
     if (headerEl) await loadPartial(headerEl, headerEl.dataset.partial || "/partials/header.html", "header");
@@ -475,12 +565,34 @@
 
     initSectionHashSync();
     initInPageAnchorScrolling();
-
+    bindGlobalPjax && bindGlobalPjax();
     const initialHash = location.hash.replace(/^#/, "");
     if (initialHash) {
       requestAnimationFrame(() => scrollToHash(initialHash, { behavior: "smooth" }));
     }
   }
+  function bindGlobalPjax() {
+    const root = document.documentElement;
+    if (root.dataset._pjaxBound === '1') return; // idempotentti
+    root.dataset._pjaxBound = '1';
+
+    // Capture-vaiheessa, jotta ehdimme ennen muita handlereita
+    document.addEventListener('click', function (e) {
+      if (e.defaultPrevented) return;
+
+      // Vain vasemman napin klikki ilman modifikaattoreita
+      if (e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+
+      const a = e.target.closest('a[href]');
+      if (!a) return;
+
+      if (!shouldIntercept(a)) return;
+
+      e.preventDefault();
+      const href = a.getAttribute('href');
+      navigate(href);
+    }, true);
+  };
 
 
   document.addEventListener("DOMContentLoaded", onDomReady);
@@ -540,7 +652,7 @@
 // --- header: piilota alas rullatessa, näytä ylös rullatessa -----------------
 (function initHideOnScrollHeader() {
   const el = document.scrollingElement || document.documentElement;
-  const html = document.documentElement; // lisätty: tieto ohjelmallisesta rullauksesta
+  const html = document.documentElement;
   let header = null;
   let lastY = el.scrollTop || 0;
   let raf = 0;
@@ -550,7 +662,7 @@
     if (!header) header = document.querySelector(".site-header");
     if (header && !started) {
       started = true;
-      update(); // heti tila oikein
+      update();
       window.addEventListener("scroll", onScroll, { passive: true });
       window.addEventListener("resize", onScroll);
     }
@@ -559,10 +671,11 @@
   function update() {
     const y = el.scrollTop || 0;
     if (header) {
+      // Ohjelmallinen rullaus: header aina näkyvissä
       if (html.classList.contains('scrolling-by-script')) {
-        // ohjelmallinen rullaus: pidä header aina näkyvissä
         header.classList.remove("site-header--hidden");
       } else {
+        // Käyttäjän rullaus määrittää näkyvyyden
         if (y <= 0) header.classList.remove("site-header--hidden");
         else if (y > lastY) header.classList.add("site-header--hidden");
         else header.classList.remove("site-header--hidden");
@@ -577,7 +690,6 @@
     raf = requestAnimationFrame(update);
   }
 
-  // Yritä löytää header heti ja partialin valmistuttua
   ensureHeader();
   window.addEventListener("partial:loaded", (e) => {
     if (e.detail?.key === "header") {
@@ -586,7 +698,6 @@
       ensureHeader();
     }
   });
-  // PJAXin jälkeen nollaa tila ja yritä uudelleen
   window.addEventListener("pjax:navigated", () => {
     lastY = el.scrollTop || 0;
     header = null;
@@ -594,9 +705,8 @@
     ensureHeader();
     requestAnimationFrame(update);
   });
-
-  document.addEventListener('DOMContentLoaded', () => { /* ei tarvita erikseen */ });
 })();
+
 
 
 // ====== Tyylikäs hampurilaisvalikko (idempotentti) ==========================
@@ -969,8 +1079,14 @@
 
 
     btn.addEventListener('click', () => {
+      const html = document.documentElement;
+      if (typeof window.__suppressHash === 'function') window.__suppressHash(900);
+      html.classList.add('scrolling-by-script');
       window.scrollTo({ top: 0, behavior: 'smooth' });
+      setTimeout(() => html.classList.remove('scrolling-by-script'), 900);
     });
+
+
 
     document.body.appendChild(btn);
     return btn;
@@ -1007,7 +1123,7 @@
   });
 })();
 
-/* Klikattava kuvan suurennus (lightbox) about-osiolle – korjattu versio */
+/* Klikattava kuvan suurennus (lightbox) about-osiolle – CSS/JS eroteltu */
 (function initAboutMediaLightbox() {
   const root = document.documentElement;
   if (root.dataset._aboutLightboxInit === '1') return;
@@ -1016,19 +1132,7 @@
   // -------- helpers ----------
   function lockScroll(lock) {
     document.documentElement.classList.toggle('no-scroll', !!lock);
-    document.body.style.overflow = lock ? 'hidden' : '';
   }
-  function fitContain(nw, nh, maxW, maxH) {
-    const r = Math.min(maxW / nw, maxH / nh, 1);
-    return { w: Math.round(nw * r), h: Math.round(nh * r) };
-  }
-  function viewportBox(padX = 32, padY = 32) {
-    const vw = Math.max(320, window.innerWidth || document.documentElement.clientWidth || 0);
-    const vh = Math.max(320, window.innerHeight || document.documentElement.clientHeight || 0);
-    return { maxW: vw - padX * 2, maxH: vh - padY * 2 };
-  }
-
-  // -------- overlay rakentaja ----------
   function ensureOverlay() {
     let overlay = document.getElementById('about-media-lightbox');
     if (overlay) return overlay;
@@ -1039,59 +1143,20 @@
     overlay.setAttribute('aria-modal', 'true');
     overlay.setAttribute('aria-label', 'Kuvan esikatselu');
 
-    Object.assign(overlay.style, {
-      position: 'fixed',
-      inset: '0',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      background: 'rgba(0,0,0,.75)',
-      padding: 'min(4vh,32px) min(4vw,32px)',
-      zIndex: '2147483647',
-      opacity: '0',
-      visibility: 'hidden',
-      transition: 'opacity .18s ease, visibility 0s linear .18s'
-    });
-
     const figure = document.createElement('figure');
-    Object.assign(figure.style, {
-      margin: 0,
-      position: 'relative',
-      borderRadius: '12px',
-      overflow: 'hidden',
-      background: '#111',
-      boxShadow: '0 10px 40px rgba(0,0,0,.45)'
-    });
+    figure.className = 'about-lightbox__figure';
 
     const img = document.createElement('img');
     img.id = 'about-media-lightbox-img';
+    img.className = 'about-lightbox__img';
     img.alt = '';
-    Object.assign(img.style, {
-      display: 'block',
-      width: 'auto',
-      height: 'auto',
-      maxWidth: '100%',
-      maxHeight: '100%',
-      objectFit: 'contain'
-    });
 
     const closeBtn = document.createElement('button');
     closeBtn.id = 'about-media-lightbox-close';
+    closeBtn.className = 'about-lightbox__close';
     closeBtn.type = 'button';
     closeBtn.setAttribute('aria-label', 'Sulje kuva');
     closeBtn.innerHTML = '✕';
-    Object.assign(closeBtn.style, {
-      position: 'absolute',
-      top: '8px',
-      right: '8px',
-      lineHeight: 1,
-      fontSize: '20px',
-      border: 0,
-      borderRadius: '999px',
-      padding: '8px 10px',
-      cursor: 'pointer',
-      background: 'rgba(255,255,255,.92)'
-    });
 
     figure.appendChild(img);
     figure.appendChild(closeBtn);
@@ -1109,40 +1174,35 @@
     // Preloadaa ja decode ennen näyttöä -> ei vilkkuvaa alt-tekstiä
     const probe = new Image();
     probe.src = src;
-    try { await (probe.decode ? probe.decode() : new Promise(r => { probe.onload = r; probe.onerror = r; })); }
-    catch { /* jatketaan silti */ }
-
-    // Aseta koko juuri VW/VH mukaan
-    const { maxW, maxH } = viewportBox(32, 32);
-    const size = fitContain(probe.naturalWidth || 2000, probe.naturalHeight || 1500, maxW, maxH);
-    const figure = overlay.firstElementChild;
-    Object.assign(figure.style, { width: size.w + 'px', height: size.h + 'px' });
+    try {
+      if (probe.decode) { await probe.decode(); }
+      else {
+        await new Promise(r => { probe.onload = r; probe.onerror = r; });
+      }
+    } catch { /* jatketaan silti */ }
 
     img.src = src;
     img.alt = alt || '';
 
-    overlay.style.visibility = 'visible';
-    overlay.style.opacity = '1';
-    overlay.style.transition = 'opacity .18s ease, visibility 0s';
+    overlay.classList.add('is-open');
     lockScroll(true);
 
     lastFocus = document.activeElement;
-    overlay.querySelector('#about-media-lightbox-close').focus({ preventScroll: true });
+    const closeEl = overlay.querySelector('#about-media-lightbox-close');
+    if (closeEl) {
+      try { closeEl.focus({ preventScroll: true }); } catch { }
+    }
   }
 
   function closeLightbox() {
     const overlay = document.getElementById('about-media-lightbox');
-    if (!overlay || overlay.style.visibility === 'hidden') return;
+    if (!overlay || !overlay.classList.contains('is-open')) return;
 
-    overlay.style.opacity = '0';
-    overlay.style.transition = 'opacity .18s ease, visibility 0s linear .18s';
-    overlay.style.visibility = 'hidden';
-
-    // ÄLÄ koske img.src -> alt-teksti ei vilku missään vaiheessa
+    overlay.classList.remove('is-open');
     lockScroll(false);
 
     if (lastFocus && document.contains(lastFocus)) {
-      try { lastFocus.focus({ preventScroll: true }); } catch {}
+      try { lastFocus.focus({ preventScroll: true }); } catch { }
     }
   }
 
@@ -1159,7 +1219,10 @@
 
     // Sulje taustaa klikatessa
     const overlay = e.target.closest('#about-media-lightbox');
-    if (overlay && e.target === overlay) closeLightbox();
+    if (overlay && e.target === overlay) {
+      closeLightbox();
+      return;
+    }
 
     // Sulkunappi
     if (e.target.closest('#about-media-lightbox-close')) {
@@ -1174,17 +1237,6 @@
 
   document.addEventListener('click', onDocClick);
   document.addEventListener('keydown', onKey);
-  window.addEventListener('resize', () => {
-    // Päivitä koko, jos overlay on auki
-    const overlay = document.getElementById('about-media-lightbox');
-    if (!overlay || overlay.style.visibility === 'hidden') return;
-    const img = overlay.querySelector('#about-media-lightbox-img');
-    if (!img || !img.naturalWidth) return;
-    const { maxW, maxH } = viewportBox(32, 32);
-    const size = fitContain(img.naturalWidth, img.naturalHeight, maxW, maxH);
-    const figure = overlay.firstElementChild;
-    Object.assign(figure.style, { width: size.w + 'px', height: size.h + 'px' });
-  });
 
   // Varmista kiinni myös sivun vaihtuessa
   window.addEventListener('pjax:navigated', closeLightbox);

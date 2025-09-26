@@ -270,6 +270,7 @@ a {
 
 .btn:hover {
     background: var(--dark-gray);
+    transition: background-color 0.1s ease, transform 0.1s ease, box-shadow 0.1s ease;
 }
 
 .btn:active {
@@ -573,6 +574,7 @@ details {
     margin: 0;
     font-weight: normal;
     font-size: 14pt;
+    padding-inline: clamp(16px, 4vw, 32px);
 }
 
 footer {
@@ -625,6 +627,7 @@ main {
     box-shadow: var(--box-shadow);
     margin-bottom: 11em;
     margin-top: 3em;
+    padding-inline: clamp(16px, 4vw, 32px);
 }
 
 h3 {
@@ -689,9 +692,7 @@ h1 {
 }
 
 .about.container.section.section--inner.has-media .content {
-  max-width: 1200px; 
   margin-inline: auto;
-  padding-inline: clamp(16px, 4vw, 32px);
   box-sizing: border-box;
 }
 
@@ -1118,10 +1119,100 @@ section.hero.container>#carousel {
   #TENANTS .tenant-card { grid-template-columns: 1fr; padding: 14px; }
   #TENANTS .tenant-card__logo { min-width: 0; height: 110px; }
 }
-.section--inner {
-    margin-top:4em;
+.container.section--inner {
+    /*! margin-top:4em; */
 }
 
 .tenant-card__body p {
     text-align: left;
+}
+
+/* ===== About-media Lightbox (eriytetty CSS) =============================== */
+
+:root {
+  --about-lightbox-backdrop: rgba(0, 0, 0, 0.75);
+  /*! --about-lightbox-radius: 12px; */
+  --about-lightbox-padding-x: 32px;
+  --about-lightbox-padding-y: 32px;
+  --about-lightbox-z: 2147483647; /* erittäin korkea z-index */
+  --about-lightbox-close-bg: rgba(255, 255, 255, 0.92);
+}
+
+/* Estä taustarullaus, kun lightbox on auki */
+html.no-scroll,
+html.no-scroll body {
+  overflow: hidden !important;
+}
+
+/* Overlay */
+#about-media-lightbox {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: min(4vh, var(--about-lightbox-padding-y)) min(4vw, var(--about-lightbox-padding-x));
+  background: var(--about-lightbox-backdrop);
+  z-index: var(--about-lightbox-z);
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity .18s ease, visibility 0s linear .18s;
+}
+
+/* Auki-tila */
+#about-media-lightbox.is-open {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transition: opacity .18s ease, visibility 0s;
+}
+
+/* Figure-kehys */
+#about-media-lightbox .about-lightbox__figure {
+  margin: 0;
+  position: relative;
+  border-radius: var(--about-lightbox-radius);
+  overflow: hidden;
+  background: #111;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, .45);
+  max-width: calc(100vw - 2 * var(--about-lightbox-padding-x));
+  max-height: calc(100vh - 2 * var(--about-lightbox-padding-y));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Kuva: sovita sisään ilman vääristymää */
+#about-media-lightbox .about-lightbox__img {
+  display: block;
+  width: auto;
+  height: auto;
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+
+/* Sulje-nappi */
+#about-media-lightbox .about-lightbox__close {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  line-height: 1;
+  font-size: 20px;
+  border: 0;
+  border-radius: 999px;
+  padding: 8px 10px;
+  cursor: pointer;
+  background: var(--about-lightbox-close-bg);
+}
+
+/* Vähemmän animaatioita, jos käyttäjä pyytää */
+@media (prefers-reduced-motion: reduce) {
+  #about-media-lightbox {
+    transition: none;
+  }
+}
+.liikkeet-ja-palvelut {
+    margin-top:4rem;
 }
