@@ -254,17 +254,17 @@ a {
 }
 
 .btn {
-    display: inline-block;
+    /*! display: inline-block; */
     background: var(--tile-red);
     color: var(--beige);
     padding: 0.6rem 0.9rem;
     border-radius: 8px;
     text-decoration: none;
-    margin-top: 0.5rem;
+    /*! margin-top: 0.5rem; */
     transition: background-color 0.1s ease, transform 0.1s ease, box-shadow 0.1s ease;
     box-shadow: var(--box-shadow);
-    margin: 0.5em;
-    width: 14em;
+    margin: 0.5rem;
+    min-width: 14em;
     text-align: center;
     align-content: center;
 }
@@ -1217,4 +1217,65 @@ html.no-scroll body {
 }
 .liikkeet-ja-palvelut {
     margin-top:4rem;
+}
+
+/* === Latausoverlay + PJAX "soft ready" (lisää styles.css:n loppuun) === */
+
+/* === Latausoverlay + PJAX "soft ready" + sulava cross-fade ensilatauksessa === */
+
+:root {
+  --loading-fade-ms: 260ms;     /* overlayin fade */
+  --softready-fade-ms: 200ms;   /* PJAX main fade */
+  --boot-fade-ms: 220ms;        /* ensilatauksen sisällön fade */
+}
+
+/* Koko-sivun overlay */
+#app-loading-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: var(--dark-gray);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--loading-fade-ms) ease;
+}
+#app-loading-overlay.is-visible { opacity: 1; pointer-events: auto; }
+#app-loading-overlay.is-hiding  { opacity: 0; pointer-events: none; }
+
+/* ENSILATAUS: sisältö piiloon overlayn alle (mutta layout pysyy) */
+html.under-overlay #site-header,
+html.under-overlay main,
+html.under-overlay #site-footer {
+  opacity: 0;                    /* ei visibility:hidden -> ei töksähdystä */
+}
+
+/* CROSS-FADE: kun .boot-reveal lisätään, sisältö häivytetään sisään.
+   Tämä sääntö tulee TÄMÄN blokin jälkeen, jolloin se voittaa under-overlayn. */
+html.boot-reveal #site-header,
+html.boot-reveal main,
+html.boot-reveal #site-footer {
+  opacity: 1;
+  transition: opacity var(--boot-fade-ms) ease;
+}
+
+/* PJAX "soft ready": uusi <main> häivytetään sisään kun sen kuvat valmiit */
+main.is-soft-pending {
+  opacity: 0;
+  transition: opacity var(--softready-fade-ms) ease;
+}
+main.is-soft-ready {
+  opacity: 1;
+  transition: opacity var(--softready-fade-ms) ease;
+}
+
+/* Liikunnan vähentäminen: poistetaan animaatiot */
+@media (prefers-reduced-motion: reduce) {
+  #app-loading-overlay,
+  main.is-soft-pending,
+  main.is-soft-ready,
+  html.boot-reveal #site-header,
+  html.boot-reveal main,
+  html.boot-reveal #site-footer {
+    transition: none !important;
+  }
 }

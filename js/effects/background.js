@@ -1,0 +1,2 @@
+/* Efektit: taustakuvan scroll-synkka */
+
