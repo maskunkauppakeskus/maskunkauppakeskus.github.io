@@ -349,7 +349,7 @@ html {
 }
 
 section.tenants.container {
-    height: 100svh;
+    /*! height: 100svh; */
 }
 
 .cta.container,
@@ -626,7 +626,7 @@ main {
     padding: 1em;
     border-radius: 1em;
     box-shadow: var(--box-shadow);
-    margin-bottom: 11em;
+    margin-bottom: 8.5em;
     margin-top: 3em;
     padding-inline: clamp(16px, 4vw, 32px);
 }
@@ -898,7 +898,7 @@ p {
 section.hours.container,
 section.tenants.container {
     height: auto !important;
-    min-height: 100lvh;
+    /*! min-height: 100lvh; */
 }
 
 body,
@@ -1219,7 +1219,7 @@ html.no-scroll body {
     margin-top:4rem;
 }
 
-/* === Latausoverlay + PJAX "soft ready" (lisää styles.css:n loppuun) === */
+
 
 /* === Latausoverlay + PJAX "soft ready" + sulava cross-fade ensilatauksessa === */
 

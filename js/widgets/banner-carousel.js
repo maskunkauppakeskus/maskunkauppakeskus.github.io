@@ -1,155 +1,97 @@
-/* Widget: globaalin bannerikarusellin init (window.initBannerCarousel) */
+/* banner-carousel.js — tiukka toteutus, ei tiedostonimiarvailua */
 
 (function () {
-  // Odota DOM + #carousel näkyviin, prewarm ensimmäinen banneri, sitten init
-
-  // Mahdolliset polkunimet/nimeämiset ensimmäiselle bannerille
-  const FIRST_CANDIDATES = [
-    '/assets/banner_1.avif',
-    '/assets/banner1.avif',
+  // Päivitä listaa tarvittaessa. Vain näitä ladataan.
+  // Voit myös yliajaa ennen latausta: window.BANNERS_AVIF = [...]
+  window.BANNERS_AVIF = window.BANNERS_AVIF || [
     './assets/banner_1.avif',
-    '/assets/banner_1.webp',
-    '/assets/banner1.webp',
-    './assets/banner_1.webp'
+    // './assets/banner_2.avif',
+    // './assets/banner_3.avif',
   ];
 
-  let booted = false;
+  function q(sel, ctx) { return (ctx || document).querySelector(sel); }
 
-  function prewarmFirstBanner(timeoutMs = 600) {
-    // Lataa ensimmäinen banneri korkealla prioriteetilla – ei estä renderöintiä
-    return new Promise((resolve) => {
-      let done = false;
-      const tried = new Set();
-      const timer = setTimeout(() => { if (!done) { done = true; resolve(); } }, timeoutMs);
+  window.initBannerCarousel = async function initBannerCarousel() {
+    const viewport = q('#carousel');
+    if (!viewport) return;
 
-      function kick(url) {
-        if (!url || tried.has(url)) return;
-        tried.add(url);
-        const i = new Image();
-        i.fetchPriority = 'high';
-        i.decoding = 'async';
-        i.loading = 'eager';
-        i.onload = i.onerror = () => {
-          if (!done) { done = true; clearTimeout(timer); resolve(); }
-        };
-        i.src = url;
-      }
+    if (viewport.dataset._carouselInit === '1') return;
+    viewport.dataset._carouselInit = '1';
 
-      FIRST_CANDIDATES.forEach(kick);
-      // Jos mikään ei ehdi, timeout vapauttaa etenemään
-    });
-  }
-
-  function whenCarouselPresent(cb) {
-    const existing = document.getElementById('carousel');
-    if (existing && existing.isConnected) { cb(existing); return; }
-
-    const obs = new MutationObserver(() => {
-      const el = document.getElementById('carousel');
-      if (el && el.isConnected) {
-        obs.disconnect();
-        cb(el);
-      }
-    });
-    obs.observe(document.documentElement, { childList: true, subtree: true });
-
-    // Turva: katkaise havainnointi jos mitään ei ilmesty (esim. landing ilman karusellia)
-    setTimeout(() => { try { obs.disconnect(); } catch {} }, 4000);
-  }
-
-  async function kickOnceReady() {
-    if (booted) return;
-    booted = true;
-
-    // Prewarm ensimmäinen banneri -> välimuistiin ennen kuin init rakentaa <img>:t
-    await prewarmFirstBanner(600);
-
-    if (typeof window.initBannerCarousel === "function") {
-      try { await window.initBannerCarousel(); } catch (_) { /* no-op */ }
+    // Luo track jos puuttuu
+    let track = viewport.querySelector('.track');
+    if (!track) {
+      track = document.createElement('div');
+      track.className = 'track';
+      track.style.display = 'flex';
+      track.style.transition = 'transform 0.6s ease';
+      track.style.willChange = 'transform';
+      viewport.appendChild(track);
     }
-  }
+    viewport.style.overflow = 'hidden';
 
-  function scheduleKick() {
-    const run = () => {
-      whenCarouselPresent(() => {
-        // Varmistetaan, että layout on laskettu ennen init:iä
-        requestAnimationFrame(() => setTimeout(kickOnceReady, 0));
-      });
+    // Tyhjennä aiemmin generoimamme slidit
+    track.querySelectorAll('[data-banner-generated="1"]').forEach(n => n.remove());
+
+    // Lisää vain manifestissa olevat polut
+    const files = (window.BANNERS_AVIF || []).slice();
+
+    if (!files.length) return;
+
+    files.forEach((src, idx) => {
+      const a = document.createElement('a');
+      a.className = 'slide';
+      a.href = '#';
+      a.style.flex = '0 0 100%';
+
+      const img = document.createElement('img');
+      img.src = src;                        // ← ei vaihtoehtopäätteitä
+      img.alt = '';
+      img.decoding = 'async';
+      img.loading = idx === 0 ? 'eager' : 'lazy';
+      img.fetchPriority = idx === 0 ? 'high' : 'auto';
+      img.style.width = '100%';
+      img.style.height = 'auto';
+      img.style.display = 'block';
+
+      a.setAttribute('data-banner-generated', '1');
+      a.appendChild(img);
+      track.appendChild(a);
+    });
+
+    // Yksinkertainen liu’utus
+    let index = 0;
+    const total = track.querySelectorAll('.slide').length;
+    const DURATION_MS = 5000;
+
+    const show = (i) => {
+      index = (i + total) % total;
+      track.style.transform = `translateX(${-index * 100}%)`;
     };
-    if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', run, { once: true });
-    } else {
-      run();
+
+    show(0);
+
+    if (viewport._timer) { clearInterval(viewport._timer); viewport._timer = null; }
+    if (total >= 2) {
+      viewport._timer = setInterval(() => show(index + 1), DURATION_MS);
     }
-  }
 
-  // Ensilataus
-  scheduleKick();
+    // Siivous kun PJAX vaihtaa sivun
+    const onPjax = () => {
+      document.removeEventListener('visibilitychange', onVisibility);
+      if (viewport._timer) { clearInterval(viewport._timer); viewport._timer = null; }
+      delete viewport.dataset._carouselInit;
+      window.removeEventListener('pjax:navigated', onPjax);
+    };
+    window.addEventListener('pjax:navigated', onPjax);
 
-  // PJAX-navigaatio: uusi <main> tuo uuden #carousel:in -> sama pipeline
-  window.addEventListener("pjax:navigated", () => {
-    booted = false; // sallitaan uusi init, initBannerCarousel on itsessään idempotentti
-    scheduleKick();
-  });
-})();
-
-
-// --- header: piilota alas rullatessa, näytä ylös rullatessa -----------------
-(function initHideOnScrollHeader() {
-  const el = document.scrollingElement || document.documentElement;
-  const html = document.documentElement;
-  let header = null;
-  let lastY = el.scrollTop || 0;
-  let raf = 0;
-  let started = false;
-
-  function ensureHeader() {
-    if (!header) header = document.querySelector(".site-header");
-    if (header && !started) {
-      started = true;
-      update();
-      window.addEventListener("scroll", onScroll, { passive: true });
-      window.addEventListener("resize", onScroll);
-    }
-  }
-
-  function update() {
-    const y = el.scrollTop || 0;
-    if (header) {
-      // Ohjelmallinen rullaus: header aina näkyvissä
-      if (html.classList.contains("scrolling-by-script")) {
-        header.classList.remove("site-header--hidden");
-      } else {
-        // Käyttäjän rullaus määrittää näkyvyyden
-        if (y <= 0) header.classList.remove("site-header--hidden");
-        else if (y > lastY) header.classList.add("site-header--hidden");
-        else header.classList.remove("site-header--hidden");
+    // Pysäytä taustalla
+    function onVisibility() {
+      if (document.hidden && viewport._timer) { clearInterval(viewport._timer); viewport._timer = null; }
+      else if (!document.hidden && total >= 2 && !viewport._timer) {
+        viewport._timer = setInterval(() => show(index + 1), DURATION_MS);
       }
     }
-    lastY = y;
-    raf = 0;
-  }
-
-  function onScroll() {
-    if (raf) return;
-    raf = requestAnimationFrame(update);
-  }
-
-  ensureHeader();
-
-  window.addEventListener("partial:loaded", (e) => {
-    if (e.detail?.key === "header") {
-      header = null;
-      started = false;
-      ensureHeader();
-    }
-  });
-
-  window.addEventListener("pjax:navigated", () => {
-    lastY = el.scrollTop || 0;
-    header = null;
-    started = false;
-    ensureHeader();
-    requestAnimationFrame(update);
-  });
+    document.addEventListener('visibilitychange', onVisibility);
+  };
 })();
