@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <title>Yhteystiedot – Maskun Kauppakeskus</title>
+  <meta name="description" content="Ota yhteyttä Maskun Kauppakeskukseen. Vastaanotamme palautetta ja kysymyksiä tällä lomakkeella." />
+  <link rel="canonical" href="https://www.maskunkauppakeskus.fi/yhteystiedot.html" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Yhteystiedot – Maskun Kauppakeskus" />
+  <meta property="og:description" content="Lähetä viesti tai palaute yhteydenottolomakkeella." />
+  <meta property="og:url" content="https://www.maskunkauppakeskus.fi/yhteystiedot.html" />
+  <meta property="og:image" content="https://www.maskunkauppakeskus.fi/assets/share-liikkeet.avif" />
+
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Yhteystiedot – Maskun Kauppakeskus" />
+  <meta name="twitter:description" content="Lähetä viesti tai palaute yhteydenottolomakkeella." />
+  <meta name="twitter:image" content="https://www.maskunkauppakeskus.fi/assets/share-liikkeet.avif" />
+
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+
+<body>
+  <header id="site-header" data-partial="./partials/header.html"></header>
+
+  <main class="yhteystiedot container section section--inner">
+    <div class="contact">
+      <h1 data-text="Yhteystiedot">Yhteystiedot</h1>
+      <p class="lead">Täytä lomake – palaamme sinulle sähköpostitse.</p>
+
+      <div class="card">
+        <form class="contact-form" data-contact-form method="post" action="/api/contact" novalidate>
+          <input type="hidden" name="to" value="info@maskunkauppakeskus.fi" />
+          <input class="hp" type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" />
+
+          <div class="row">
+            <label for="replyTo">Sähköpostiosoitteesi</label>
+            <input id="replyTo" name="replyTo" type="email" inputmode="email" autocomplete="email"
+                   placeholder="esim. etunimi.sukunimi@example.com" required
+                   aria-describedby="replyToHelp" />
+            <div id="replyToHelp" class="hint">Tähän vastaamme.</div>
+          </div>
+
+          <div class="row">
+            <label for="message">Viestisi</label>
+            <textarea id="message" name="message" placeholder="Kirjoita viesti tähän..." required
+                      aria-describedby="messageHelp"></textarea>
+            <div id="messageHelp" class="hint">Kerro asiasi omin sanoin.</div>
+          </div>
+
+          <div class="actions">
+            <button type="submit" id="sendBtn">Lähetä viesti</button>
+            <span id="formStatus" class="status" aria-live="polite"></span>
+          </div>
+        </form>
+      </div>
+    </div>
+  </main>
+
+  <footer id="site-footer" data-partial="./partials/footer.html"></footer>
+
+  <!-- Sivun JS-rypäs, linjassa muiden sivujen kanssa -->
+  <script src="./js/core/pjax.js"></script>
+  <script src="./js/ui/hamburger.js"></script>
+  <script src="./js/ui/hamburger-outside-close.js"></script>
+  <script src="./js/ui/header-hide-on-scroll.js"></script>
+  <script src="./js/effects/background.js"></script>
+  <script src="./js/ui/lock-bg-scale-fallback.js"></script>
+  <script src="./js/widgets/banner-carousel.js"></script>
+  <script src="./js/widgets/opening-hours.js"></script>
+  <script src="./js/widgets/back-to-top.js"></script>
+  <script src="./js/widgets/about-lightbox.js"></script>
+
+  <!-- Yhteydenottolomakkeen käsittely (erillinen tiedosto) -->
+  <script defer src="/js/widgets/contact-form.js"></script>
+
+  <script defer src="/js/core/image-ready.js"></script>
+  <script defer src="/js/core/boot-loading-overlay.js"></script>
+  <script defer src="/js/ui/pjax-soft-ready.js"></script>
+</body>
+</html>

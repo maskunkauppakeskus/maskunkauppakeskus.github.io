@@ -27,6 +27,7 @@
 :root {
     --font-heading: "Barlow", system-ui, -apple-system, "Segoe UI", Roboto, Ubuntu, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
     --font-body: "Montserrat", system-ui, -apple-system, "Segoe UI", Roboto, Ubuntu, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+    --radius: 1em;
 }
 
 body {
@@ -216,12 +217,15 @@ a {
     box-shadow: var(--box-shadow);
     height: 9em;
     transition: background-color 0.1s ease, transform 0.1s ease, box-shadow 0.1s ease;
-    border-radius: 0.5em;
+
     max-width: 100%;
 }
 
-.tenant:hover, .tenant-card__logo:hover, .tenant-link:hover {
-    background: var(--dark-gray) !important;;
+.tenant:hover,
+.tenant-card__logo:hover,
+.tenant-link:hover {
+    background: var(--dark-gray) !important;
+    ;
     transition: background-color 0.1s ease, transform 0.1s ease, box-shadow 0.1s ease;
 }
 
@@ -676,25 +680,32 @@ h1 {
 }
 
 .about.container.section.section--inner.has-media .about-media {
-  overflow: hidden; /* fallback vanhemmille selaimille */
-  overflow: clip;
-  border-radius: 12px;            /* valinnainen, siisti reunus */
-  /*! margin-block: clamp(16px, 3vw, 32px); */
-  max-width: 100%;
+    overflow: hidden;
+    /* fallback vanhemmille selaimille */
+    overflow: clip;
+    border-radius: 12px;
+    /* valinnainen, siisti reunus */
+    /*! margin-block: clamp(16px, 3vw, 32px); */
+    max-width: 100%;
 }
 
 .about.container.section.section--inner.has-media .about-media img {
-  display: block;          /* poistaa img:n oletusvälin */
-  inline-size: 100%;       /* = width: 100% mutta kirjoitussuunta-agnostinen */
-  max-inline-size: 100%;   /* varmistus */
-  block-size: auto;        /* = height: auto */
-  object-fit: cover;       /* täyttää kehyksen nätisti, ei venytä mittasuhteita */
-  cursor: pointer;
+    display: block;
+    /* poistaa img:n oletusvälin */
+    inline-size: 100%;
+    /* = width: 100% mutta kirjoitussuunta-agnostinen */
+    max-inline-size: 100%;
+    /* varmistus */
+    block-size: auto;
+    /* = height: auto */
+    object-fit: cover;
+    /* täyttää kehyksen nätisti, ei venytä mittasuhteita */
+    cursor: pointer;
 }
 
 .about.container.section.section--inner.has-media .content {
-  margin-inline: auto;
-  box-sizing: border-box;
+    margin-inline: auto;
+    box-sizing: border-box;
 }
 
 @media (max-width: 500px) {
@@ -1035,92 +1046,127 @@ section.hero.container>#carousel {
     }
 
 }
+
 /* ===== Liikkeet & palvelut — vain tämän sivun (#TENANTS) korjaukset ===== */
 
 /* vihreä taustalohko vain tälle sivulle */
 #TENANTS {
-  /*! background: var(--moss-green); */
-  /*! border-radius: 20px; */
-  /*! padding: clamp(88px, 8vw, 112px) 18px 28px; */ /* yläpadding korjaa sticky-headerin */
-  /*! margin-top: 10px; */
-  /*! background-image: none !important; */ /* jos teema asettaa kuvia, poistetaan */
+    /*! background: var(--moss-green); */
+    /*! border-radius: 20px; */
+    /*! padding: clamp(88px, 8vw, 112px) 18px 28px; */
+    /* yläpadding korjaa sticky-headerin */
+    /*! margin-top: 10px; */
+    /*! background-image: none !important; */
+    /* jos teema asettaa kuvia, poistetaan */
 }
 
 /* ankkurihypyt pysähtyvät nätisti headerin alle */
-#TENANTS .tenant-card { scroll-margin-top: clamp(88px, 8vw, 112px); }
+#TENANTS .tenant-card {
+    scroll-margin-top: clamp(88px, 8vw, 112px);
+}
 
 /* lista ja kortit: logo vasemmalle, teksti oikealle */
 #TENANTS .tenant-list {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 18px;
-  margin-top: 14px;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 18px;
+    margin-top: 14px;
 }
 
 #TENANTS .tenant-card {
-  display: grid;
-  grid-template-columns: 170px 1fr;
-  align-items: center;
-  gap: 20px;
-  background: var(--beige);
-  border-radius: 16px;
-  padding: 18px;
-  box-shadow: 0 6px 18px rgba(0,0,0,.12);
-  margin-bottom: 1em;
+    display: grid;
+    grid-template-columns: 170px 1fr;
+    align-items: center;
+    gap: 20px;
+    background: var(--beige);
+    border-radius: 16px;
+    padding: 18px;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, .12);
+    margin-bottom: 1em;
 }
 
 /* logokehys + logo: EI maskeja tai väritinttejä */
 #TENANTS .tenant-card__logo {
-  display: grid;
-  place-items: center;
-  background: var(--moss-green);
-  border-radius: 12px;
-  height: 120px;
-  min-width: 170px;
-  overflow: hidden;
-  padding: 10px;
-  transition: background-color 0.1s ease, transform 0.1s ease, box-shadow 0.1s ease;
+    display: grid;
+    place-items: center;
+    background: var(--moss-green);
+    border-radius: 12px;
+    height: 120px;
+    min-width: 170px;
+    overflow: hidden;
+    padding: 10px;
+    transition: background-color 0.1s ease, transform 0.1s ease, box-shadow 0.1s ease;
 }
 
 #TENANTS .tenant-card__logo .logo {
-  width: 100%;
-  height: 100%;
-  background-image: var(--logo);
-  background-repeat: no-repeat;
-  background-position: center;
-  background-size: contain;
-  -webkit-mask: none !important;
-  mask: none !important;
-  background-color: transparent !important;
+    width: 100%;
+    height: 100%;
+    background-image: var(--logo);
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
+    -webkit-mask: none !important;
+    mask: none !important;
+    background-color: transparent !important;
 }
 
 /* tekstit vasempaan reunaan tämän sivun korteissa */
-#TENANTS .tenant-card__body { display: grid; gap: .4rem; /*! text-align: left; */ }
-#TENANTS .tenant-card__title { margin: 0; color: #1f2b21; text-align: left; }
-#TENANTS .tenant-card__desc { margin: 0; /*! color: #2c2c2c; */ }
-#TENANTS .tenant-card__links { margin-top: .35rem; }
+#TENANTS .tenant-card__body {
+    display: grid;
+    gap: .4rem;
+    /*! text-align: left; */
+}
+
+#TENANTS .tenant-card__title {
+    margin: 0;
+    color: #1f2b21;
+    text-align: left;
+}
+
+#TENANTS .tenant-card__desc {
+    margin: 0;
+    /*! color: #2c2c2c; */
+}
+
+#TENANTS .tenant-card__links {
+    margin-top: .35rem;
+}
+
 #TENANTS .tenant-card__links .tenant-link {
-  background: var(--moss-green); color: #fff; text-decoration: none;
-  padding: .5rem .8rem; border-radius: 8px; display: inline-block;
+    background: var(--moss-green);
+    color: #fff;
+    text-decoration: none;
+    padding: .5rem .8rem;
+    border-radius: 8px;
+    display: inline-block;
 }
 
 #TENANTS .quick-nav {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-  gap: 12px;
-  margin-bottom: 8px;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 12px;
+    margin-bottom: 8px;
 }
+
 #TENANTS .quick-nav .btn {
-  background: var(--beige);
-  color: #1f2b21;
-  border: 1px solid rgba(0,0,0,.06);
+    background: var(--beige);
+    color: #1f2b21;
+    border: 1px solid rgba(0, 0, 0, .06);
 }
 
 /* mobiili: logo ylös, teksti alle — vain tällä sivulla */
 @media (max-width: 720px) {
-  #TENANTS .tenant-card { grid-template-columns: 1fr; padding: 14px; }
-  #TENANTS .tenant-card__logo { min-width: 0; height: 110px; }
+    #TENANTS .tenant-card {
+        grid-template-columns: 1fr;
+        padding: 14px;
+    }
+
+    #TENANTS .tenant-card__logo {
+        min-width: 0;
+        height: 110px;
+    }
 }
+
 .container.section--inner {
     /*! margin-top:4em; */
 }
@@ -1132,91 +1178,93 @@ section.hero.container>#carousel {
 /* ===== About-media Lightbox (eriytetty CSS) =============================== */
 
 :root {
-  --about-lightbox-backdrop: rgba(0, 0, 0, 0.75);
-  /*! --about-lightbox-radius: 12px; */
-  --about-lightbox-padding-x: 32px;
-  --about-lightbox-padding-y: 32px;
-  --about-lightbox-z: 2147483647; /* erittäin korkea z-index */
-  --about-lightbox-close-bg: rgba(255, 255, 255, 0.92);
+    --about-lightbox-backdrop: rgba(0, 0, 0, 0.75);
+    /*! --about-lightbox-radius: 12px; */
+    --about-lightbox-padding-x: 32px;
+    --about-lightbox-padding-y: 32px;
+    --about-lightbox-z: 2147483647;
+    /* erittäin korkea z-index */
+    --about-lightbox-close-bg: rgba(255, 255, 255, 0.92);
 }
 
 /* Estä taustarullaus, kun lightbox on auki */
 html.no-scroll,
 html.no-scroll body {
-  overflow: hidden !important;
+    overflow: hidden !important;
 }
 
 /* Overlay */
 #about-media-lightbox {
-  position: fixed;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: min(4vh, var(--about-lightbox-padding-y)) min(4vw, var(--about-lightbox-padding-x));
-  background: var(--about-lightbox-backdrop);
-  z-index: var(--about-lightbox-z);
-  opacity: 0;
-  visibility: hidden;
-  pointer-events: none;
-  transition: opacity .18s ease, visibility 0s linear .18s;
+    position: fixed;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: min(4vh, var(--about-lightbox-padding-y)) min(4vw, var(--about-lightbox-padding-x));
+    background: var(--about-lightbox-backdrop);
+    z-index: var(--about-lightbox-z);
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition: opacity .18s ease, visibility 0s linear .18s;
 }
 
 /* Auki-tila */
 #about-media-lightbox.is-open {
-  opacity: 1;
-  visibility: visible;
-  pointer-events: auto;
-  transition: opacity .18s ease, visibility 0s;
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    transition: opacity .18s ease, visibility 0s;
 }
 
 /* Figure-kehys */
 #about-media-lightbox .about-lightbox__figure {
-  margin: 0;
-  position: relative;
-  border-radius: var(--about-lightbox-radius);
-  overflow: hidden;
-  background: #111;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, .45);
-  max-width: calc(100vw - 2 * var(--about-lightbox-padding-x));
-  max-height: calc(100vh - 2 * var(--about-lightbox-padding-y));
-  display: flex;
-  align-items: center;
-  justify-content: center;
+    margin: 0;
+    position: relative;
+    border-radius: var(--about-lightbox-radius);
+    overflow: hidden;
+    background: #111;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, .45);
+    max-width: calc(100vw - 2 * var(--about-lightbox-padding-x));
+    max-height: calc(100vh - 2 * var(--about-lightbox-padding-y));
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 /* Kuva: sovita sisään ilman vääristymää */
 #about-media-lightbox .about-lightbox__img {
-  display: block;
-  width: auto;
-  height: auto;
-  max-width: 100%;
-  max-height: 100%;
-  object-fit: contain;
+    display: block;
+    width: auto;
+    height: auto;
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
 }
 
 /* Sulje-nappi */
 #about-media-lightbox .about-lightbox__close {
-  position: absolute;
-  top: 8px;
-  right: 8px;
-  line-height: 1;
-  font-size: 20px;
-  border: 0;
-  border-radius: 999px;
-  padding: 8px 10px;
-  cursor: pointer;
-  background: var(--about-lightbox-close-bg);
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    line-height: 1;
+    font-size: 20px;
+    border: 0;
+    border-radius: 999px;
+    padding: 8px 10px;
+    cursor: pointer;
+    background: var(--about-lightbox-close-bg);
 }
 
 /* Vähemmän animaatioita, jos käyttäjä pyytää */
 @media (prefers-reduced-motion: reduce) {
-  #about-media-lightbox {
-    transition: none;
-  }
+    #about-media-lightbox {
+        transition: none;
+    }
 }
+
 .liikkeet-ja-palvelut {
-    margin-top:4rem;
+    margin-top: 4rem;
 }
 
 
@@ -1224,29 +1272,41 @@ html.no-scroll body {
 /* === Latausoverlay + PJAX "soft ready" + sulava cross-fade ensilatauksessa === */
 
 :root {
-  --loading-fade-ms: 260ms;     /* overlayin fade */
-  --softready-fade-ms: 200ms;   /* PJAX main fade */
-  --boot-fade-ms: 220ms;        /* ensilatauksen sisällön fade */
+    --loading-fade-ms: 260ms;
+    /* overlayin fade */
+    --softready-fade-ms: 200ms;
+    /* PJAX main fade */
+    --boot-fade-ms: 220ms;
+    /* ensilatauksen sisällön fade */
 }
 
 /* Koko-sivun overlay */
 #app-loading-overlay {
-  position: fixed;
-  inset: 0;
-  z-index: 9999;
-  background: var(--dark-gray);
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity var(--loading-fade-ms) ease;
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    background: var(--dark-gray);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity var(--loading-fade-ms) ease;
 }
-#app-loading-overlay.is-visible { opacity: 1; pointer-events: auto; }
-#app-loading-overlay.is-hiding  { opacity: 0; pointer-events: none; }
+
+#app-loading-overlay.is-visible {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+#app-loading-overlay.is-hiding {
+    opacity: 0;
+    pointer-events: none;
+}
 
 /* ENSILATAUS: sisältö piiloon overlayn alle (mutta layout pysyy) */
 html.under-overlay #site-header,
 html.under-overlay main,
 html.under-overlay #site-footer {
-  opacity: 0;                    /* ei visibility:hidden -> ei töksähdystä */
+    opacity: 0;
+    /* ei visibility:hidden -> ei töksähdystä */
 }
 
 /* CROSS-FADE: kun .boot-reveal lisätään, sisältö häivytetään sisään.
@@ -1254,28 +1314,143 @@ html.under-overlay #site-footer {
 html.boot-reveal #site-header,
 html.boot-reveal main,
 html.boot-reveal #site-footer {
-  opacity: 1;
-  transition: opacity var(--boot-fade-ms) ease;
+    opacity: 1;
+    transition: opacity var(--boot-fade-ms) ease;
 }
 
 /* PJAX "soft ready": uusi <main> häivytetään sisään kun sen kuvat valmiit */
 main.is-soft-pending {
-  opacity: 0;
-  transition: opacity var(--softready-fade-ms) ease;
+    opacity: 0;
+    transition: opacity var(--softready-fade-ms) ease;
 }
+
 main.is-soft-ready {
-  opacity: 1;
-  transition: opacity var(--softready-fade-ms) ease;
+    opacity: 1;
+    transition: opacity var(--softready-fade-ms) ease;
 }
 
 /* Liikunnan vähentäminen: poistetaan animaatiot */
 @media (prefers-reduced-motion: reduce) {
-  #app-loading-overlay,
-  main.is-soft-pending,
-  main.is-soft-ready,
-  html.boot-reveal #site-header,
-  html.boot-reveal main,
-  html.boot-reveal #site-footer {
-    transition: none !important;
-  }
+
+    #app-loading-overlay,
+    main.is-soft-pending,
+    main.is-soft-ready,
+    html.boot-reveal #site-header,
+    html.boot-reveal main,
+    html.boot-reveal #site-footer {
+        transition: none !important;
+    }
 }
+
+/* ===== LOGO: kahden vaiheen vaihto ilman välähdystä ===== */
+:root {
+    --logo-fade: .2s;
+}
+
+/* voit säätää keston tarvittaessa */
+
+.logo[style*="--logo-white"] {
+    position: relative;
+    background: transparent !important;
+    isolation: isolate;
+}
+
+/* kerrokset */
+.logo[style*="--logo-white"]::before,
+.logo[style*="--logo-white"]::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: contain;
+    pointer-events: none;
+}
+
+/* white alla, näkyy oletuksena */
+.logo[style*="--logo-white"]::before {
+    z-index: 1;
+    background-image: var(--logo-white);
+    opacity: 1;
+    /* Perustila: ei viivettä (näkyviin heti, kun hover loppuu) */
+    transition: opacity .2s linear 0s;
+    will-change: opacity;
+}
+
+/* color päällä, aluksi piilossa ja fadaa sisään */
+.logo[style*="--logo-white"]::after {
+    z-index: 2;
+    background-image: var(--logo-color, var(--logo-white));
+    opacity: 0;
+    transition: opacity var(--logo-fade, .2s) ease-in-out 0s;
+    will-change: opacity;
+}
+
+/* Kun color on ladattu (.color-ready) ja hover/focus alkaa:
+   1) color alkaa fadata sisään heti
+   2) white piilotetaan vasta, kun colorin fade on valmis (viive = --logo-fade) */
+.logo[style*="--logo-white"].color-ready:hover::after,
+.logo[style*="--logo-white"].color-ready:focus-visible::after,
+a:hover .logo[style*="--logo-white"].color-ready::after,
+a:focus-visible .logo[style*="--logo-white"].color-ready::after,
+.tenant-card:hover .logo[style*="--logo-white"].color-ready::after,
+.tenant-card:focus-within .logo[style*="--logo-white"].color-ready::after {
+    opacity: 1;
+    transition-delay: 0s;
+    /* heti sisään */
+}
+
+.logo[style*="--logo-white"].color-ready:hover::before,
+.logo[style*="--logo-white"].color-ready:focus-visible::before,
+a:hover .logo[style*="--logo-white"].color-ready::before,
+a:focus-visible .logo[style*="--logo-white"].color-ready::before,
+.tenant-card:hover .logo[style*="--logo-white"].color-ready::before,
+.tenant-card:focus-within .logo[style*="--logo-white"].color-ready::before {
+    opacity: 0;
+    /* piilota white vasta, kun color on täydessä peitossa */
+    transition: opacity .2s linear var(--logo-fade, .2s);
+}
+
+/* Kun hover/focus loppuu:
+   - white näkyviin heti (ei viivettä)
+   - color fadaa ulos normaalisti */
+@media (prefers-reduced-motion: reduce) {
+
+    .logo[style*="--logo-white"]::before,
+    .logo[style*="--logo-white"]::after {
+        transition: none;
+    }
+}
+
+/* ====== Yhteydenottolomake ====== */
+.contact { min-width: 100%; margin-inline: auto; }
+.contact .card { background: var(--beige); border-radius: var(--radius); box-shadow: var(--box-shadow); padding: clamp(16px, 3vw, 28px); }
+.contact h1 { margin-bottom: .25rem; }
+.contact p.lead { color: var(--dark-gray); margin: 0 0 1.25rem 0; }
+
+.contact form { display: grid; gap: 14px; }
+.contact label { font-weight: 600; }
+.contact input[type="email"],
+.contact textarea {
+  border-radius: 12px; border: 0px solid var(--moss-green);
+  padding: 12px 14px; font: inherit; line-height: 1.45; background: var(--beige);
+  box-shadow: var(--box-shadow);
+}
+.contact textarea { min-height: 180px; resize: vertical; }
+.contact .row { display: grid; gap: 12px; }
+.contact .actions { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+.contact button[type="submit"]{
+  appearance: none; border: 0; border-radius: 999px; padding: 12px 20px;
+  background: var(--moss-green); color: var(--beige); font-weight: 700; cursor: pointer;
+  box-shadow: var(--box-shadow);
+}
+.contact button[disabled]{ opacity: .6; cursor: progress; }
+.contact .hint { font-size: .925rem; color: var(--dark-gray); }
+
+/* Honeypot */
+.contact .hp { position: absolute !important; left: -9999px !important; top: -9999px !important; width: 1px; height: 1px; overflow: hidden; }
+
+/* Tilaviestit */
+.contact .status { font-size: .95rem; }
+.contact .status--ok { color: var(var(--moss-green)); }
+.contact .status--err { color: var(--tile-red); }
